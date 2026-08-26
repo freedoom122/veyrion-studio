@@ -1,4 +1,5 @@
-const db = require('../config/database');
+const { getDb } = require('../config/database');
+const db = getDb();
 
 const Cart = {
   findOrCreate({ user_id, session_id }) {

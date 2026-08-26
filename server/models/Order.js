@@ -1,4 +1,5 @@
-const db = require('../config/database');
+const { getDb } = require('../config/database');
+const db = getDb();
 const { generateOrderNumber } = require('../utils/generateOrderNumber');
 
 const Order = {

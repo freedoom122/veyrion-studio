@@ -1,5 +1,6 @@
-const db = require('../config/database');
-const bcrypt = require('bcrypt');
+const { getDb } = require('../config/database');
+const db = getDb();
+const bcrypt = require('bcryptjs');
 
 const User = {
   findById(id) {

@@ -4,7 +4,8 @@ const Product = require('../models/Product');
 const License = require('../models/License');
 const { generateDownloadToken } = require('../utils/generateOrderNumber');
 const { sendEmail } = require('../config/email');
-const db = require('../config/database');
+const { getDb } = require('../config/database');
+const db = getDb();
 
 const orderController = {
   async checkout(req, res, next) {

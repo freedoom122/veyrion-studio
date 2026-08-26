@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
-const db = require('../config/database');
+const { getDb } = require('../config/database');
+const db = getDb();
 
 const productController = {
   // Public endpoints

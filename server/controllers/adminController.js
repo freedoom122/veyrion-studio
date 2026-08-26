@@ -1,4 +1,5 @@
-const db = require('../config/database');
+const { getDb } = require('../config/database');
+const db = getDb();
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');

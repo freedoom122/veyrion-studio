@@ -1,4 +1,5 @@
-const db = require('../config/database');
+const { getDb } = require('../config/database');
+const db = getDb();
 const User = require('../models/User');
 const { generateToken, generateRefreshToken } = require('../middleware/auth');
 const { sendEmail } = require('../config/email');
