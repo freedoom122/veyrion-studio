@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 function seed() {
   console.log('[DB] Seeding database...');
 
-  const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(process.env.ADMIN_EMAIL || 'admin@veyrion.dev');
+  const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(process.env.ADMIN_EMAIL || 'admin@example.com');
 
   if (!existingAdmin) {
     const passwordHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'SuperAdmin123!@#', 12);
@@ -13,7 +13,7 @@ function seed() {
       INSERT INTO users (email, password_hash, name, role, email_verified)
       VALUES (?, ?, ?, 'superadmin', 1)
     `).run(
-      process.env.ADMIN_EMAIL || 'admin@veyrion.dev',
+      process.env.ADMIN_EMAIL || 'admin@example.com',
       passwordHash,
       'Studio Admin'
     );
@@ -98,7 +98,7 @@ function seed() {
   const settings = [
     { key: 'site_name', value: 'Veyrion', setting_group: 'general', is_public: 1 },
     { key: 'site_description', value: 'Bespoke systems for companies that have outgrown the catalogue', setting_group: 'general', is_public: 1 },
-    { key: 'site_email', value: 'studio@veyrion.dev', setting_group: 'general', is_public: 1 },
+    { key: 'site_email', value: 'admin@example.com', setting_group: 'general', is_public: 1 },
     { key: 'currency', value: 'USD', setting_group: 'commerce', is_public: 1 },
     { key: 'tax_rate', value: '0', setting_group: 'commerce', is_public: 0 },
     { key: 'maintenance_mode', value: 'false', setting_group: 'system', is_public: 0 },

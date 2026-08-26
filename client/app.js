@@ -369,7 +369,7 @@
         ].join("\n");
       },
       "--contact": function () {
-        return '<span class="t-str">studio@veyrion.dev</span>  \u2014  2 business day response  \u2014  New York, remote-first';
+        return '<span class="t-str">admin@example.com</span>  \u2014  2 business day response  \u2014  New York, remote-first';
       },
       "help": function () {
         return "available commands:\n  --show-stack\n  --benchmarks\n  --architecture\n  --security\n  --contact\n  clear";
@@ -651,7 +651,7 @@
     var btn = $("#copy-email");
     var toast = $("#toast") || $("#toast-global");
     if (!btn) return;
-    var EMAIL = "studio@veyrion.dev";
+    var EMAIL = "admin@example.com";
 
     function showCopied() {
       btn.textContent = "Copied";

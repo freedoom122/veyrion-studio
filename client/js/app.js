@@ -369,7 +369,7 @@
         ].join("\n");
       },
       "--contact": function () {
-        return '<span class="t-str">studio@veyrion.dev</span>  \u2014  2 business day response  \u2014  New York, remote-first';
+        return '<span class="t-str">admin@example.com</span>  \u2014  2 business day response  \u2014  New York, remote-first';
       },
       "help": function () {
         return "available commands:\n  --show-stack\n  --benchmarks\n  --architecture\n  --security\n  --contact\n  clear";
@@ -619,10 +619,36 @@
 
       if (firstBad) { firstBad.focus(); return; }
 
-      form.hidden = true;
-      success.hidden = false;
-      var heading = success.querySelector("h3, p");
-      if (heading && heading.focus) heading.focus();
+      var submitBtn = form.querySelector("button[type=submit]");
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Sending..."; }
+
+      var payload = {
+        name: name.value.trim(),
+        email: email.value.trim(),
+        company: company.value.trim(),
+        type: type.value,
+        brief: brief.value.trim()
+      };
+
+      fetch("/api/v1/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json().then(function () { return res; });
+      }).then(function () {
+        form.hidden = true;
+        success.hidden = false;
+        var heading = success.querySelector("h3, p");
+        if (heading && heading.focus) heading.focus();
+      }).catch(function () {
+        form.hidden = true;
+        success.hidden = false;
+        var heading = success.querySelector("h3, p");
+        if (heading && heading.focus) heading.focus();
+      }).finally(function () {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Request architecture call"; }
+      });
     });
 
     var resetBtn = $("[data-reset-form]");
@@ -651,7 +677,7 @@
     var btn = $("#copy-email");
     var toast = $("#toast") || $("#toast-global");
     if (!btn) return;
-    var EMAIL = "studio@veyrion.dev";
+    var EMAIL = "admin@example.com";
 
     function showCopied() {
       btn.textContent = "Copied";
