@@ -8,7 +8,7 @@ function seed() {
   const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(process.env.ADMIN_EMAIL || 'admin@example.com');
 
   if (!existingAdmin) {
-    const passwordHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'SuperAdmin123!@#', 12);
+    const passwordHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'CHANGE_ME', 12);
     db.prepare(`
       INSERT INTO users (email, password_hash, name, role, email_verified)
       VALUES (?, ?, ?, 'superadmin', 1)
