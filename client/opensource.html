@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Source — Veyrion</title>
+  <meta name="description" content="Tools and libraries we maintain and contribute to.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="header__brand"><img src="assets/logo.png" alt="Veiryon Studios" class="header__logo"></a>
+      <nav class="header__nav" aria-label="Main">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header__right">
+        <a href="contact.html" class="header__cta">BOOK ARCHITECTURE CALL</a>
+      </div>
+      <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobile-menu" hidden>
+    <button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>
+    <a href="index.html#capabilities">Capabilities</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="services.html">Services</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="page-hero__inner">
+        <p class="page-hero__eyebrow">OPEN SOURCE</p>
+        <h1 class="page-hero__title">Tools we maintain</h1>
+        <p class="page-hero__sub">Libraries and tools we build for internal use and release publicly. If it solves a problem for us, it probably solves it for someone else.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__inner">
+        <div class="oss-grid">
+
+          <article class="oss-card">
+            <div class="oss-card__header">
+              <h3 class="oss-card__name">flux-core</h3>
+              <span class="oss-card__stars">2.4k stars</span>
+            </div>
+            <span class="oss-card__lang">TypeScript</span>
+            <p class="oss-card__body">Durable workflow engine with typed activities, compensation chains, and an operator dashboard. Temporal-inspired, lighter weight.</p>
+            <div class="oss-card__meta">
+              <span>v2.4.0</span>
+              <span>MIT License</span>
+            </div>
+          </article>
+
+          <article class="oss-card">
+            <div class="oss-card__header">
+              <h3 class="oss-card__name">audit-log</h3>
+              <span class="oss-card__stars">890 stars</span>
+            </div>
+            <span class="oss-card__lang">Go</span>
+            <p class="oss-card__body">Immutable audit logging with structured events, forward-only schema migrations, and built-in compliance exports for SOC 2 and GDPR.</p>
+            <div class="oss-card__meta">
+              <span>v1.0.0</span>
+              <span>Apache 2.0</span>
+            </div>
+          </article>
+
+          <article class="oss-card">
+            <div class="oss-card__header">
+              <h3 class="oss-card__name">serde-stream</h3>
+              <span class="oss-card__stars">1.1k stars</span>
+            </div>
+            <span class="oss-card__lang">Rust</span>
+            <p class="oss-card__body">Streaming serialization with schema registry integration. Supports Avro, Protobuf, and JSON Schema validation at the wire level.</p>
+            <div class="oss-card__meta">
+              <span>v1.2.0</span>
+              <span>MIT License</span>
+            </div>
+          </article>
+
+          <article class="oss-card">
+            <div class="oss-card__header">
+              <h3 class="oss-card__name">eval-harness</h3>
+              <span class="oss-card__stars">640 stars</span>
+            </div>
+            <span class="oss-card__lang">Python</span>
+            <p class="oss-card__body">LLM evaluation framework with golden ticket sets, regression detection, cost tracking, and automated weekly reports.</p>
+            <div class="oss-card__meta">
+              <span>v3.0.0</span>
+              <span>MIT License</span>
+            </div>
+          </article>
+
+          <article class="oss-card">
+            <div class="oss-card__header">
+              <h3 class="oss-card__name">conn-sdk</h3>
+              <span class="oss-card__stars">420 stars</span>
+            </div>
+            <span class="oss-card__lang">TypeScript</span>
+            <p class="oss-card__body">Typed connector SDK for building integration adapters. Idempotent by default, with built-in retry and dead-letter support.</p>
+            <div class="oss-card__meta">
+              <span>v1.1.0</span>
+              <span>MIT License</span>
+            </div>
+          </article>
+
+          <article class="oss-card">
+            <div class="oss-card__header">
+              <h3 class="oss-card__name">helm-bundler</h3>
+              <span class="oss-card__stars">310 stars</span>
+            </div>
+            <span class="oss-card__lang">Go</span>
+            <p class="oss-card__body">CLI tool for bundling multiple Helm charts into a single deployment with dependency resolution and version locking.</p>
+            <div class="oss-card__meta">
+              <span>v0.9.0</span>
+              <span>Apache 2.0</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="section__inner" style="text-align:center;">
+        <h2 class="section__title">Contribute</h2>
+        <p style="color:var(--text-2);margin-bottom:32px;max-width:50ch;margin-left:auto;margin-right:auto;">All our open source work lives on GitHub. Issues, PRs, and feedback welcome.</p>
+        <a href="#" class="btn">View on GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__left">
+        <span class="footer__brand">VEYRION</span>
+        <span class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</span>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="mailto:studio@veyrion.dev">studio@veyrion.dev</a>
+      </nav>
+      <div class="footer__social">
+        <a href="#" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+      </div>
+      <span class="footer__copy">&copy; 2026 Veyrion &middot; All work confidential until you say otherwise.</span>
+    </div>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

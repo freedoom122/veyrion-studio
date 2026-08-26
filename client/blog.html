@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Veyrion</title>
+  <meta name="description" content="Engineering writing from the Veyrion studio. Systems architecture, automation, and hard-won lessons.">
+  <meta property="og:title" content="Blog — Veyrion">
+  <meta property="og:description" content="Engineering writing from the Veyrion studio.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="header__brand"><img src="assets/logo.png" alt="Veiryon Studios" class="header__logo"></a>
+      <nav class="header__nav" aria-label="Main">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html" class="is-active">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header__right">
+        <a href="contact.html" class="header__cta">BOOK ARCHITECTURE CALL</a>
+      </div>
+      <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobile-menu" hidden>
+    <button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>
+    <a href="index.html#capabilities">Capabilities</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="services.html">Services</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="page-hero__inner">
+        <p class="page-hero__eyebrow">BLOG</p>
+        <h1 class="page-hero__title">Engineering writing</h1>
+        <p class="page-hero__sub">Technical writing from the studio. No marketing fluff. Just the things we've learned building systems that run in production.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__inner">
+        <div class="blog-grid">
+
+          <article class="blog-card">
+            <div class="blog-card__meta">
+              <span class="blog-card__tag">ARCHITECTURE</span>
+              <time class="blog-card__date">2026-06-12</time>
+            </div>
+            <h2 class="blog-card__title">Why your service mesh is probably wrong</h2>
+            <p class="blog-card__body">Most teams adopt a service mesh because it sounds like the right thing to do. Then they spend six months debugging mTLS cert rotation at 3 a.m. Here's how we think about it instead.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__read">12 min read</span>
+              <a href="#" class="blog-card__link">Read &rarr;</a>
+            </div>
+          </article>
+
+          <article class="blog-card">
+            <div class="blog-card__meta">
+              <span class="blog-card__tag">DATA</span>
+              <time class="blog-card__date">2026-04-28</time>
+            </div>
+            <h2 class="blog-card__title">The real cost of real-time</h2>
+            <p class="blog-card__body">Everyone wants sub-second dashboards until they see the infrastructure bill. We break down when streaming makes sense, when batch is fine, and how to build a cost model that doesn't surprise you.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__read">9 min read</span>
+              <a href="#" class="blog-card__link">Read &rarr;</a>
+            </div>
+          </article>
+
+          <article class="blog-card">
+            <div class="blog-card__meta">
+              <span class="blog-card__tag">SECURITY</span>
+              <time class="blog-card__date">2026-03-15</time>
+            </div>
+            <h2 class="blog-card__title">Secrets management without the drama</h2>
+            <p class="blog-card__body">Vault, AWS Secrets Manager, environment variables, encrypted files — every team does it differently. We've migrated secrets architecture for seven clients. Here's what actually works.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__read">8 min read</span>
+              <a href="#" class="blog-card__link">Read &rarr;</a>
+            </div>
+          </article>
+
+          <article class="blog-card">
+            <div class="blog-card__meta">
+              <span class="blog-card__tag">AI / ML</span>
+              <time class="blog-card__date">2026-02-10</time>
+            </div>
+            <h2 class="blog-card__title">Evaluating LLM outputs in production</h2>
+            <p class="blog-card__body">Most AI deployments have no evaluation. The model works in a demo, ships to production, and drifts silently. We describe our eval harness: golden ticket sets, automated regression detection, and a feedback loop that catches quality drops before customers do.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__read">14 min read</span>
+              <a href="#" class="blog-card__link">Read &rarr;</a>
+            </div>
+          </article>
+
+          <article class="blog-card">
+            <div class="blog-card__meta">
+              <span class="blog-card__tag">AUTOMATION</span>
+              <time class="blog-card__date">2025-11-22</time>
+            </div>
+            <h2 class="blog-card__title">Temporal in production: what we've learned</h2>
+            <p class="blog-card__body">We've run Temporal in production for three years across five clients. It's powerful, but it has edges. Here's our playbook for workflow design, failure handling, and operational hygiene.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__read">11 min read</span>
+              <a href="#" class="blog-card__link">Read &rarr;</a>
+            </div>
+          </article>
+
+          <article class="blog-card">
+            <div class="blog-card__meta">
+              <span class="blog-card__tag">OPERATIONS</span>
+              <time class="blog-card__date">2025-09-08</time>
+            </div>
+            <h2 class="blog-card__title">On-call for systems you didn't build</h2>
+            <p class="blog-card__body">Sometimes you inherit a system that has no runbook, no monitoring, and a bus factor of one. Here's our 72-hour protocol for taking ownership of an unknown system without breaking it.</p>
+            <div class="blog-card__footer">
+              <span class="blog-card__read">7 min read</span>
+              <a href="#" class="blog-card__link">Read &rarr;</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__left">
+        <span class="footer__brand">VEYRION</span>
+        <span class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</span>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="mailto:studio@veyrion.dev">studio@veyrion.dev</a>
+      </nav>
+      <div class="footer__social">
+        <a href="#" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+      </div>
+      <span class="footer__copy">&copy; 2026 Veyrion &middot; All work confidential until you say otherwise.</span>
+    </div>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — Veyrion</title>
+  <meta name="description" content="Architecture documentation and technical reference for Veyrion systems.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="header__brand"><img src="assets/logo.png" alt="Veiryon Studios" class="header__logo"></a>
+      <nav class="header__nav" aria-label="Main">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header__right">
+        <a href="contact.html" class="header__cta">BOOK ARCHITECTURE CALL</a>
+      </div>
+      <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobile-menu" hidden>
+    <button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>
+    <a href="index.html#capabilities">Capabilities</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="services.html">Services</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="page-hero__inner">
+        <p class="page-hero__eyebrow">DOCUMENTATION</p>
+        <h1 class="page-hero__title">Architecture reference</h1>
+        <p class="page-hero__sub">Technical reference for the systems we build. Updated as patterns evolve.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__inner">
+        <div class="docs-layout">
+
+          <nav class="docs-nav" aria-label="Documentation">
+            <a href="#layer-model" class="docs-nav__link is-active">Layer model</a>
+            <a href="#service-boundaries" class="docs-nav__link">Service boundaries</a>
+            <a href="#data-modeling" class="docs-nav__link">Data modeling</a>
+            <a href="#sagas" class="docs-nav__link">Sagas & workflows</a>
+            <a href="#observability" class="docs-nav__link">Observability</a>
+            <a href="#deployment" class="docs-nav__link">Deployment</a>
+          </nav>
+
+          <div class="docs-content">
+
+            <article class="docs-section" id="layer-model">
+              <h2 class="docs-section__title">Layer model</h2>
+              <p class="docs-section__body">Every system we build follows a six-layer model. The layers are not deployment tiers — they are logical boundaries that constrain coupling. A change in one layer should not require changes in another.</p>
+              <div class="docs-code">
+                <pre><code>L6  Client          Interfaces, consoles, portals
+L5  API             Versioned contracts, auth, rate limits
+L4  Orchestration   Workflows, sagas, schedulers
+L3  Services        Domain boundaries, SLAs
+L2  Data            Stores, streams, schemas
+L1  Infrastructure  Compute, network, secrets</code></pre>
+              </div>
+              <p class="docs-section__body">Layers communicate downward only. L4 never calls L6. L2 never reaches into L3's tables. If you need cross-layer communication, you go through a contract, not a direct reference.</p>
+            </article>
+
+            <article class="docs-section" id="service-boundaries">
+              <h2 class="docs-section__title">Service boundaries</h2>
+              <p class="docs-section__body">We define service boundaries by domain, not by technical function. A "payment service" owns everything about payments — the data model, the business logic, the API surface. Other services interact with it through its public contract.</p>
+              <p class="docs-section__body">Rules we follow:</p>
+              <ul class="docs-list">
+                <li>Services own their data. No shared databases.</li>
+                <li>Cross-service reads go through APIs, not direct queries.</li>
+                <li>Cross-service writes go through events, not direct calls.</li>
+                <li>Every service has an explicit latency budget and error budget.</li>
+                <li>Failures in one service never cascade to others.</li>
+              </ul>
+            </article>
+
+            <article class="docs-section" id="data-modeling">
+              <h2 class="docs-section__title">Data modeling</h2>
+              <p class="docs-section__body">Data is modeled once per domain. We use event sourcing for write-heavy domains and traditional CRUD for read-heavy ones. Streams carry facts. Caches are disposable. Migrations are forward-only and reversible in rehearsal.</p>
+              <p class="docs-section__body">We treat the database as a private implementation detail of the service. If you need data from another service, you call its API or subscribe to its events. You never reach into its tables.</p>
+            </article>
+
+            <article class="docs-section" id="sagas">
+              <h2 class="docs-section__title">Sagas & workflows</h2>
+              <p class="docs-section__body">Long-running work is a workflow with a name, a history, and a compensating action. Every workflow has:</p>
+              <ul class="docs-list">
+                <li>A unique execution ID for tracing and replay.</li>
+                <li>Idempotent activity implementations.</li>
+                <li>Compensating actions for every write step.</li>
+                <li>A dead-letter path with operator replay.</li>
+                <li>Timeout and retry policies per activity.</li>
+              </ul>
+              <p class="docs-section__body">Cron jobs are not an architecture. If something needs to run on a schedule, it's a workflow with a timer trigger.</p>
+            </article>
+
+            <article class="docs-section" id="observability">
+              <h2 class="docs-section__title">Observability</h2>
+              <p class="docs-section__body">Telemetry is a product requirement, not a dashboard you add later. Every service emits structured logs, metrics, and traces from day one. We use OpenTelemetry as the standard instrumentation layer.</p>
+              <div class="docs-code">
+                <pre><code>traces   → Jaeger / Tempo
+metrics  → Prometheus → Grafana
+logs     → Structured JSON → Loki
+alerts   → PagerDuty / OpsGenie</code></pre>
+              </div>
+              <p class="docs-section__body">If you can't see it, stop it, and roll it back, it's not in production — it's a demo.</p>
+            </article>
+
+            <article class="docs-section" id="deployment">
+              <h2 class="docs-section__title">Deployment</h2>
+              <p class="docs-section__body">We deploy progressively. Canary → percentage → full rollout. Every deployment has a rehearsed rollback procedure. Every service has an on-call owner who wrote the code.</p>
+              <p class="docs-section__body">Infrastructure is code. Secrets are injected at runtime, never baked into images or config files. Environments are reproducible from a single source of truth.</p>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__left">
+        <span class="footer__brand">VEYRION</span>
+        <span class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</span>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="mailto:studio@veyrion.dev">studio@veyrion.dev</a>
+      </nav>
+      <div class="footer__social">
+        <a href="#" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+      </div>
+      <span class="footer__copy">&copy; 2026 Veyrion &middot; All work confidential until you say otherwise.</span>
+    </div>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

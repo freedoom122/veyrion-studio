@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Studies — Veyrion</title>
+  <meta name="description" content="Representative systems Veyrion has built. Details composited from real engagement patterns.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="header__brand">VEYRION</a>
+      <nav class="header__nav" aria-label="Main">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html" class="is-active">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header__right">
+        <a href="contact.html" class="header__cta">BOOK ARCHITECTURE CALL</a>
+      </div>
+      <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-nav" id="mobile-menu" hidden>
+    <button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>
+    <a href="index.html#capabilities">Capabilities</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+    <a href="process.html">Process</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <div class="page-hero__inner">
+        <p class="page-hero__eyebrow">06 / REPRESENTATIVE BUILDS</p>
+        <h1 class="page-hero__title">Systems we have shipped</h1>
+        <p class="page-hero__sub">Representative builds. Details composited from real engagement patterns. Not client endorsements.</p>
+      </div>
+    </section>
+
+    <!-- Case 1 -->
+    <section class="cs-deep">
+      <div class="cs-deep__inner">
+        <div class="cs-deep__meta">
+          <span class="cs-deep__kicker">OPERATIONS</span>
+          <span class="cs-deep__date">2022 — 2023</span>
+        </div>
+        <h2 class="cs-deep__title">Distributed Operations Platform</h2>
+        <div class="cs-deep__grid">
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Problem</h3>
+            <p>A multi-region operator ran plant scheduling in spreadsheets and three disconnected vendor tools. Night shifts could not see live capacity. Incidents were reconstructed from chat logs. The operations team spent more time reconciling data than acting on it.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Constraints</h3>
+            <p>Multi-region with partition tolerance required. Write path had to survive network splits. Read models needed sub-second freshness for operator consoles. Audit trail was non-negotiable for regulatory compliance.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Architecture</h3>
+            <p>Event-sourced operations log with regional read models. Single operator console as the system of engagement. Write path designed for partition tolerance with causal consistency. Event replay for audit and incident reconstruction.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Implementation</h3>
+            <p>Go services for the write path. Postgres with logical replication for regional read models. NATS for event fan-out across regions. TypeScript console with optimistic concurrency on every mutation. OpenTelemetry traces on all write operations.</p>
+          </div>
+        </div>
+        <div class="cs-deep__outcome">
+          <div class="cs-deep__metrics">
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">&lt;400ms</span>
+              <span class="cs-deep__metric-label">Regional lag</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">99.97%</span>
+              <span class="cs-deep__metric-label">Write uptime</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">3</span>
+              <span class="cs-deep__metric-label">Regions</span>
+            </div>
+          </div>
+          <p>Scheduling and incident timeline live in one system. Night shifts see the same data as day shifts. Spreadsheets retired from the critical path. The audit trail serves compliance without manual reporting.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case 2 -->
+    <section class="cs-deep cs-deep--alt">
+      <div class="cs-deep__inner">
+        <div class="cs-deep__meta">
+          <span class="cs-deep__kicker">AUTOMATION</span>
+          <span class="cs-deep__date">2023</span>
+        </div>
+        <h2 class="cs-deep__title">Automation Orchestration Engine</h2>
+        <div class="cs-deep__grid">
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Problem</h3>
+            <p>A marketplace team had 70+ Zapier zaps, no retries they trusted, and a weekly ritual of re-running failed jobs by hand. Nobody knew which zaps were critical. Failures surfaced in Slack threads that nobody owned.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Constraints</h3>
+            <p>Exactly-once semantics required for financial operations. Dead-letter needed operator replay, not just alerting. Connector SDK had to be typed so non-core engineers could add integrations without touching the engine.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Architecture</h3>
+            <p>Durable workflow engine with named executions and full history. Idempotency keys at the edge for exactly-once effects. Dead-letter queue with operator replay console. Typed connector SDK for new integrations.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Implementation</h3>
+            <p>Temporal-style orchestrators in TypeScript. Redis for lease management and distributed locks. Postgres for execution history and audit. OpenTelemetry on every activity for tracing and debugging.</p>
+          </div>
+        </div>
+        <div class="cs-deep__outcome">
+          <div class="cs-deep__metrics">
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">70+</span>
+              <span class="cs-deep__metric-label">Zaps replaced</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">0</span>
+              <span class="cs-deep__metric-label">Manual reruns</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">1</span>
+              <span class="cs-deep__metric-label">Operator console</span>
+            </div>
+          </div>
+          <p>Failed work became a queue with an owner, not a Slack thread. Replay is a button. New connectors ship without touching the core engine. The weekly rerun ritual disappeared entirely.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case 3 -->
+    <section class="cs-deep">
+      <div class="cs-deep__inner">
+        <div class="cs-deep__meta">
+          <span class="cs-deep__kicker">ANALYTICS</span>
+          <span class="cs-deep__date">2023 — 2024</span>
+        </div>
+        <h2 class="cs-deep__title">Real-Time Analytics Infrastructure</h2>
+        <div class="cs-deep__grid">
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Problem</h3>
+            <p>Product and finance disagreed on revenue because three pipelines defined "paid" differently, each with a 12-hour delay. The argument was never about strategy — it was about which number was real.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Constraints</h3>
+            <p>Exactly-once loaders into the warehouse. Streaming aggregates for operator dashboards had to be sub-second. Finance needed audit-grade accuracy with full lineage. Semantic layer had to be queryable by both teams.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Architecture</h3>
+            <p>Canonical event bus as the single source of truth. Exactly-once loaders into the warehouse. Streaming aggregates for the operator view. dbt for the semantic layer with versioned models and freshness checks.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Implementation</h3>
+            <p>Kafka for the event bus. Flink-style streaming jobs for real-time aggregates. ClickHouse for hot reads on operator dashboards. Snowflake for finance with full dbt lineage. One metrics catalog both teams query.</p>
+          </div>
+        </div>
+        <div class="cs-deep__outcome">
+          <div class="cs-deep__metrics">
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">1</span>
+              <span class="cs-deep__metric-label">Definition of paid</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">&lt;2s</span>
+              <span class="cs-deep__metric-label">Operator dashboards</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">&lt;5min</span>
+              <span class="cs-deep__metric-label">Finance reports</span>
+            </div>
+          </div>
+          <p>One number for "paid." Operator dashboards update in seconds, finance in minutes. The argument moved from "which number" to "what to do with it."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case 4 -->
+    <section class="cs-deep cs-deep--alt">
+      <div class="cs-deep__inner">
+        <div class="cs-deep__meta">
+          <span class="cs-deep__kicker">AI SYSTEMS</span>
+          <span class="cs-deep__date">2024</span>
+        </div>
+        <h2 class="cs-deep__title">AI Workflow System</h2>
+        <div class="cs-deep__grid">
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Problem</h3>
+            <p>A support org pasted tickets into a public chatbot. Answers drifted with no evaluation. PII left the perimeter on every request. Nobody knew if the model was getting better or worse over time.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Constraints</h3>
+            <p>PII had to stay inside the VPC. Write actions (closing tickets, updating records) required human confirmation. Quality had to be a tracked metric with regression detection. Inference costs had to be bounded.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Architecture</h3>
+            <p>Retrieval over an internal corpus with permissions-aware filtering. Tool-calling into the ticketing API for write actions. Eval suite running on golden tickets weekly. Human-confirm step on any write operation.</p>
+          </div>
+          <div class="cs-deep__block">
+            <h3 class="cs-deep__label">Implementation</h3>
+            <p>Python inference workers with model versioning. Permissions-aware retriever enforcing access control at query time. Streaming responses over gRPC for low-latency UX. Traces stored for weekly eval runs and regression detection.</p>
+          </div>
+        </div>
+        <div class="cs-deep__outcome">
+          <div class="cs-deep__metrics">
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">0</span>
+              <span class="cs-deep__metric-label">PII leaks</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">100%</span>
+              <span class="cs-deep__metric-label">Writes confirmed</span>
+            </div>
+            <div class="cs-deep__metric">
+              <span class="cs-deep__metric-value">Weekly</span>
+              <span class="cs-deep__metric-label">Eval runs</span>
+            </div>
+          </div>
+          <p>Suggested replies stay inside the VPC. Write actions require an agent click. Quality is a number that can get worse — and we notice before customers do.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section">
+      <div class="section__inner" style="text-align:center;">
+        <h2 class="section__title">Have a system that needs building?</h2>
+        <p style="color:var(--text-2);margin-bottom:32px;max-width:50ch;margin-left:auto;margin-right:auto;">Every engagement starts with a 45-minute architecture call. Technical conversation, not a sales pitch.</p>
+        <a href="contact.html" class="btn btn--primary">Request architecture call</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__left">
+        <span class="footer__brand">VEYRION</span>
+        <span class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</span>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="mailto:studio@veyrion.dev">studio@veyrion.dev</a>
+      </nav>
+      <div class="footer__social">
+        <a href="#" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+      </div>
+      <span class="footer__copy">&copy; 2026 Veyrion &middot; All work confidential until you say otherwise.</span>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

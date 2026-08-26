@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Veyrion</title>
+  <meta name="description" content="Veyrion is a small studio of senior engineers who build systems other teams can't.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="header__brand">VEYRION</a>
+      <nav class="header__nav" aria-label="Main">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html" class="is-active">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header__right">
+        <a href="contact.html" class="header__cta">BOOK ARCHITECTURE CALL</a>
+      </div>
+      <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-nav" id="mobile-menu" hidden>
+    <button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>
+    <a href="index.html#capabilities">Capabilities</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+    <a href="process.html">Process</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main id="main">
+
+    <section class="page-hero">
+      <div class="page-hero__inner">
+        <p class="page-hero__eyebrow">ABOUT</p>
+        <h1 class="page-hero__title">The studio</h1>
+        <p class="page-hero__sub">Small team. Every person has shipped production systems at scale. We like it that way.</p>
+      </div>
+    </section>
+
+    <!-- Story -->
+    <section class="section">
+      <div class="section__inner">
+        <div class="about-story">
+          <div class="about-story__main">
+            <h2 class="section__title" style="margin-bottom:24px;">How this started</h2>
+            <p>Veyrion started in 2019 because two engineers kept getting asked the same question: "Can you just look at this? Nobody else can figure it out."</p>
+            <p>The problems were always the same shape. Systems that had outgrown their original architecture. Pipelines that broke every Tuesday. Databases that nobody dared migrate. The kind of work where "just use a managed service" stopped being an option.</p>
+            <p>We said yes enough times that it became a studio. No pitch decks. No sales team. No growth hacks. Just engineers who'd rather fix the problem than talk about fixing it.</p>
+            <p>Six years later, we're still small on purpose. Every person at Veyrion has shipped production systems that handle real traffic, real money, and real consequences when they break. We don't hire for potential. We hire for proof.</p>
+          </div>
+          <div class="about-story__side">
+            <div class="about-stat-block">
+              <span class="about-stat-block__value">2019</span>
+              <span class="about-stat-block__label">Founded</span>
+            </div>
+            <div class="about-stat-block">
+              <span class="about-stat-block__value">12</span>
+              <span class="about-stat-block__label">Engineers</span>
+            </div>
+            <div class="about-stat-block">
+              <span class="about-stat-block__value">147</span>
+              <span class="about-stat-block__label">Systems in production</span>
+            </div>
+            <div class="about-stat-block">
+              <span class="about-stat-block__value">0</span>
+              <span class="about-stat-block__label">Sales team members</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section section--alt">
+      <div class="section__inner">
+        <p class="section__label">TEAM</p>
+        <h2 class="section__title">Who you'd work with</h2>
+        <div class="team-grid">
+
+          <div class="team-member">
+            <div class="team-member__avatar">MR</div>
+            <h3 class="team-member__name">Maya Reeves</h3>
+            <span class="team-member__role">Principal Architect</span>
+            <p class="team-member__bio">15 years building distributed systems. Previously led platform engineering at a Series D fintech. Designs systems backward from constraints.</p>
+          </div>
+
+          <div class="team-member">
+            <div class="team-member__avatar">JC</div>
+            <h3 class="team-member__name">James Chen</h3>
+            <span class="team-member__role">Principal Engineer</span>
+            <p class="team-member__bio">Former infrastructure lead at a major cloud provider. Specializes in high-throughput data pipelines and event-driven architectures.</p>
+          </div>
+
+          <div class="team-member">
+            <div class="team-member__avatar">SN</div>
+            <h3 class="team-member__name">Sofia Nilsson</h3>
+            <span class="team-member__role">Security Architect</span>
+            <p class="team-member__bio">10 years in offensive and defensive security. Designs secrets architecture, threat models, and audit systems before the first feature ships.</p>
+          </div>
+
+          <div class="team-member">
+            <div class="team-member__avatar">AK</div>
+            <h3 class="team-member__name">Amir Kapoor</h3>
+            <span class="team-member__role">AI / ML Engineer</span>
+            <p class="team-member__bio">Builds evaluation harnesses and inference pipelines that actually work in production. Skeptical of demos that can't survive real traffic.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Practices -->
+    <section class="section">
+      <div class="section__inner">
+        <p class="section__label">PRACTICES</p>
+        <h2 class="section__title">How we work</h2>
+        <div class="practices-grid">
+
+          <div class="practice">
+            <h3 class="practice__title">No billable hours</h3>
+            <p class="practice__body">Fixed-scope engagements. We quote a number, you know the budget. Nobody's watching a clock.</p>
+          </div>
+
+          <div class="practice">
+            <h3 class="practice__title">No NDAs for existing clients</h3>
+            <p class="practice__body">If you want to see our work, we'll show you. We're proud of what we've built and we think transparency builds trust.</p>
+          </div>
+
+          <div class="practice">
+            <h3 class="practice__title">Asynchronous by default</h3>
+            <p class="practice__body">We write things down. Design docs, ADRs, architecture decision records. If you can't find it in writing, it didn't happen.</p>
+          </div>
+
+          <div class="practice">
+            <h3 class="practice__title">Production from week one</h3>
+            <p class="practice__body">We deploy early and often. Staging environments are a lie. Real traffic is the only test that matters.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="section__inner" style="text-align:center;">
+        <h2 class="section__title">Want to join?</h2>
+        <p style="color:var(--text-2);margin-bottom:32px;max-width:50ch;margin-left:auto;margin-right:auto;">We're always interested in talking to senior engineers who've shipped production systems. No recruiters. Email us directly.</p>
+        <a href="mailto:studio@veyrion.dev" class="btn">Email us</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__left">
+        <span class="footer__brand">VEYRION</span>
+        <span class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</span>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="index.html#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="mailto:studio@veyrion.dev">studio@veyrion.dev</a>
+      </nav>
+      <div class="footer__social">
+        <a href="#" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+      </div>
+      <span class="footer__copy">&copy; 2026 Veyrion &middot; All work confidential until you say otherwise.</span>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

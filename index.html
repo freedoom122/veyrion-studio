@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Veyrion — Software Built Without Compromise</title>
+  <meta name="description" content="Veyrion architects bespoke software systems for companies whose technical requirements have exceeded conventional tools.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-loading">
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <div class="page-loader" aria-hidden="true">
+    <span class="page-loader__text">VEYRION</span>
+  </div>
+
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ====== NAV ====== -->
+  <header class="header" id="nav">
+    <div class="header__inner">
+      <a href="index.html" class="header__brand">VEYRION</a>
+      <nav class="header__nav" aria-label="Main">
+        <a href="#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="header__right">
+        <span class="header__status">
+          <span class="header__dot"></span>
+          OPEN FOR SELECT PROJECTS
+        </span>
+        <a href="#contact" class="header__cta">BOOK ARCHITECTURE CALL</a>
+      </div>
+      <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-nav" id="mobile-menu" hidden>
+    <button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>
+    <a href="#capabilities">Capabilities</a>
+    <a href="case-studies.html">Case Studies</a>
+    <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+    <a href="about.html">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <main id="main">
+
+    <!-- ====== HERO ====== -->
+    <section class="hero" id="hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="hero__inner">
+        <div class="hero__left">
+          <p class="hero__eyebrow">STUDIO / SYSTEMS ARCHITECTURE / EST. 2019</p>
+          <h1 class="hero__title">
+            <span>SOFTWARE</span>
+            <span>BUILT WITHOUT</span>
+            <span>COMPROMISE.</span>
+          </h1>
+          <p class="hero__body">Veyrion architects bespoke software systems for companies whose technical requirements have exceeded conventional tools. We design, build, and operate infrastructure that agencies cannot ship and platforms will not customize.</p>
+          <div class="hero__actions">
+            <a href="#capabilities" class="btn btn--primary">Explore Capabilities</a>
+            <a href="#contact" class="btn">Schedule Briefing</a>
+          </div>
+        </div>
+        <div class="hero__right">
+          <ul class="hero__metrics">
+            <li>
+              <span class="metric__value" data-count="99.99" data-suffix="%">99.99%</span>
+              <span class="metric__label">Reliability</span>
+            </li>
+            <li>
+              <span class="metric__value">&lt;50ms</span>
+              <span class="metric__label">Typical Latency</span>
+            </li>
+            <li>
+              <span class="metric__value">24/7</span>
+              <span class="metric__label">Observability</span>
+            </li>
+            <li>
+              <span class="metric__value" data-count="100" data-suffix="%">100%</span>
+              <span class="metric__label">Bespoke</span>
+            </li>
+          </ul>
+
+          <!-- TERMINAL -->
+          <div class="terminal" id="terminal" role="region" aria-label="Architecture console">
+            <div class="terminal__bar">
+              <div class="terminal__dots"><span></span><span></span><span></span></div>
+              <span class="terminal__title">VEYRION / ARCHITECTURE CONSOLE</span>
+            </div>
+            <div class="terminal__body">
+              <div class="terminal__log" id="terminal-log" aria-live="polite"></div>
+              <div class="terminal__chips" id="terminal-chips">
+                <button type="button" class="chip" data-cmd="--show-stack">--show-stack</button>
+                <button type="button" class="chip" data-cmd="--benchmarks">--benchmarks</button>
+                <button type="button" class="chip" data-cmd="--architecture">--architecture</button>
+                <button type="button" class="chip" data-cmd="--security">--security</button>
+                <button type="button" class="chip" data-cmd="--contact">--contact</button>
+              </div>
+              <form class="terminal__input-row" id="terminal-form">
+                <span class="terminal__prompt" aria-hidden="true">&gt;</span>
+                <input id="terminal-input" type="text" autocomplete="off" aria-label="Console command" placeholder="type a command or click a chip">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TRUST STRIP ====== -->
+    <section class="strip" aria-hidden="true">
+      <div class="strip__inner">
+        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
+        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
+        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
+        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
+      </div>
+    </section>
+
+    <!-- ====== STATUS ====== -->
+    <section class="section" style="padding:48px var(--gutter);">
+      <div class="section__inner">
+        <div class="status-dash">
+          <div class="status-card">
+            <span class="status-card__label">STATUS</span>
+            <span class="status-card__value status-card__value--ok">All systems operational</span>
+          </div>
+          <div class="status-card">
+            <span class="status-card__label">UPTIME</span>
+            <span class="status-card__value">99.99%</span>
+          </div>
+          <div class="status-card">
+            <span class="status-card__label">RESPONSE TIME</span>
+            <span class="status-card__value">38ms p50</span>
+          </div>
+          <div class="status-card">
+            <span class="status-card__label">ERROR BUDGET</span>
+            <span class="status-card__value">98.2% remaining</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== CAPABILITIES ====== -->
+    <section class="section" id="capabilities">
+      <div class="section__inner">
+        <p class="section__label">01 / CAPABILITIES</p>
+        <h2 class="section__title">What we actually build</h2>
+        <div class="bento">
+          <article class="bento-card bento-card--wide">
+            <span class="bento-card__num">01</span>
+            <h3 class="bento-card__title">High-Throughput Engines</h3>
+            <p class="bento-card__body">Event-driven runtimes that sustain tens of thousands of operations per second without collapsing under backpressure.</p>
+            <div class="bento-card__tags"><span>Rust</span><span>Queues</span><span>Fan-out</span></div>
+          </article>
+          <article class="bento-card">
+            <span class="bento-card__num">02</span>
+            <h3 class="bento-card__title">Automation Pipelines</h3>
+            <p class="bento-card__body">Deterministic workflows that replace fragile Zapier-style glue with observable, retry-safe orchestration.</p>
+            <div class="bento-card__tags"><span>Workers</span><span>Idempotency</span><span>DAGs</span></div>
+          </article>
+          <article class="bento-card">
+            <span class="bento-card__num">03</span>
+            <h3 class="bento-card__title">Custom Applications</h3>
+            <p class="bento-card__body">Internal and customer-facing products designed around your domain, not a generic CRUD template.</p>
+            <div class="bento-card__tags"><span>TypeScript</span><span>Domain Models</span><span>UX</span></div>
+          </article>
+          <article class="bento-card">
+            <span class="bento-card__num">04</span>
+            <h3 class="bento-card__title">Secure Infrastructure</h3>
+            <p class="bento-card__body">Hardened environments with least-privilege access, audit trails, and secrets that never touch application logs.</p>
+            <div class="bento-card__tags"><span>IAM</span><span>Zero-trust</span><span>Audit</span></div>
+          </article>
+          <article class="bento-card bento-card--wide">
+            <span class="bento-card__num">05</span>
+            <h3 class="bento-card__title">AI + Data Systems</h3>
+            <p class="bento-card__body">Retrieval, inference, and evaluation pipelines wired into production systems &mdash; not a chatbot bolted onto a landing page.</p>
+            <div class="bento-card__tags"><span>RAG</span><span>Evals</span><span>Streaming</span></div>
+          </article>
+          <article class="bento-card">
+            <span class="bento-card__num">06</span>
+            <h3 class="bento-card__title">Legacy Modernization</h3>
+            <p class="bento-card__body">Strangler-fig replacements for systems that still make money but can no longer be safely changed.</p>
+            <div class="bento-card__tags"><span>Strangler</span><span>CDC</span><span>Parity</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ARCHITECTURE ====== -->
+    <section class="section section--alt" id="architecture">
+      <div class="section__inner">
+        <p class="section__label">02 / SYSTEM ARCHITECTURE</p>
+        <h2 class="section__title">Six layers. One system.</h2>
+        <div class="arch" id="arch-diagram">
+          <div class="arch__layers">
+            <button type="button" class="arch-layer" data-layer="L6" aria-pressed="false">
+              <span class="arch-layer__id">L6</span>
+              <div class="arch-layer__text">
+                <span class="arch-layer__name">Client</span>
+                <span class="arch-layer__desc">Interfaces, operator consoles, partner portals</span>
+              </div>
+            </button>
+            <button type="button" class="arch-layer" data-layer="L5" aria-pressed="false">
+              <span class="arch-layer__id">L5</span>
+              <div class="arch-layer__text">
+                <span class="arch-layer__name">API</span>
+                <span class="arch-layer__desc">Versioned contracts, auth, rate limits, idempotency keys</span>
+              </div>
+            </button>
+            <button type="button" class="arch-layer" data-layer="L4" aria-pressed="false">
+              <span class="arch-layer__id">L4</span>
+              <div class="arch-layer__text">
+                <span class="arch-layer__name">Orchestration</span>
+                <span class="arch-layer__desc">Workflows, sagas, schedulers, compensation</span>
+              </div>
+            </button>
+            <button type="button" class="arch-layer is-active" data-layer="L3" aria-pressed="true">
+              <span class="arch-layer__id">L3</span>
+              <div class="arch-layer__text">
+                <span class="arch-layer__name">Services</span>
+                <span class="arch-layer__desc">Domain services with explicit boundaries and SLAs</span>
+              </div>
+            </button>
+            <button type="button" class="arch-layer" data-layer="L2" aria-pressed="false">
+              <span class="arch-layer__id">L2</span>
+              <div class="arch-layer__text">
+                <span class="arch-layer__name">Data</span>
+                <span class="arch-layer__desc">Stores, streams, caches, schemas, migrations</span>
+              </div>
+            </button>
+            <button type="button" class="arch-layer" data-layer="L1" aria-pressed="false">
+              <span class="arch-layer__id">L1</span>
+              <div class="arch-layer__text">
+                <span class="arch-layer__name">Infrastructure</span>
+                <span class="arch-layer__desc">Compute, network, secrets, observability, recovery</span>
+              </div>
+            </button>
+          </div>
+          <div class="arch__detail" id="arch-detail">
+            <span class="arch__detail-label">L3 / SERVICES</span>
+            <h3 class="arch__detail-title">Domain services with explicit boundaries</h3>
+            <p class="arch__detail-body">Services own a domain. They do not reach into each other's tables. Failures are isolated; latency budgets are explicit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SERVICES ====== -->
+    <section class="section" id="services">
+      <div class="section__inner">
+        <p class="section__label">03 / SERVICES</p>
+        <h2 class="section__title">Engagement surfaces</h2>
+        <div class="services-list">
+          <details class="service-item" open>
+            <summary class="service-summary">
+              <span class="service-summary__num">01</span>
+              <span class="service-summary__title">Custom Software</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>Greenfield products and internal tools built against your domain language. We start from constraints (latency, audit, multi-tenant, offline) and design the system backward from those constraints.</p>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary class="service-summary">
+              <span class="service-summary__num">02</span>
+              <span class="service-summary__title">Backend Systems</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>APIs, service meshes, and data planes that other teams can build on without asking us for a meeting. Contracts first, implementation second.</p>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary class="service-summary">
+              <span class="service-summary__num">03</span>
+              <span class="service-summary__title">Automation</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>Replacing human-in-the-loop operations with durable workflows: retries, dead-letter queues, exactly-once effects, and an operator console.</p>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary class="service-summary">
+              <span class="service-summary__num">04</span>
+              <span class="service-summary__title">AI Integration</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>Models are components, not products. We wire inference into existing systems with evaluation harnesses, fallback paths, and cost controls.</p>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary class="service-summary">
+              <span class="service-summary__num">05</span>
+              <span class="service-summary__title">Data Infrastructure</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>Warehouses, streaming topologies, and CDC pipelines that keep operational systems and analytical systems honest with each other.</p>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary class="service-summary">
+              <span class="service-summary__num">06</span>
+              <span class="service-summary__title">Cloud Architecture</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>Multi-account AWS/GCP layouts, network isolation, and delivery pipelines that a two-person team can still operate at 3 a.m.</p>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary class="service-summary">
+              <span class="service-summary__num">07</span>
+              <span class="service-summary__title">Security Engineering</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>Threat modeling, secrets architecture, key rotation, and audit log design &mdash; done before the first feature ships, not after the first incident.</p>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary class="service-summary">
+              <span class="service-summary__num">08</span>
+              <span class="service-summary__title">Legacy Modernization</span>
+              <span class="service-summary__icon">+</span>
+            </summary>
+            <div class="service-panel">
+              <p>Coexistence, not big-bang rewrites. We put a facade in front of the system that still prints money, then replace it in slices with parity tests.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ESTIMATOR ====== -->
+    <section class="section section--alt" id="scope">
+      <div class="section__inner">
+        <p class="section__label">04 / SCOPE</p>
+        <h2 class="section__title">Plan the engagement</h2>
+        <form class="estimator" id="estimator">
+          <div class="estimator__controls">
+            <p class="estimator__disclaimer">Planning estimate &mdash; not a proposal. No pricing is generated.</p>
+            <div class="estimator__field">
+              <label class="estimator__label" for="est-type">Project Type</label>
+              <select class="estimator__select" id="est-type" name="type">
+                <option>Custom Application</option>
+                <option>Backend Platform</option>
+                <option>Automation</option>
+                <option>AI System</option>
+                <option>Data Infrastructure</option>
+                <option>Legacy Modernization</option>
+              </select>
+            </div>
+            <div class="estimator__field">
+              <label class="estimator__label" for="est-cx">Complexity</label>
+              <select class="estimator__select" id="est-cx" name="cx">
+                <option>Contained (one team, one domain)</option>
+                <option>Cross-cutting (several services, shared data)</option>
+                <option>Systemic (platform-level, multiple teams)</option>
+              </select>
+            </div>
+            <div class="estimator__field">
+              <label class="estimator__label" for="est-time">Timeline</label>
+              <select class="estimator__select" id="est-time" name="time">
+                <option>8&ndash;12 weeks</option>
+                <option>3&ndash;6 months</option>
+                <option>6&ndash;12 months</option>
+                <option>12+ months</option>
+              </select>
+            </div>
+            <div class="estimator__field">
+              <label class="estimator__label" for="est-model">Team Involvement</label>
+              <select class="estimator__select" id="est-model" name="model">
+                <option>Advisory (architecture + review)</option>
+                <option>Embedded (we staff the core)</option>
+                <option>Joint (your engineers, our lead)</option>
+              </select>
+            </div>
+          </div>
+          <div class="estimator__output" id="estimator-out" role="status" aria-live="polite">
+            <div class="estimator__row">
+              <span class="estimator__row-label">Estimated scope</span>
+              <span class="estimator__row-value" id="est-scope">A tightly scoped system with a single primary surface.</span>
+            </div>
+            <div class="estimator__row">
+              <span class="estimator__row-label">Delivery window</span>
+              <span class="estimator__row-value" id="est-window">8&ndash;12 weeks. Discovery-heavy; delivery owned by your team.</span>
+            </div>
+            <div class="estimator__row">
+              <span class="estimator__row-label">Complexity rating</span>
+              <div class="estimator__rating">
+                <div class="estimator__rating-bars">
+                  <span class="estimator__rating-bar is-filled"></span>
+                  <span class="estimator__rating-bar"></span>
+                  <span class="estimator__rating-bar"></span>
+                  <span class="estimator__rating-bar"></span>
+                  <span class="estimator__rating-bar"></span>
+                </div>
+                <span class="estimator__rating-label" id="est-rating-label">Focused</span>
+              </div>
+            </div>
+            <div class="estimator__row">
+              <span class="estimator__row-label">Engagement model</span>
+              <span class="estimator__row-value" id="est-model-out">Architecture partnership. We design, your team builds.</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ====== STACK MARQUEE ====== -->
+    <section class="section" id="stack">
+      <div class="section__inner">
+        <p class="section__label">05 / STACK</p>
+        <h2 class="section__title">Tools we reach for first</h2>
+        <div class="stack-marquee">
+          <div class="stack-marquee__track">
+            <span>Rust</span><span>Go</span><span>C++</span><span>TypeScript</span><span>Python</span>
+            <span>PostgreSQL</span><span>Redis</span><span>Docker</span><span>Kubernetes</span><span>WebAssembly</span>
+            <span>Linux</span><span>Terraform</span><span>GraphQL</span><span>REST</span><span>gRPC</span>
+            <span>Rust</span><span>Go</span><span>C++</span><span>TypeScript</span><span>Python</span>
+            <span>PostgreSQL</span><span>Redis</span><span>Docker</span><span>Kubernetes</span><span>WebAssembly</span>
+            <span>Linux</span><span>Terraform</span><span>GraphQL</span><span>REST</span><span>gRPC</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== BUILDS ====== -->
+    <section class="section section--alt" id="builds">
+      <div class="section__inner">
+        <p class="section__label">06 / REPRESENTATIVE BUILDS</p>
+        <p class="builds-eyebrow">Representative builds. Details composited from real engagement patterns. Not client endorsements.</p>
+        <div class="builds-grid">
+
+          <article class="build">
+            <span class="build__kicker">OPERATIONS</span>
+            <h3 class="build__title">Distributed Operations Platform</h3>
+            <div class="build__section">
+              <span class="build__section-label">Problem</span>
+              <p class="build__section-body">A multi-region operator ran plant scheduling in spreadsheets and three disconnected vendor tools. Night shifts could not see live capacity. Incidents were reconstructed from chat.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Architecture</span>
+              <p class="build__section-body">Event-sourced operations log, regional read models, a single operator console, and a write path that survives partition.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Implementation</span>
+              <p class="build__section-body">Go services, Postgres + logical replication, NATS for fan-out, a TypeScript console with optimistic concurrency on every mutation.</p>
+            </div>
+            <p class="build__outcome"><strong>Outcome:</strong> Scheduling and incident timeline live in one system. Regional lag under 400ms. Spreadsheets retired from the critical path.</p>
+          </article>
+
+          <article class="build">
+            <span class="build__kicker">AUTOMATION</span>
+            <h3 class="build__title">Automation Orchestration Engine</h3>
+            <div class="build__section">
+              <span class="build__section-label">Problem</span>
+              <p class="build__section-body">A marketplace team had 70+ Zapier zaps, no retries they trusted, and a weekly ritual of re-running failed jobs by hand.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Architecture</span>
+              <p class="build__section-body">Durable workflow engine, idempotency keys at the edge, dead-letter with operator replay, and a typed connector SDK.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Implementation</span>
+              <p class="build__section-body">Temporal-style orchestrators in TypeScript, Redis for leases, Postgres for history, OpenTelemetry on every activity.</p>
+            </div>
+            <p class="build__outcome"><strong>Outcome:</strong> Failed work became a queue with an owner, not a Slack thread. Replay is a button. New connectors ship without touching the core.</p>
+          </article>
+
+          <article class="build">
+            <span class="build__kicker">ANALYTICS</span>
+            <h3 class="build__title">Real-Time Analytics Infrastructure</h3>
+            <div class="build__section">
+              <span class="build__section-label">Problem</span>
+              <p class="build__section-body">Product and finance disagreed on revenue because three pipelines defined "paid" differently, each with a 12-hour delay.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Architecture</span>
+              <p class="build__section-body">Canonical event bus, exactly-once loaders into a warehouse, streaming aggregates for the operator view, dbt for the semantic layer.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Implementation</span>
+              <p class="build__section-body">Kafka, Flink-style jobs, ClickHouse for hot reads, Snowflake for finance, one metrics catalog both teams query.</p>
+            </div>
+            <p class="build__outcome"><strong>Outcome:</strong> One definition of paid. Operator dashboards in seconds, finance in minutes. The argument moved from "which number" to "what to do."</p>
+          </article>
+
+          <article class="build">
+            <span class="build__kicker">AI SYSTEMS</span>
+            <h3 class="build__title">AI Workflow System</h3>
+            <div class="build__section">
+              <span class="build__section-label">Problem</span>
+              <p class="build__section-body">A support org pasted tickets into a public chatbot. Answers drifted, no evaluation, and PII left the perimeter.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Architecture</span>
+              <p class="build__section-body">Retrieval over an internal corpus, tool-calling into the ticketing API, an eval suite on golden tickets, and a human-confirm step on any write.</p>
+            </div>
+            <div class="build__section">
+              <span class="build__section-label">Implementation</span>
+              <p class="build__section-body">Python inference workers, a permissions-aware retriever, streaming responses over gRPC, traces stored for weekly eval runs.</p>
+            </div>
+            <p class="build__outcome"><strong>Outcome:</strong> Suggested replies stay inside the VPC. Write actions require an agent click. Quality is a number that can get worse &mdash; and we notice.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== APPROACH ====== -->
+    <section class="section" id="approach">
+      <div class="section__inner">
+        <p class="section__label">07 / APPROACH</p>
+        <h2 class="section__title">How an engagement runs</h2>
+        <div class="timeline">
+          <div class="timeline-step">
+            <span class="timeline-step__num">01</span>
+            <div>
+              <h3 class="timeline-step__title">Discover</h3>
+              <p class="timeline-step__body">Constraints, failure modes, and the current system's real shape. We read the code and the incident history, not just the deck.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-step__num">02</span>
+            <div>
+              <h3 class="timeline-step__title">Architect</h3>
+              <p class="timeline-step__body">Boundaries, data contracts, threat model, and a delivery sequence that can be stopped without leaving a mess.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-step__num">03</span>
+            <div>
+              <h3 class="timeline-step__title">Engineer</h3>
+              <p class="timeline-step__body">Thin vertical slices, production-like environments from week one, and interfaces frozen before internals are clever.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-step__num">04</span>
+            <div>
+              <h3 class="timeline-step__title">Validate</h3>
+              <p class="timeline-step__body">Load, failure injection, security review, and parity tests against the system being replaced. "It works on my machine" is not a gate.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-step__num">05</span>
+            <div>
+              <h3 class="timeline-step__title">Deploy</h3>
+              <p class="timeline-step__body">Progressive delivery, rollback that has been rehearsed, and on-call that includes the people who wrote the code.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="timeline-step__num">06</span>
+            <div>
+              <h3 class="timeline-step__title">Optimize</h3>
+              <p class="timeline-step__body">Latency budgets, cost, and operability after the applause. We stay through the first real traffic, not just the launch.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== PRINCIPLES ====== -->
+    <section class="section section--alt" id="principles">
+      <div class="section__inner">
+        <p class="section__label">08 / PRINCIPLES</p>
+        <h2 class="section__title">Non-negotiable engineering</h2>
+        <div class="principles-grid">
+          <blockquote class="principle">
+            <p class="principle__quote">"Performance is a feature."</p>
+            <p class="principle__body">If a screen takes 800ms, users invent workarounds. We budget latency the way we budget scope.</p>
+          </blockquote>
+          <blockquote class="principle">
+            <p class="principle__quote">"Complexity should be earned."</p>
+            <p class="principle__body">A new service, queue, or language is a liability until it removes a larger one. We can explain every moving part on a whiteboard.</p>
+          </blockquote>
+          <blockquote class="principle">
+            <p class="principle__quote">"Security is architectural."</p>
+            <p class="principle__body">Authz, tenancy, and audit are designed with the data model, not bolted on as middleware the week before launch.</p>
+          </blockquote>
+          <blockquote class="principle">
+            <p class="principle__quote">"Operability is the product."</p>
+            <p class="principle__body">A system you cannot see, stop, or roll back is not in production. It is a demo that happens to have users.</p>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== CONTACT ====== -->
+    <section class="section" id="contact">
+      <div class="section__inner">
+        <div class="contact-layout">
+          <div class="contact-left">
+            <p class="section__label">09 / CONTACT</p>
+            <h2 class="section__title">Start with an architecture call</h2>
+            <p class="contact__sub">45 minutes. Technical conversation, not a sales pitch. We talk about your constraints and whether the work is in our range. If it's not, we'll tell you.</p>
+            <div class="contact__details">
+              <p><strong>Email</strong> studio@veyrion.dev</p>
+              <p><strong>Response</strong> 2 business days</p>
+              <p><strong>Location</strong> New York, remote-first</p>
+            </div>
+            <div class="contact__clock">
+              <span class="contact__clock-label">STUDIO TIME</span>
+              <span class="contact__clock-value" id="studio-clock">New York &middot; --:--:-- &middot; --</span>
+            </div>
+            <button type="button" class="btn btn--copy-email" id="copy-email">Copy direct email</button>
+            <div class="toast" id="toast" aria-live="polite"></div>
+          </div>
+          <div class="contact-right">
+            <form id="contact-form" novalidate>
+              <div class="field">
+                <label for="cf-name">Name</label>
+                <input type="text" id="cf-name" name="name" required minlength="2" autocomplete="name">
+                <p class="field-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="cf-email">Work Email</label>
+                <input type="email" id="cf-email" name="email" required autocomplete="email">
+                <p class="field-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="cf-company">Company</label>
+                <input type="text" id="cf-company" name="company" required minlength="2" autocomplete="organization">
+                <p class="field-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="cf-type">Project Type</label>
+                <select id="cf-type" name="type" required>
+                  <option value="">Select a type</option>
+                  <option>Custom Application</option>
+                  <option>Backend Platform</option>
+                  <option>Automation</option>
+                  <option>AI System</option>
+                  <option>Data Infrastructure</option>
+                  <option>Legacy Modernization</option>
+                </select>
+                <p class="field-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="cf-brief">Project Brief</label>
+                <textarea id="cf-brief" name="brief" required rows="4" minlength="40"></textarea>
+                <p class="field-error" aria-live="polite"></p>
+              </div>
+              <button type="submit" class="btn btn--primary">Request architecture call</button>
+              <p class="contact__legal">We reply within two business days. No retainers sold from this form.</p>
+            </form>
+            <div id="form-success" hidden>
+              <h3>Brief received.</h3>
+              <p>A partner will reply from studio@veyrion.dev within two business days. If the work is outside our range, we will say so plainly.</p>
+              <button type="button" data-reset-form class="btn btn--sm">Send another brief</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="footer" id="footer">
+    <div class="footer__inner">
+      <div class="footer__left">
+        <span class="footer__brand">VEYRION</span>
+        <span class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</span>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <a href="#capabilities">Capabilities</a>
+        <a href="case-studies.html">Case Studies</a>
+        <a href="services.html">Services</a>
+        <a href="blog.html">Blog</a>
+    <a href="blog.html">Blog</a>
+        <a href="process.html">Process</a>
+        <a href="about.html">About</a>
+        <a href="#contact">Contact</a>
+        <a href="mailto:studio@veyrion.dev">studio@veyrion.dev</a>
+      </nav>
+      <div class="footer__social">
+        <a href="#" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" aria-label="X"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+      </div>
+      <span class="footer__copy">&copy; 2026 Veyrion &middot; All work confidential until you say otherwise. &middot; New York &middot; Remote-first</span>
+    </div>
+  </footer>
+
+  <div class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </div>
+
+  <div class="toast" id="toast-global" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="app.js" defer></script>
+
+</body>
+</html>
