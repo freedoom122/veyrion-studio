@@ -1,4 +1,4 @@
-require('dotenv').config({ override: true });
+try { require('dotenv').config({ override: true }); } catch (_) {}
 
 const express = require('express');
 const path = require('path');
