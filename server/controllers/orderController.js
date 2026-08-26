@@ -154,32 +154,105 @@ const orderController = {
       try {
         event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
       } catch (err) {
+        console.error('[STRIPE] Webhook signature error:', err.message);
         return res.status(400).send(`Webhook Error: ${err.message}`);
       }
 
+      console.log('[STRIPE] Webhook received:', event.type);
+
       if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
-        const order = Order.findByPaymentIntent(session.payment_intent || session.id);
-        if (order) {
-          Order.updateStatus(order.id, 'paid');
-          // Create download links for purchased products
-          const items = Order.getItems(order.id);
-          for (const item of items) {
-            const license = db.prepare('SELECT id FROM licenses WHERE order_id = ? AND product_id = ?').get(order.id, item.product_id);
-            if (license) {
-              const token = generateDownloadToken();
-              db.prepare(`INSERT INTO downloads (license_key_id, file_path, download_token, expires_at) VALUES (?, ?, ?, datetime('now', '+24 hours'))`).run(
-                license.id, item.product_slug || 'product-download', token
-              );
-            }
-          }
+        const meta = session.metadata || {};
+        const userId = parseInt(meta.user_id);
+        const productId = parseInt(meta.product_id);
 
+        if (!userId || !productId) {
+          console.error('[STRIPE] Missing metadata in checkout session:', session.id);
+          return res.json({ received: true });
+        }
+
+        // Check if order already exists for this session
+        let order = Order.findByPaymentIntent(session.id);
+
+        if (!order) {
+          // Create order from Stripe session
+          const amountPaid = (session.amount_total || 0) / 100;
+          order = Order.create({
+            user_id: userId,
+            total_amount: amountPaid,
+            payment_intent_id: session.payment_intent || session.id,
+            ip_address: null,
+            user_agent: 'Stripe Checkout',
+          });
+
+          // Create order item and license
+          const license = License.create({
+            product_id: productId,
+            order_id: order.id,
+            user_id: userId,
+          });
+
+          Order.addItem({
+            order_id: order.id,
+            product_id: productId,
+            quantity: 1,
+            unit_price: amountPaid,
+            license_key: license.license_key,
+          });
+
+          Product.incrementSales(productId);
+        }
+
+        // Mark as paid
+        if (order.status !== 'paid') {
+          Order.updateStatus(order.id, 'paid');
+        }
+
+        // Create download link
+        const existingLicense = db.prepare('SELECT id FROM licenses WHERE order_id = ? AND product_id = ?').get(order.id, productId);
+        if (existingLicense) {
+          const existingDownload = db.prepare('SELECT id FROM downloads WHERE license_key_id = ?').get(existingLicense.id);
+          if (!existingDownload) {
+            const downloadToken = generateDownloadToken();
+            db.prepare(`INSERT INTO downloads (license_key_id, file_path, download_token, expires_at) VALUES (?, ?, ?, datetime('now', '+7 days'))`).run(
+              existingLicense.id, meta.product_slug || 'product-download', downloadToken
+            );
+          }
+        }
+
+        // Send confirmation email
+        const user = require('../models/User').findById(userId);
+        if (user) {
           sendEmail({
-            to: order.user_email,
-            subject: `Order ${order.order_number} Confirmed`,
-            html: `<p>Your order ${order.order_number} has been confirmed. You can download your purchases from your account.</p>`,
+            to: user.email,
+            subject: `Veyrion — Order ${order.order_number} Confirmed`,
+            html: `<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:500px;margin:0 auto;padding:32px;background:#0c0c0e;color:#fff;">
+              <h2 style="color:#10B981;margin-bottom:16px;font-size:18px;">Payment confirmed.</h2>
+              <p style="color:#A1A1AA;font-size:14px;line-height:1.7;">
+                Your order <strong>${order.order_number}</strong> for <strong>${meta.product_name || 'your purchase'}</strong> has been confirmed.
+                You can download your files and view your license key from your account.
+              </p>
+              <p style="color:#71717A;font-size:12px;margin-top:32px;">- Veyrion</p>
+            </div>`,
+            text: `Order ${order.order_number} confirmed. Your purchase of ${meta.product_name || 'your product'} is ready. Log in to download.`,
           }).catch(() => {});
         }
+
+        // Notify admin
+        sendEmail({
+          to: process.env.ADMIN_EMAIL || 'admin@example.com',
+          subject: `[Veyrion Store] New order — ${order.order_number}`,
+          html: `<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:500px;margin:0 auto;padding:32px;background:#0c0c0e;color:#fff;">
+            <h2 style="color:#10B981;margin-bottom:16px;font-size:18px;">New order received.</h2>
+            <p style="color:#A1A1AA;font-size:14px;line-height:1.7;">
+              Order <strong>${order.order_number}</strong><br>
+              Product: <strong>${meta.product_name || 'Unknown'}</strong><br>
+              Amount: <strong>$${(session.amount_total / 100).toFixed(2)}</strong><br>
+              Customer: ${meta.user_email || 'Unknown'}
+            </p>
+          </div>`,
+          text: `New order ${order.order_number}. Product: ${meta.product_name}. Amount: $${(session.amount_total / 100).toFixed(2)}. Customer: ${meta.user_email}.`,
+        }).catch(() => {});
       }
 
       if (event.type === 'charge.refunded') {

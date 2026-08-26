@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Cancelled — Veyrion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .cancel-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .cancel-page__inner { max-width: 440px; }
+    .cancel-page__icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(244,63,94,0.1); border: 2px solid var(--danger);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; font-size: 24px; color: var(--danger);
+    }
+    .cancel-page__title {
+      font-family: var(--font-display); font-size: 28px; font-weight: 700;
+      letter-spacing: -0.03em; margin-bottom: 12px;
+    }
+    .cancel-page__body {
+      color: var(--text-2); font-size: 15px; line-height: 1.65;
+      margin-bottom: 32px;
+    }
+    .cancel-page__actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="cancel-page">
+    <div class="cancel-page__inner">
+      <div class="cancel-page__icon" aria-hidden="true">&#10005;</div>
+      <h1 class="cancel-page__title">Checkout Cancelled</h1>
+      <p class="cancel-page__body">
+        No payment was taken. You can return to the store anytime to complete your purchase.
+      </p>
+      <div class="cancel-page__actions">
+        <a href="store.html" class="btn btn--primary">Back to Store</a>
+        <a href="contact.html" class="btn">Talk to Us</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

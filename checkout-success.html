@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Confirmed — Veyrion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .success-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .success-page__inner {
+      max-width: 480px;
+    }
+    .success-page__icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 28px;
+      color: var(--accent);
+    }
+    .success-page__title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .success-page__body {
+      color: var(--text-2);
+      font-size: 15px;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+    .success-page__details {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+    .success-page__row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .success-page__row:last-child { border-bottom: none; }
+    .success-page__label { color: var(--text-3); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .success-page__value { color: var(--text); }
+    .success-page__actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <div class="success-page">
+    <div class="success-page__inner">
+      <div class="success-page__icon" aria-hidden="true">&#10003;</div>
+      <h1 class="success-page__title">Payment Confirmed</h1>
+      <p class="success-page__body">
+        Your payment has been processed. A confirmation email with download instructions has been sent to your registered email address.
+      </p>
+      <div class="success-page__details" id="order-details" style="display:none;">
+        <div class="success-page__row">
+          <span class="success-page__label">Status</span>
+          <span class="success-page__value" id="detail-status">Confirmed</span>
+        </div>
+        <div class="success-page__row">
+          <span class="success-page__label">Session</span>
+          <span class="success-page__value" id="detail-session" style="font-family:var(--font-mono);font-size:11px;"></span>
+        </div>
+      </div>
+      <div class="success-page__actions">
+        <a href="store.html" class="btn btn--primary">Back to Store</a>
+        <a href="index.html" class="btn">Home</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var sessionId = params.get('session_id');
+      var detailSession = document.getElementById('detail-session');
+      var detailStatus = document.getElementById('detail-status');
+      var details = document.getElementById('order-details');
+
+      if (sessionId) {
+        details.style.display = 'block';
+        detailSession.textContent = sessionId.substring(0, 20) + '...';
+
+        // Try to verify the session
+        var saved = null;
+        try { saved = JSON.parse(localStorage.getItem('veyrion_auth')); } catch (_) {}
+        if (saved && saved.token) {
+          fetch('/api/v1/checkout/session/' + sessionId, {
+            headers: { 'Authorization': 'Bearer ' + saved.token }
+          })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.success && data.data) {
+              detailStatus.textContent = data.data.paid ? 'Paid' : data.data.status || 'Processing';
+              if (data.data.amount_total) {
+                var amount = '$' + (data.data.amount_total / 100).toFixed(2);
+                detailStatus.textContent += ' — ' + amount;
+              }
+            }
+          })
+          .catch(function () {});
+        }
+      }
+
+      // Clear cart from localStorage
+      try { localStorage.removeItem('veyrion_cart'); } catch (_) {}
+    })();
+  </script>
+</body>
+</html>

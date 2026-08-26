@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store — Veyrion</title>
+  <meta name="description" content="Production-grade software systems and infrastructure built by Veyrion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .store-hero {
+      padding: 140px 24px 80px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .store-hero__eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+    .store-hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .store-hero__sub {
+      color: var(--text-2);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 52ch;
+      margin: 0 auto 32px;
+    }
+    .store-filters {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .store-filter {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: transparent;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .store-filter:hover,
+    .store-filter.active {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .store-grid {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 64px 24px 120px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s;
+    }
+    .product-card:hover {
+      border-color: var(--border-2);
+    }
+    .product-card__header {
+      padding: 28px 28px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .product-card__category {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .product-card__version {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      background: var(--elevated);
+      padding: 2px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .product-card__body {
+      padding: 20px 28px;
+      flex: 1;
+    }
+    .product-card__name {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .product-card__desc {
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .product-card__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .product-card__tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-3);
+    }
+    .product-card__req {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      margin-top: 12px;
+    }
+    .product-card__footer {
+      padding: 0 28px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .product-card__price {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .product-card__price span {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-3);
+      margin-left: 4px;
+    }
+    .buy-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      padding: 0 24px;
+      background: #fff;
+      color: #050505;
+      border: 1px solid #fff;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+      min-width: 140px;
+    }
+    .buy-btn:hover {
+      background: transparent;
+      color: #fff;
+    }
+    .buy-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .store-empty {
+      text-align: center;
+      padding: 120px 24px;
+      color: var(--text-3);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .login-prompt {
+      max-width: 480px;
+      margin: 0 auto 80px;
+      padding: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+    }
+    .login-prompt__text {
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .login-prompt .btn {
+      margin: 0 6px;
+    }
+    @media (max-width: 640px) {
+      .store-grid {
+        grid-template-columns: 1fr;
+        padding: 40px 20px 80px;
+      }
+      .product-card__footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .buy-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="is-loading">
+
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <div class="page-loader" aria-hidden="true">
+    <div class="page-loader__bar"></div>
+  </div>
+
+  <!-- Nav -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">
+        <img src="client/assets/logo.png" alt="Veyrion" class="nav__logo">
+      </a>
+      <nav class="nav__links" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="store.html" aria-current="page" style="color:var(--text)">Store</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav__right">
+        <span class="nav__status" aria-label="Studio open for projects">
+          <span class="nav__dot" aria-hidden="true"></span>
+          OPEN FOR SELECT PROJECTS
+        </span>
+        <a href="contact.html" class="btn btn--sm">BOOK ARCHITECTURE CALL</a>
+        <button class="nav__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="nav__bar"></span><span class="nav__bar"></span><span class="nav__bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="store.html">Store</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="store-hero">
+      <div style="max-width:var(--max);margin:0 auto;">
+        <p class="store-hero__eyebrow">10  /  STORE</p>
+        <h1 class="store-hero__title">Production Systems</h1>
+        <p class="store-hero__sub">Battle-tested software infrastructure. Each system is a complete, deployable package with documentation, monitoring hooks, and production configs.</p>
+        <div class="store-filters">
+          <button class="store-filter active" data-category="all">All</button>
+          <button class="store-filter" data-category="software">Software</button>
+          <button class="store-filter" data-category="tools">Tools</button>
+          <button class="store-filter" data-category="infrastructure">Infrastructure</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Login prompt (shown when not authenticated) -->
+    <div class="login-prompt" id="login-prompt" style="display:none; margin: 48px auto; max-width:480px; padding:0 24px;">
+      <p class="login-prompt__text">Sign in or create an account to purchase systems.</p>
+      <a href="#" class="btn btn--primary btn--sm" id="login-trigger">Sign In</a>
+      <a href="#" class="btn btn--sm" id="register-trigger">Create Account</a>
+    </div>
+
+    <!-- Product grid -->
+    <div class="store-grid" id="store-grid">
+      <div class="store-empty">Loading products...</div>
+    </div>
+
+    <!-- Auth modal -->
+    <div class="modal" id="auth-modal" hidden>
+      <div class="modal__overlay" tabindex="-1"></div>
+      <div class="modal__content" role="dialog" aria-labelledby="auth-title">
+        <button class="modal__close" type="button" aria-label="Close">&times;</button>
+        <h2 id="auth-title" style="font-family:var(--font-display);font-size:20px;font-weight:600;letter-spacing:-0.02em;margin-bottom:24px;">Sign In</h2>
+        <form id="auth-form" novalidate>
+          <div class="field" style="margin-bottom:16px;">
+            <label for="auth-name" style="display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;">Name</label>
+            <input type="text" id="auth-name" name="name" autocomplete="name" style="width:100%;padding:10px 12px;background:var(--elevated);border:1px solid var(--border);border-radius:2px;color:var(--text);font-size:14px;" placeholder="Your name">
+          </div>
+          <div class="field" style="margin-bottom:16px;">
+            <label for="auth-email" style="display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;">Email</label>
+            <input type="email" id="auth-email" name="email" autocomplete="email" required style="width:100%;padding:10px 12px;background:var(--elevated);border:1px solid var(--border);border-radius:2px;color:var(--text);font-size:14px;" placeholder="you@company.com">
+          </div>
+          <div class="field" style="margin-bottom:16px;">
+            <label for="auth-password" style="display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;">Password</label>
+            <input type="password" id="auth-password" name="password" autocomplete="current-password" required style="width:100%;padding:10px 12px;background:var(--elevated);border:1px solid var(--border);border-radius:2px;color:var(--text);font-size:14px;" placeholder="Password">
+          </div>
+          <p class="auth-error" id="auth-error" style="color:var(--danger);font-size:13px;margin-bottom:12px;display:none;"></p>
+          <button type="submit" class="btn btn--primary" style="width:100%;margin-bottom:12px;" id="auth-submit">Sign In</button>
+          <p style="text-align:center;font-size:13px;color:var(--text-3);">
+            <a href="#" id="auth-toggle" style="color:var(--accent);text-decoration:underline;cursor:pointer;">Create an account</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Auth success (replaces modal content) -->
+
+  </main>
+
+  <footer class="footer" id="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <span class="footer__name">VEYRION</span>
+        <p class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</p>
+      </div>
+      <div class="footer__links">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="store.html">Store</a>
+        <a href="contact.html">Contact</a>
+        <a href="mailto:admin@example.com">admin@example.com</a>
+      </div>
+      <div class="footer__bottom">
+        <span>&copy; 2026 Veyrion &middot; All work confidential until you say otherwise.</span>
+        <span>New York &middot; Remote-first</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="app.js" defer></script>
+  <script>
+    /* ============================================================
+       STORE PAGE — product listing + Stripe Checkout
+       ============================================================ */
+    (function () {
+      var API = '/api/v1';
+      var user = null;
+      var token = null;
+      var allProducts = [];
+
+      // Restore session from localStorage
+      try {
+        var saved = JSON.parse(localStorage.getItem('veyrion_auth'));
+        if (saved && saved.token) {
+          token = saved.token;
+          user = saved.user;
+        }
+      } catch (_) {}
+
+      var grid = document.getElementById('store-grid');
+      var loginPrompt = document.getElementById('login-prompt');
+      var authModal = document.getElementById('auth-modal');
+      var authForm = document.getElementById('auth-form');
+      var authError = document.getElementById('auth-error');
+      var authSubmit = document.getElementById('auth-submit');
+      var authToggle = document.getElementById('auth-toggle');
+      var authTitle = document.getElementById('auth-title');
+      var isRegister = false;
+
+      // Load products
+      function loadProducts(category) {
+        var url = API + '/products?limit=50';
+        if (category && category !== 'all') url += '&category=' + category;
+
+        fetch(url)
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            var products = Array.isArray(d.data) ? d.data : (d.data && d.data.products ? d.data.products : []);
+            if (products.length) {
+              allProducts = products;
+              renderProducts(allProducts);
+            } else {
+              grid.innerHTML = '<div class="store-empty">No products available yet.</div>';
+            }
+          })
+          .catch(function () {
+            grid.innerHTML = '<div class="store-empty">Could not load products. Try again later.</div>';
+          });
+      }
+
+      function renderProducts(products) {
+        if (!products.length) {
+          grid.innerHTML = '<div class="store-empty">No products in this category.</div>';
+          return;
+        }
+        grid.innerHTML = '';
+        products.forEach(function (p) {
+          var tags = (p.tags || '').split(',').filter(Boolean);
+          var tagsHtml = tags.slice(0, 4).map(function (t) {
+            return '<span class="product-card__tag">' + t.trim() + '</span>';
+          }).join('');
+
+          var card = document.createElement('article');
+          card.className = 'product-card';
+          card.innerHTML =
+            '<div class="product-card__header">' +
+              '<span class="product-card__category">' + (p.category_name || 'System') + '</span>' +
+              '<span class="product-card__version">v' + (p.version || '1.0.0') + '</span>' +
+            '</div>' +
+            '<div class="product-card__body">' +
+              '<h3 class="product-card__name">' + escapeHtml(p.name) + '</h3>' +
+              '<p class="product-card__desc">' + escapeHtml(p.description_short || '') + '</p>' +
+              '<div class="product-card__meta">' + tagsHtml + '</div>' +
+              (p.requirements ? '<p class="product-card__req">' + escapeHtml(p.requirements) + '</p>' : '') +
+            '</div>' +
+            '<div class="product-card__footer">' +
+              '<div class="product-card__price">$' + formatPrice(p.price) + ' <span>USD</span></div>' +
+              '<button class="buy-btn" data-product-id="' + p.id + '">Buy Now</button>' +
+            '</div>';
+
+          grid.appendChild(card);
+        });
+
+        // Wire buy buttons
+        grid.querySelectorAll('.buy-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            handleBuy(btn);
+          });
+        });
+      }
+
+      function handleBuy(btn) {
+        var productId = btn.getAttribute('data-product-id');
+
+        if (!token) {
+          openAuth('login');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Redirecting...';
+
+        fetch(API + '/checkout/create-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+          },
+          body: JSON.stringify({ product_id: parseInt(productId) }),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.success && data.data && data.data.url) {
+            window.location.href = data.data.url;
+          } else if (data.error && data.error.code === 'STRIPE_NOT_CONFIGURED') {
+            btn.disabled = false;
+            btn.textContent = 'Buy Now';
+            alert('Stripe is not configured yet. Add your Stripe keys to enable payments.');
+          } else {
+            btn.disabled = false;
+            btn.textContent = 'Buy Now';
+            alert(data.error ? data.error.message : 'Something went wrong.');
+          }
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.textContent = 'Buy Now';
+          alert('Network error. Please try again.');
+        });
+      }
+
+      // Auth modal
+      function openAuth(mode) {
+        isRegister = mode === 'register';
+        authTitle.textContent = isRegister ? 'Create Account' : 'Sign In';
+        authSubmit.textContent = isRegister ? 'Create Account' : 'Sign In';
+        authToggle.textContent = isRegister ? 'Sign in instead' : 'Create an account';
+        document.getElementById('auth-name').style.display = isRegister ? 'block' : 'none';
+        document.getElementById('auth-name').required = isRegister;
+        authError.style.display = 'none';
+        authForm.reset();
+        authModal.hidden = false;
+        document.getElementById('auth-email').focus();
+      }
+
+      authToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        openAuth(isRegister ? 'login' : 'register');
+      });
+
+      document.querySelector('.modal__close').addEventListener('click', function () {
+        authModal.hidden = true;
+      });
+
+      document.querySelector('.modal__overlay').addEventListener('click', function () {
+        authModal.hidden = true;
+      });
+
+      authForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        authError.style.display = 'none';
+        var email = document.getElementById('auth-email').value.trim();
+        var password = document.getElementById('auth-password').value;
+        var name = document.getElementById('auth-name').value.trim();
+
+        if (!email || !password) {
+          authError.textContent = 'Email and password are required.';
+          authError.style.display = 'block';
+          return;
+        }
+
+        if (isRegister && (!name || name.length < 2)) {
+          authError.textContent = 'Name is required.';
+          authError.style.display = 'block';
+          return;
+        }
+
+        authSubmit.disabled = true;
+        authSubmit.textContent = isRegister ? 'Creating...' : 'Signing in...';
+
+        var endpoint = isRegister ? API + '/auth/register' : API + '/auth/login';
+        var body = { email: email, password: password };
+        if (isRegister) body.name = name;
+
+        fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.success && data.data) {
+            token = data.data.token;
+            user = data.data.user;
+            try { localStorage.setItem('veyrion_auth', JSON.stringify({ token: token, user: user })); } catch (_) {}
+            authModal.hidden = true;
+            updateUI();
+          } else {
+            authError.textContent = data.error ? data.error.message : 'Authentication failed.';
+            authError.style.display = 'block';
+          }
+        })
+        .catch(function () {
+          authError.textContent = 'Network error. Try again.';
+          authError.style.display = 'block';
+        })
+        .finally(function () {
+          authSubmit.disabled = false;
+          authSubmit.textContent = isRegister ? 'Create Account' : 'Sign In';
+        });
+      });
+
+      function updateUI() {
+        if (user) {
+          loginPrompt.style.display = 'none';
+        } else {
+          loginPrompt.style.display = 'block';
+        }
+      }
+
+      document.getElementById('login-trigger').addEventListener('click', function (e) {
+        e.preventDefault();
+        openAuth('login');
+      });
+      document.getElementById('register-trigger').addEventListener('click', function (e) {
+        e.preventDefault();
+        openAuth('register');
+      });
+
+      // Filter buttons
+      document.querySelectorAll('.store-filter').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.store-filter').forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var cat = btn.getAttribute('data-category');
+          if (cat === 'all') {
+            renderProducts(allProducts);
+          } else {
+            renderProducts(allProducts.filter(function (p) { return p.category_slug === cat; }));
+          }
+        });
+      });
+
+      function formatPrice(cents) {
+        if (!cents && cents !== 0) return '0.00';
+        return parseFloat(cents).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      function escapeHtml(s) {
+        if (!s) return '';
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      // Init
+      updateUI();
+      loadProducts('all');
+
+      // Init lucide icons
+      if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

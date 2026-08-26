@@ -6,6 +6,7 @@ const productRoutes = require('./products');
 const cartRoutes = require('./cart');
 const orderRoutes = require('./orders');
 const ticketRoutes = require('./tickets');
+const checkoutRoutes = require('./checkout');
 const adminRoutes = require('./admin');
 const contactController = require('../../controllers/contactController');
 const validate = require('../../middleware/validate');
@@ -16,6 +17,7 @@ router.use('/products', productRoutes);
 router.use('/cart', cartRoutes);
 router.use('/orders', orderRoutes);
 router.use('/tickets', ticketRoutes);
+router.use('/checkout', checkoutRoutes);
 router.use('/admin', adminRoutes);
 
 // Contact form endpoint
