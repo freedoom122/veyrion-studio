@@ -1,8 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { getDb } = require('../../config/database');
 const { requireAuth } = require('../../middleware/auth');
+
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key || key === 'sk_test_...' || key === 'sk_test_placeholder' || !key.startsWith('sk_')) return null;
+  try { return require('stripe')(key); } catch (_) { return null; }
+}
+
+function isStripeReady() {
+  return getStripe() !== null;
+}
 
 // Create a Stripe Checkout Session
 router.post('/create-session', requireAuth, async (req, res, next) => {
@@ -24,11 +33,15 @@ router.post('/create-session', requireAuth, async (req, res, next) => {
       return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });
     }
 
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_...') {
-      return res.status(503).json({ success: false, error: { code: 'STRIPE_NOT_CONFIGURED', message: 'Stripe is not configured. Set STRIPE_SECRET_KEY in your environment.' } });
+    const stripe = getStripe();
+    if (!stripe) {
+      return res.status(503).json({
+        success: false,
+        error: { code: 'STRIPE_NOT_CONFIGURED', message: 'Stripe is not configured. Set STRIPE_SECRET_KEY in your environment variables with a valid key (sk_live_... or sk_test_...).' }
+      });
     }
 
-    const origin = req.headers.origin || req.headers.referer?.replace(/\/[^/]*$/, '') || process.env.FRONTEND_URL || 'https://veyrion-studio.onrender.com';
+    const origin = req.headers.origin || (req.headers.referer ? req.headers.referer.replace(/\/[^/]*$/, '') : '') || process.env.FRONTEND_URL || 'https://veyrion-studio.onrender.com';
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -47,7 +60,7 @@ router.post('/create-session', requireAuth, async (req, res, next) => {
                 version: product.version || '1.0.0',
               },
             },
-            unit_amount: Math.round(product.price * 100), // Stripe uses cents
+            unit_amount: Math.round(product.price * 100),
           },
           quantity: 1,
         },
@@ -73,7 +86,8 @@ router.post('/create-session', requireAuth, async (req, res, next) => {
 // Get checkout session status (for success page polling)
 router.get('/session/:sessionId', requireAuth, async (req, res, next) => {
   try {
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_...') {
+    const stripe = getStripe();
+    if (!stripe) {
       return res.json({ success: true, data: { status: 'simulated', paid: true } });
     }
 
@@ -91,6 +105,11 @@ router.get('/session/:sessionId', requireAuth, async (req, res, next) => {
     console.error('[STRIPE] Session retrieve error:', err.message);
     next(err);
   }
+});
+
+// Check if Stripe is configured
+router.get('/status', (req, res) => {
+  res.json({ success: true, data: { configured: isStripeReady() } });
 });
 
 module.exports = router;
