@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     client_id: GOOGLE_CLIENT_ID,
     redirect_uri: REDIRECT_URI,
     response_type: 'code',
-    scope: scopes,
+    scope: 'openid email profile',
     access_type: 'offline',
     prompt: 'consent',
   });
