@@ -372,7 +372,8 @@
        STORE PAGE — product listing + Stripe Checkout
        ============================================================ */
     (function () {
-      var API = '/api/v1';
+      var RENDER_BACKEND = 'https://veyrion-studio.onrender.com';
+      var API = ((location.hostname.indexOf('github.io') !== -1) ? RENDER_BACKEND : '') + '/api/v1';
       var user = null;
       var token = null;
       var allProducts = [];

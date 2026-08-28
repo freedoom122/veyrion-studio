@@ -6,6 +6,10 @@
 (function () {
   "use strict";
 
+  /* ---- API base (GitHub Pages -> Render backend, or relative on Render) ---- */
+  var RENDER_BACKEND = 'https://veyrion-studio.onrender.com';
+  var API_BASE = (location.hostname.indexOf('github.io') !== -1) ? RENDER_BACKEND : '';
+
   /* ---- guards ---- */
   var hasGSAP = typeof gsap !== "undefined";
   var hasST = hasGSAP && typeof ScrollTrigger !== "undefined";
@@ -630,7 +634,7 @@
         brief: brief.value.trim()
       };
 
-      fetch("/api/v1/contact", {
+      fetch(API_BASE + "/api/v1/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

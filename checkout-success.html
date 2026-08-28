@@ -110,7 +110,8 @@
         var saved = null;
         try { saved = JSON.parse(localStorage.getItem('veyrion_auth')); } catch (_) {}
         if (saved && saved.token) {
-          fetch('/api/v1/checkout/session/' + sessionId, {
+          var _API = (location.hostname.indexOf('github.io') !== -1) ? 'https://veyrion-studio.onrender.com' : '';
+          fetch(_API + '/api/v1/checkout/session/' + sessionId, {
             headers: { 'Authorization': 'Bearer ' + saved.token }
           })
           .then(function (r) { return r.json(); })
