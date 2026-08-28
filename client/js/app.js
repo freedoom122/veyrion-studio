@@ -373,7 +373,7 @@
         ].join("\n");
       },
       "--contact": function () {
-        return '<span class="t-str">admin@example.com</span>  \u2014  2 business day response  \u2014  New York, remote-first';
+        return '<span class="t-str">Contact via form</span>  \u2014  2 business day response  \u2014  New York, remote-first';
       },
       "help": function () {
         return "available commands:\n  --show-stack\n  --benchmarks\n  --architecture\n  --security\n  --contact\n  clear";
@@ -679,36 +679,9 @@
      ============================================================ */
   function initCopyEmail() {
     var btn = $("#copy-email");
-    var toast = $("#toast") || $("#toast-global");
     if (!btn) return;
-    var EMAIL = "admin@example.com";
-
-    function showCopied() {
-      btn.textContent = "Copied";
-      if (toast) {
-        toast.textContent = "Email copied \u2014 " + EMAIL;
-        toast.classList.add("is-on");
-        setTimeout(function () { toast.classList.remove("is-on"); }, 2000);
-      }
-      setTimeout(function () { btn.textContent = "Copy direct email"; }, 2000);
-    }
-
-    function fallback() {
-      var ta = document.createElement("textarea");
-      ta.value = EMAIL;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand("copy"); showCopied(); }
-      catch (_) { btn.textContent = EMAIL; }
-      ta.remove();
-    }
-
     btn.addEventListener("click", function () {
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(EMAIL).then(showCopied).catch(fallback);
-      } else fallback();
+      window.location.href = "contact.html";
     });
   }
 
