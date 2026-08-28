@@ -78,6 +78,43 @@ router.put('/settings', requireRole('superadmin'), validate(settingSchema), admi
 // Audit logs (superadmin only)
 router.get('/logs', requireRole('superadmin'), adminController.getAuditLogs);
 
+// Contact submissions
+router.get('/contact-submissions', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS contact_submissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        company TEXT NOT NULL,
+        project_type TEXT,
+        brief TEXT NOT NULL,
+        ip TEXT,
+        user_agent TEXT,
+        created_at TEXT DEFAULT (datetime('now'))
+      )
+    `).run();
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const offset = (page - 1) * limit;
+
+    const total = db.prepare('SELECT COUNT(*) as count FROM contact_submissions').get().count;
+    const rows = db.prepare('SELECT * FROM contact_submissions ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
+
+    res.json({
+      success: true,
+      data: rows,
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) }
+    });
+  } catch (err) {
+    console.error('[ADMIN] Contact submissions error:', err.message);
+    res.json({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } });
+  }
+});
+
 // Backup (superadmin only)
 router.post('/backup', requireRole('superadmin'), adminController.triggerBackup);
 

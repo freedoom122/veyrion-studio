@@ -101,7 +101,7 @@
     const titles = {
       dashboard: 'Dashboard', users: 'Users', products: 'Products', orders: 'Orders',
       licenses: 'Licenses', tickets: 'Tickets', coupons: 'Coupons', subscribers: 'Subscribers',
-      settings: 'Settings', logs: 'Audit Logs'
+      contacts: 'Contact Submissions', settings: 'Settings', logs: 'Audit Logs'
     };
     document.getElementById('page-title').textContent = titles[page] || page;
     content.innerHTML = '<div class="empty-state">Loading...</div>';
@@ -110,7 +110,7 @@
       dashboard: loadDashboard, users: loadUsers, products: loadProducts,
       orders: loadOrders, licenses: loadLicenses, tickets: loadTickets,
       coupons: loadCoupons, subscribers: loadSubscribers, settings: loadSettings,
-      logs: loadLogs,
+      logs: loadLogs, contacts: loadContacts,
     };
 
     if (loaders[page]) await loaders[page](content);
@@ -401,6 +401,33 @@
       </div>`;
   }
 
+  // Contact Submissions
+  async function loadContacts(el, page = 1) {
+    const res = await api(`/admin/contact-submissions?page=${page}&limit=20`);
+    if (!res?.success) { el.innerHTML = '<div class="empty-state">No submissions yet.</div>'; return; }
+    if (!res.data.length) { el.innerHTML = '<div class="empty-state">No contact form submissions yet.</div>'; return; }
+    el.innerHTML = `
+      <div class="table-container">
+        <div class="table-header"><h3>Contact Submissions (${res.meta.total} total)</h3></div>
+        <table>
+          <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Company</th><th>Type</th><th>Brief</th></tr></thead>
+          <tbody>
+            ${res.data.map(s => `
+              <tr>
+                <td style="color:var(--text-3);font-size:12px;white-space:nowrap">${new Date(s.created_at).toLocaleString()}</td>
+                <td><strong>${s.name}</strong></td>
+                <td style="font-family:var(--font-mono);font-size:12px">${s.email}</td>
+                <td>${s.company}</td>
+                <td><span class="badge badge-blue">${s.project_type || 'N/A'}</span></td>
+                <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-2);font-size:13px" title="${s.brief.replace(/"/g, '&quot;')}">${s.brief}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        ${renderPagination(res.meta, 'loadContacts')}
+      </div>`;
+  }
+
   // Coupons
   async function loadCoupons(el) {
     el.innerHTML = `<div class="empty-state">Coupon management — create coupons from the API or add a coupon form here.</div>`;
@@ -479,7 +506,7 @@
   }
 
   window._adminPaginate = (loaderName, page) => {
-    const loaders = { loadUsers, loadProducts, loadOrders, loadLicenses, loadTickets, loadLogs };
+    const loaders = { loadUsers, loadProducts, loadOrders, loadLicenses, loadTickets, loadLogs, loadContacts };
     if (loaders[loaderName]) loaders[loaderName](document.getElementById('page-content'), page);
   };
 
