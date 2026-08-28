@@ -63,6 +63,10 @@ async function main() {
   app.use('/api/v1/', apiLimiter);
 
   // API routes
+  // Google OAuth
+  const googleAuthRoutes = require('./server/routes/auth/google');
+  app.use('/auth/google', googleAuthRoutes);
+
   app.use('/api/v1', apiRoutes);
 
   // Webhook routes (raw body for Stripe)

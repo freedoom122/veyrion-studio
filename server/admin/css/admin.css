@@ -399,8 +399,9 @@ tr:hover td { background: rgba(255,255,255,0.02); }
   font-weight: 500;
   cursor: pointer;
   transition: background .15s;
+  text-decoration: none;
 }
-.btn-google:hover { background: #f8f9fa; }
+.btn-google:hover { background: #f8f9fa; text-decoration: none; }
 
 .login-divider {
   display: flex;

@@ -37,77 +37,22 @@
   function $(sel) { return document.querySelector(sel); }
   function $$(sel) { return document.querySelectorAll(sel); }
 
-  // ============ GOOGLE OAUTH ============
-  var googleClientId = '';
-  var scriptEl = document.querySelector('script[data-google-client-id]');
-  if (scriptEl) googleClientId = scriptEl.getAttribute('data-google-client-id');
-
-  var googleReady = false;
-  function initGoogle() {
-    if (googleReady) return;
-    if (typeof google === 'undefined' || !google || !google.accounts) {
-      console.error('[ADMIN] Google GSI not loaded yet');
-      return;
-    }
-    if (!googleClientId) {
-      console.error('[ADMIN] No Google Client ID found');
-      return;
-    }
-    google.accounts.id.initialize({
-      client_id: googleClientId,
-      auto_select: false,
-      callback: function(response) {
-        console.log('[ADMIN] Google credential received');
-        submitGoogleCredential(response.credential);
-      },
-      error_callback: function(err) {
-        console.error('[ADMIN] Google error:', err);
-        showToast('Google sign-in error: ' + (err.message || 'Unknown error'), 'error');
-      }
-    });
-    googleReady = true;
-    console.log('[ADMIN] Google GSI initialized with client ID:', googleClientId.substring(0, 20) + '...');
+  // ============ SHOW ERRORS FROM OAUTH CALLBACK ============
+  var urlParams = new URLSearchParams(window.location.search);
+  var errorParam = urlParams.get('error');
+  if (errorParam) {
+    var errEl = document.getElementById('login-error');
+    errEl.textContent = errorParam;
+    errEl.hidden = false;
+    window.history.replaceState({}, '', '/admin/');
   }
 
-  // Wait for Google script to load
-  function waitForGoogle(attempts) {
-    attempts = attempts || 0;
-    if (typeof google !== 'undefined' && google && google.accounts) {
-      initGoogle();
-    } else if (attempts < 50) {
-      setTimeout(function() { waitForGoogle(attempts + 1); }, 200);
-    } else {
-      console.error('[ADMIN] Google GSI did not load after 10 seconds');
-    }
-  }
-  waitForGoogle();
-
-  window.handleGoogleLogin = function() {
-    if (!googleReady) {
-      initGoogle();
-      if (!googleReady) {
-        showToast('Google Sign-In is still loading. Try again in a moment, or use email login.', 'error');
-        return;
-      }
-    }
-    google.accounts.id.prompt();
-  };
-
-  async function submitGoogleCredential(credential) {
-    var res = await api('/admin/google-login', {
-      method: 'POST',
-      body: JSON.stringify({ credential: credential })
-    });
-    if (res && res.success) {
-      token = res.data.token;
-      localStorage.setItem('admin_token', token);
-      currentUser = res.data.user;
-      showDashboard();
-    } else {
-      var errEl = document.getElementById('login-error');
-      errEl.textContent = res?.error?.message || 'Google login failed';
-      errEl.hidden = false;
-    }
+  // Auto-login if token was set by OAuth callback
+  var storedUser = null;
+  try { storedUser = JSON.parse(localStorage.getItem('admin_user')); } catch (_) {}
+  if (token && storedUser && storedUser.email) {
+    currentUser = storedUser;
+    showDashboard();
   }
 
   // ============ EMAIL/PASSWORD LOGIN ============
