@@ -6,6 +6,34 @@ function escapeHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+async function sendViaFormSubmit({ name, email, company, type, brief }) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+    const resp = await fetch('https://formsubmit.co/ajax/' + adminEmail, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: '[Veyrion Brief] ' + company + ' - ' + (type || 'Project Inquiry'),
+        _template: 'table',
+        name: name,
+        email: email,
+        company: company,
+        project_type: type || 'Not specified',
+        brief: brief,
+        _replyto: email,
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (resp.ok) {
+      console.log('[CONTACT] Email sent via FormSubmit.co');
+    } else {
+      console.error('[CONTACT] FormSubmit.co returned', resp.status);
+    }
+  } catch (e) {
+    console.error('[CONTACT] FormSubmit.co failed:', e.message);
+  }
+}
+
 const contactController = {
   async submit(req, res, next) {
     try {
@@ -43,7 +71,7 @@ const contactController = {
       // Respond immediately — don't wait for email
       res.json({ success: true, message: 'Brief submitted successfully' });
 
-      // Fire emails in background (never blocks the response)
+      // Try SMTP first, fall back to FormSubmit.co
       const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
       const adminHtml = '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#0c0c0e;color:#fff;">'
         + '<h2 style="color:#10B981;margin-bottom:8px;font-size:18px;">New Architecture Brief</h2>'
@@ -58,23 +86,16 @@ const contactController = {
         + '<p style="color:#71717A;font-size:12px;margin-top:24px;">Reply to respond directly to ' + escapeHtml(name) + ' at ' + escapeHtml(email) + '</p>'
         + '</div>';
 
+      // Fire email in background (never blocks the response)
       sendEmail({
         to: adminEmail,
         subject: '[Veyrion Brief] ' + company + ' - ' + (type || 'Project Inquiry'),
         html: adminHtml,
         text: 'New architecture brief from ' + name + ' at ' + company + ' (' + email + ').\nProject type: ' + (type || 'Not specified') + '\n\nBrief:\n' + brief,
-      }).catch(function(e) { console.error('[CONTACT] Admin email failed:', e.message); });
-
-      sendEmail({
-        to: email,
-        subject: 'Veyrion - Brief Received',
-        html: '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:500px;margin:0 auto;padding:32px;background:#0c0c0e;color:#fff;">'
-          + '<h2 style="color:#10B981;margin-bottom:16px;font-size:18px;">Brief received.</h2>'
-          + '<p style="color:#A1A1AA;font-size:14px;line-height:1.7;">Thanks, ' + escapeHtml(name) + '. We received your brief for ' + escapeHtml(company) + '. A partner will reply from admin@example.com within two business days. If the work is outside our range, we will say so plainly.</p>'
-          + '<p style="color:#71717A;font-size:12px;margin-top:32px;">- Veyrion</p>'
-          + '</div>',
-        text: 'Thanks, ' + name + '. We received your brief for ' + company + '. A partner will reply from admin@example.com within two business days.',
-      }).catch(function(e) { console.error('[CONTACT] Confirmation email failed:', e.message); });
+      }).catch(function(e) {
+        console.error('[CONTACT] SMTP failed, trying FormSubmit.co:', e.message);
+        sendViaFormSubmit({ name, email, company, type, brief });
+      });
 
     } catch (err) {
       console.error('[CONTACT] Error:', err);
