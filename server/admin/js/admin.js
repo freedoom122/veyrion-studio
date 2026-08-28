@@ -38,23 +38,58 @@
   function $$(sel) { return document.querySelectorAll(sel); }
 
   // ============ GOOGLE OAUTH ============
-  var googleClientId = document.querySelector('script[data-google-client-id]')?.getAttribute('data-google-client-id') || '';
+  var googleClientId = '';
+  var scriptEl = document.querySelector('script[data-google-client-id]');
+  if (scriptEl) googleClientId = scriptEl.getAttribute('data-google-client-id');
 
-  window.handleGoogleLogin = function() {
-    if (typeof google === 'undefined' || !google.accounts) {
-      showToast('Google Sign-In not loaded. Try email login.', 'error');
+  var googleReady = false;
+  function initGoogle() {
+    if (googleReady) return;
+    if (typeof google === 'undefined' || !google || !google.accounts) {
+      console.error('[ADMIN] Google GSI not loaded yet');
       return;
     }
     if (!googleClientId) {
-      showToast('Google Client ID not configured', 'error');
+      console.error('[ADMIN] No Google Client ID found');
       return;
     }
     google.accounts.id.initialize({
       client_id: googleClientId,
+      auto_select: false,
       callback: function(response) {
+        console.log('[ADMIN] Google credential received');
         submitGoogleCredential(response.credential);
+      },
+      error_callback: function(err) {
+        console.error('[ADMIN] Google error:', err);
+        showToast('Google sign-in error: ' + (err.message || 'Unknown error'), 'error');
       }
     });
+    googleReady = true;
+    console.log('[ADMIN] Google GSI initialized with client ID:', googleClientId.substring(0, 20) + '...');
+  }
+
+  // Wait for Google script to load
+  function waitForGoogle(attempts) {
+    attempts = attempts || 0;
+    if (typeof google !== 'undefined' && google && google.accounts) {
+      initGoogle();
+    } else if (attempts < 50) {
+      setTimeout(function() { waitForGoogle(attempts + 1); }, 200);
+    } else {
+      console.error('[ADMIN] Google GSI did not load after 10 seconds');
+    }
+  }
+  waitForGoogle();
+
+  window.handleGoogleLogin = function() {
+    if (!googleReady) {
+      initGoogle();
+      if (!googleReady) {
+        showToast('Google Sign-In is still loading. Try again in a moment, or use email login.', 'error');
+        return;
+      }
+    }
     google.accounts.id.prompt();
   };
 
