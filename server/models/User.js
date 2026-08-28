@@ -95,6 +95,23 @@ const User = {
     return db.prepare(`SELECT COUNT(*) as count FROM users WHERE created_at > datetime('now', '-${days} days')`).get().count;
   },
 
+  changePassword(id, newPassword) {
+    const passwordHash = bcrypt.hashSync(newPassword, 12);
+    db.prepare("UPDATE users SET password_hash = ?, updated_at = datetime('now') WHERE id = ?").run(passwordHash, id);
+    return this.findById(id);
+  },
+
+  setRole(id, role) {
+    const valid = ['customer', 'admin', 'superadmin'];
+    if (!valid.includes(role)) throw new Error('Invalid role');
+    db.prepare("UPDATE users SET role = ?, updated_at = datetime('now') WHERE id = ?").run(role, id);
+    return this.findById(id);
+  },
+
+  createAdmin({ email, password, name }) {
+    return this.create({ email, password, name, role: 'admin' });
+  },
+
   updateLastLogin(id) {
     db.prepare("UPDATE users SET last_login = datetime('now') WHERE id = ?").run(id);
   },

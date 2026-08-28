@@ -78,6 +78,117 @@ router.put('/settings', requireRole('superadmin'), validate(settingSchema), admi
 // Audit logs (superadmin only)
 router.get('/logs', requireRole('superadmin'), adminController.getAuditLogs);
 
+// Change user password (superadmin only)
+router.put('/users/:id/password', requireRole('superadmin'), (req, res, next) => {
+  try {
+    const { password } = req.body;
+    if (!password || password.length < 8) {
+      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Password must be at least 8 characters' } });
+    }
+    const User = require('../../../models/User');
+    const user = User.changePassword(parseInt(req.params.id), password);
+    if (!user) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'User not found' } });
+    const { getDb } = require('../../../config/database');
+    const db = getDb();
+    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, ip_address) VALUES (?, 'change_password', 'user', ?, ?)`).run(req.user.id, user.id, req.ip);
+    res.json({ success: true, data: { id: user.id, email: user.email, message: 'Password updated' } });
+  } catch (err) { next(err); }
+});
+
+// Change user role (superadmin only)
+router.put('/users/:id/role', requireRole('superadmin'), (req, res, next) => {
+  try {
+    const { role } = req.body;
+    const User = require('../../../models/User');
+    const user = User.setRole(parseInt(req.params.id), role);
+    if (!user) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'User not found' } });
+    const { getDb } = require('../../../config/database');
+    const db = getDb();
+    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, new_values, ip_address) VALUES (?, 'change_role', 'user', ?, ?, ?)`).run(req.user.id, user.id, JSON.stringify({ role }), req.ip);
+    res.json({ success: true, data: user });
+  } catch (err) { next(err); }
+});
+
+// Create admin user (superadmin only)
+router.post('/create-admin', requireRole('superadmin'), (req, res, next) => {
+  try {
+    const { email, password, name } = req.body;
+    if (!email || !password || !name) {
+      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Email, password, and name are required' } });
+    }
+    const User = require('../../../models/User');
+    const existing = User.findByEmail(email);
+    if (existing) {
+      return res.status(409).json({ success: false, error: { code: 'CONFLICT', message: 'Email already exists' } });
+    }
+    const user = User.createAdmin({ email, password, name });
+    const { getDb } = require('../../../config/database');
+    const db = getDb();
+    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, new_values, ip_address) VALUES (?, 'create_admin', 'user', ?, ?, ?)`).run(req.user.id, user.id, JSON.stringify({ email, name }), req.ip);
+    res.json({ success: true, data: { id: user.id, email: user.email, name: user.name, role: user.role } });
+  } catch (err) { next(err); }
+});
+
+// Google OAuth login (restricted to admin@example.com)
+router.post('/google-login', async (req, res, next) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Google credential required' } });
+    }
+
+    // Decode the JWT token from Google (no verification needed for email extraction)
+    const parts = credential.split('.');
+    if (parts.length !== 3) {
+      return res.status(400).json({ success: false, error: { code: 'INVALID_TOKEN', message: 'Invalid Google token' } });
+    }
+
+    let payload;
+    try {
+      payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+    } catch (e) {
+      return res.status(400).json({ success: false, error: { code: 'INVALID_TOKEN', message: 'Cannot decode Google token' } });
+    }
+
+    const email = payload.email;
+    const allowedEmail = process.env.ADMIN_GOOGLE_EMAIL || 'admin@example.com';
+
+    if (email !== allowedEmail) {
+      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Only ' + allowedEmail + ' can access the admin panel' } });
+    }
+
+    // Find or create the user
+    const User = require('../../../models/User');
+    let user = User.findByEmail(email);
+    if (!user) {
+      user = User.create({
+        email,
+        password: require('crypto').randomBytes(32).toString('hex'),
+        name: payload.name || email.split('@')[0],
+        role: 'superadmin',
+      });
+    } else if (user.role !== 'admin' && user.role !== 'superadmin') {
+      // Promote to superadmin if they're the allowed Google user
+      user = User.setRole(user.id, 'superadmin');
+    }
+
+    const { generateToken } = require('../../../middleware/auth');
+    const token = generateToken(user);
+
+    const { getDb } = require('../../../config/database');
+    const db = getDb();
+    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, ip_address) VALUES (?, 'google_login', 'user', ?, ?)`).run(user.id, user.id, req.ip);
+
+    res.json({
+      success: true,
+      data: {
+        token,
+        user: { id: user.id, email: user.email, name: user.name, role: user.role }
+      }
+    });
+  } catch (err) { next(err); }
+});
+
 // Contact submissions
 router.get('/contact-submissions', (req, res) => {
   const { getDb } = require('../../../config/database');

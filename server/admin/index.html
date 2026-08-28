@@ -8,14 +8,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin/css/admin.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div id="app">
     <!-- Login Screen -->
     <div id="login-screen" class="login-screen">
       <div class="login-card">
-        <img src="/admin/assets/logo.png" alt="Veiryon Studios" class="login-logo">
+        <img src="/admin/assets/logo.png" alt="Veyrion" class="login-logo">
         <h1>Admin Panel</h1>
+
+        <!-- Google OAuth Button -->
+        <div id="google-btn-container" class="google-btn-wrap">
+          <button type="button" id="google-signin-btn" class="btn-google" onclick="handleGoogleLogin()">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            Sign in with Google
+          </button>
+        </div>
+
+        <div class="login-divider"><span>or</span></div>
+
         <form id="login-form">
           <div class="field">
             <label for="login-email">Email</label>
@@ -35,7 +47,7 @@
     <div id="dashboard-screen" class="dashboard-screen" hidden>
       <!-- Sidebar -->
       <aside id="sidebar" class="sidebar">
-        <img src="/admin/assets/logo.png" alt="Veiryon Studios" class="sidebar-logo">
+        <img src="/admin/assets/logo.png" alt="Veyrion" class="sidebar-logo">
         <nav class="sidebar-nav">
           <a href="#" class="nav-item active" data-page="dashboard">Dashboard</a>
           <a href="#" class="nav-item" data-page="users">Users</a>
@@ -43,8 +55,6 @@
           <a href="#" class="nav-item" data-page="orders">Orders</a>
           <a href="#" class="nav-item" data-page="licenses">Licenses</a>
           <a href="#" class="nav-item" data-page="tickets">Tickets</a>
-          <a href="#" class="nav-item" data-page="coupons">Coupons</a>
-          <a href="#" class="nav-item" data-page="subscribers">Subscribers</a>
           <a href="#" class="nav-item" data-page="contacts">Contact Forms</a>
           <a href="#" class="nav-item" data-page="settings">Settings</a>
           <a href="#" class="nav-item" data-page="logs">Audit Logs</a>
@@ -58,16 +68,14 @@
       <!-- Main Content -->
       <main class="main-content">
         <header class="main-header">
-          <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+          <button class="sidebar-toggle" id="sidebar-toggle">&#9776;</button>
           <h2 id="page-title">Dashboard</h2>
           <div class="header-actions">
             <button class="btn btn-sm" id="refresh-btn">Refresh</button>
           </div>
         </header>
 
-        <div id="page-content" class="page-content">
-          <!-- Dynamic content loaded here -->
-        </div>
+        <div id="page-content" class="page-content"></div>
       </main>
     </div>
   </div>
@@ -77,11 +85,11 @@
 
   <!-- Modal -->
   <div id="modal" class="modal" hidden>
-    <div class="modal-backdrop"></div>
+    <div class="modal-backdrop" onclick="window._hideModal()"></div>
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="modal-title">Modal</h3>
-        <button class="modal-close" id="modal-close">&times;</button>
+        <button class="modal-close" onclick="window._hideModal()">&times;</button>
       </div>
       <div id="modal-body" class="modal-body"></div>
       <div id="modal-footer" class="modal-footer"></div>
