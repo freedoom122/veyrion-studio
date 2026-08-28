@@ -38,13 +38,19 @@
   function $$(sel) { return document.querySelectorAll(sel); }
 
   // ============ GOOGLE OAUTH ============
+  var googleClientId = document.querySelector('script[data-google-client-id]')?.getAttribute('data-google-client-id') || '';
+
   window.handleGoogleLogin = function() {
     if (typeof google === 'undefined' || !google.accounts) {
       showToast('Google Sign-In not loaded. Try email login.', 'error');
       return;
     }
+    if (!googleClientId) {
+      showToast('Google Client ID not configured', 'error');
+      return;
+    }
     google.accounts.id.initialize({
-      client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your Google OAuth client ID
+      client_id: googleClientId,
       callback: function(response) {
         submitGoogleCredential(response.credential);
       }
