@@ -8,7 +8,7 @@ function escapeHtml(str) {
 
 async function sendViaFormSubmit({ name, email, company, type, brief }) {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@localhost';
     const resp = await fetch('https://formsubmit.co/ajax/' + adminEmail, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -72,7 +72,7 @@ const contactController = {
       res.json({ success: true, message: 'Brief submitted successfully' });
 
       // Try SMTP first, fall back to FormSubmit.co
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@localhost';
       const adminHtml = '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#0c0c0e;color:#fff;">'
         + '<h2 style="color:#10B981;margin-bottom:8px;font-size:18px;">New Architecture Brief</h2>'
         + '<p style="color:#71717A;font-size:13px;margin-bottom:24px;">Submitted via veyrion.dev contact form</p>'
