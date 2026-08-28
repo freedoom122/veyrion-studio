@@ -189,6 +189,97 @@ router.post('/google-login', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// Coupons
+router.get('/coupons', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const offset = (page - 1) * limit;
+    const total = db.prepare('SELECT COUNT(*) as count FROM coupons').get().count;
+    const rows = db.prepare('SELECT * FROM coupons ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
+    res.json({ success: true, data: rows, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } });
+  } catch (err) { console.error('[ADMIN] Coupons error:', err.message); res.json({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } }); }
+});
+
+router.post('/coupons', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    const { code, discount_type, discount_value, max_uses, min_order_amount, expires_at } = req.body;
+    if (!code || !discount_type || discount_value === undefined) {
+      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Code, type, and value are required' } });
+    }
+    const result = db.prepare(
+      'INSERT INTO coupons (code, discount_type, discount_value, max_uses, min_order_amount, expires_at) VALUES (?, ?, ?, ?, ?, ?)'
+    ).run(code.toUpperCase(), discount_type, discount_value, max_uses || null, min_order_amount || 0, expires_at || null);
+    res.json({ success: true, data: { id: result.lastInsertRowid, code: code.toUpperCase() } });
+  } catch (err) {
+    if (err.message && err.message.includes('UNIQUE')) {
+      return res.status(409).json({ success: false, error: { code: 'CONFLICT', message: 'Coupon code already exists' } });
+    }
+    console.error('[ADMIN] Create coupon error:', err.message);
+    next(err);
+  }
+});
+
+router.put('/coupons/:id', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    const { code, discount_type, discount_value, max_uses, min_order_amount, expires_at, is_active } = req.body;
+    db.prepare(
+      'UPDATE coupons SET code=COALESCE(?,code), discount_type=COALESCE(?,discount_type), discount_value=COALESCE(?,discount_value), max_uses=COALESCE(?,max_uses), min_order_amount=COALESCE(?,min_order_amount), expires_at=COALESCE(?,expires_at), is_active=COALESCE(?,is_active) WHERE id=?'
+    ).run(code ? code.toUpperCase() : null, discount_type, discount_value, max_uses, min_order_amount, expires_at, is_active, parseInt(req.params.id));
+    const coupon = db.prepare('SELECT * FROM coupons WHERE id = ?').get(parseInt(req.params.id));
+    res.json({ success: true, data: coupon });
+  } catch (err) { console.error('[ADMIN] Update coupon error:', err.message); next(err); }
+});
+
+router.delete('/coupons/:id', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    db.prepare('DELETE FROM coupons WHERE id = ?').run(parseInt(req.params.id));
+    res.json({ success: true, message: 'Coupon deleted' });
+  } catch (err) { console.error('[ADMIN] Delete coupon error:', err.message); next(err); }
+});
+
+// Subscribers
+router.get('/subscribers', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const offset = (page - 1) * limit;
+    const total = db.prepare('SELECT COUNT(*) as count FROM subscribers').get().count;
+    const rows = db.prepare('SELECT * FROM subscribers ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
+    res.json({ success: true, data: rows, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } });
+  } catch (err) { console.error('[ADMIN] Subscribers error:', err.message); res.json({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } }); }
+});
+
+router.put('/subscribers/:id/toggle', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    const sub = db.prepare('SELECT * FROM subscribers WHERE id = ?').get(parseInt(req.params.id));
+    if (!sub) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Subscriber not found' } });
+    db.prepare('UPDATE subscribers SET is_active = ? WHERE id = ?').run(sub.is_active ? 0 : 1, sub.id);
+    res.json({ success: true, data: { id: sub.id, is_active: sub.is_active ? 0 : 1 } });
+  } catch (err) { console.error('[ADMIN] Toggle subscriber error:', err.message); next(err); }
+});
+
+router.delete('/subscribers/:id', (req, res) => {
+  const { getDb } = require('../../../config/database');
+  const db = getDb();
+  try {
+    db.prepare('DELETE FROM subscribers WHERE id = ?').run(parseInt(req.params.id));
+    res.json({ success: true, message: 'Subscriber removed' });
+  } catch (err) { console.error('[ADMIN] Delete subscriber error:', err.message); next(err); }
+});
+
 // Contact submissions
 router.get('/contact-submissions', (req, res) => {
   const { getDb } = require('../../../config/database');

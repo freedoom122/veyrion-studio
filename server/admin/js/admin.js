@@ -177,6 +177,7 @@
     var titles = {
       dashboard: 'Dashboard', users: 'Users', products: 'Products', orders: 'Orders',
       licenses: 'Licenses', tickets: 'Tickets', contacts: 'Contact Submissions',
+      coupons: 'Coupons', subscribers: 'Subscribers',
       settings: 'Settings', logs: 'Audit Logs'
     };
     document.getElementById('page-title').textContent = titles[page] || page;
@@ -186,6 +187,7 @@
       dashboard: loadDashboard, users: loadUsers, products: loadProducts,
       orders: loadOrders, licenses: loadLicenses, tickets: loadTickets,
       settings: loadSettings, logs: loadLogs, contacts: loadContacts,
+      coupons: loadCoupons, subscribers: loadSubscribers,
     };
 
     if (loaders[page]) await loaders[page](content);
@@ -529,6 +531,133 @@
         '</tbody></table>' + renderPagination(res.meta, 'loadContacts') + '</div>';
   }
 
+  // ============ COUPONS ============
+  async function loadCoupons(el, page) {
+    page = page || 1;
+    var res = await api('/admin/coupons?page=' + page + '&limit=20');
+    if (!res || !res.success) return;
+    el.innerHTML =
+      '<div class="filter-bar">' +
+        '<button class="btn btn-sm btn-primary" onclick="window._adminCreateCoupon()">+ New Coupon</button>' +
+      '</div>' +
+      '<div class="table-container"><table><thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Uses</th><th>Max Uses</th><th>Min Order</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+      res.data.map(function(c) {
+        return '<tr>' +
+          '<td style="font-family:var(--font-mono);font-size:13px;font-weight:500">' + c.code + '</td>' +
+          '<td><span class="badge badge-blue">' + c.discount_type + '</span></td>' +
+          '<td>' + (c.discount_type === 'percentage' ? c.discount_value + '%' : '$' + c.discount_value.toFixed(2)) + '</td>' +
+          '<td>' + c.uses_count + '</td>' +
+          '<td>' + (c.max_uses || 'Unlimited') + '</td>' +
+          '<td>$' + (c.min_order_amount || 0).toFixed(2) + '</td>' +
+          '<td style="color:var(--text-3)">' + (c.expires_at ? new Date(c.expires_at).toLocaleDateString() : 'Never') + '</td>' +
+          '<td>' + (c.is_active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Disabled</span>') + '</td>' +
+          '<td class="action-cell">' +
+            '<button class="btn btn-sm" onclick="window._adminEditCoupon(' + c.id + ')">Edit</button> ' +
+            '<button class="btn btn-sm btn-danger" onclick="window._adminDeleteCoupon(' + c.id + ')">Delete</button>' +
+          '</td></tr>';
+      }).join('') +
+      '</tbody></table>' + renderPagination(res.meta, 'loadCoupons') + '</div>';
+  }
+
+  window._adminCreateCoupon = function() {
+    showModal('Create Coupon',
+      '<div class="field"><label>Code</label><input id="c-code" placeholder="e.g. SUMMER20" style="text-transform:uppercase"></div>' +
+      '<div class="field"><label>Discount Type</label><select id="c-type"><option value="percentage">Percentage</option><option value="fixed">Fixed Amount</option></select></div>' +
+      '<div class="field"><label>Discount Value</label><input type="number" id="c-value" step="0.01" value="10"></div>' +
+      '<div class="field"><label>Max Uses (0 = unlimited)</label><input type="number" id="c-max-uses" value="0"></div>' +
+      '<div class="field"><label>Min Order Amount</label><input type="number" id="c-min-order" step="0.01" value="0"></div>' +
+      '<div class="field"><label>Expires At (optional)</label><input type="date" id="c-expires"></div>',
+      async function() {
+        var data = {
+          code: document.getElementById('c-code').value,
+          discount_type: document.getElementById('c-type').value,
+          discount_value: parseFloat(document.getElementById('c-value').value) || 0,
+          max_uses: parseInt(document.getElementById('c-max-uses').value) || null,
+          min_order_amount: parseFloat(document.getElementById('c-min-order').value) || 0,
+          expires_at: document.getElementById('c-expires').value || null,
+        };
+        var res = await api('/admin/coupons', { method: 'POST', body: JSON.stringify(data) });
+        if (res && res.success) { showToast('Coupon created'); hideModal(); loadPage('coupons'); }
+        else showToast((res && res.error && res.error.message) || 'Failed', 'error');
+      }
+    );
+  };
+
+  window._adminEditCoupon = async function(id) {
+    var res = await api('/admin/coupons?page=1&limit=100');
+    if (!res || !res.success) return;
+    var c = res.data.find(function(x) { return x.id === id; });
+    if (!c) return;
+    showModal('Edit Coupon',
+      '<div class="field"><label>Code</label><input id="c-code" value="' + c.code + '" style="text-transform:uppercase"></div>' +
+      '<div class="field"><label>Discount Type</label><select id="c-type"><option value="percentage"' + (c.discount_type === 'percentage' ? ' selected' : '') + '>Percentage</option><option value="fixed"' + (c.discount_type === 'fixed' ? ' selected' : '') + '>Fixed Amount</option></select></div>' +
+      '<div class="field"><label>Discount Value</label><input type="number" id="c-value" step="0.01" value="' + c.discount_value + '"></div>' +
+      '<div class="field"><label>Max Uses</label><input type="number" id="c-max-uses" value="' + (c.max_uses || 0) + '"></div>' +
+      '<div class="field"><label>Min Order Amount</label><input type="number" id="c-min-order" step="0.01" value="' + (c.min_order_amount || 0) + '"></div>' +
+      '<div class="field"><label>Expires At</label><input type="date" id="c-expires" value="' + (c.expires_at ? c.expires_at.substring(0, 10) : '') + '"></div>' +
+      '<div class="field"><label>Status</label><select id="c-active"><option value="1"' + (c.is_active ? ' selected' : '') + '>Active</option><option value="0"' + (!c.is_active ? ' selected' : '') + '>Disabled</option></select></div>',
+      async function() {
+        var data = {
+          code: document.getElementById('c-code').value,
+          discount_type: document.getElementById('c-type').value,
+          discount_value: parseFloat(document.getElementById('c-value').value) || 0,
+          max_uses: parseInt(document.getElementById('c-max-uses').value) || null,
+          min_order_amount: parseFloat(document.getElementById('c-min-order').value) || 0,
+          expires_at: document.getElementById('c-expires').value || null,
+          is_active: parseInt(document.getElementById('c-active').value),
+        };
+        var res2 = await api('/admin/coupons/' + id, { method: 'PUT', body: JSON.stringify(data) });
+        if (res2 && res2.success) { showToast('Coupon updated'); hideModal(); loadPage('coupons'); }
+        else showToast('Failed', 'error');
+      }
+    );
+  };
+
+  window._adminDeleteCoupon = async function(id) {
+    if (!confirm('Delete this coupon?')) return;
+    await api('/admin/coupons/' + id, { method: 'DELETE' });
+    showToast('Coupon deleted');
+    loadPage('coupons');
+  };
+
+  // ============ SUBSCRIBERS ============
+  async function loadSubscribers(el, page) {
+    page = page || 1;
+    var res = await api('/admin/subscribers?page=' + page + '&limit=20');
+    if (!res || !res.success) { el.innerHTML = '<div class="empty-state">No subscribers yet.</div>'; return; }
+    if (!res.data.length) { el.innerHTML = '<div class="empty-state">No newsletter subscribers yet.</div>'; return; }
+    el.innerHTML =
+      '<div class="table-container">' +
+        '<div class="table-header"><h3>Subscribers (' + res.meta.total + ' total)</h3></div>' +
+        '<table><thead><tr><th>Email</th><th>Name</th><th>Source</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+        res.data.map(function(s) {
+          return '<tr>' +
+            '<td style="font-family:var(--font-mono);font-size:12px">' + s.email + '</td>' +
+            '<td>' + (s.name || '-') + '</td>' +
+            '<td><span class="badge badge-gray">' + (s.source || 'website') + '</span></td>' +
+            '<td style="color:var(--text-3)">' + new Date(s.created_at).toLocaleDateString() + '</td>' +
+            '<td>' + (s.is_active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Unsubscribed</span>') + '</td>' +
+            '<td class="action-cell">' +
+              '<button class="btn btn-sm" onclick="window._adminToggleSubscriber(' + s.id + ')">' + (s.is_active ? 'Unsubscribe' : 'Reactivate') + '</button> ' +
+              '<button class="btn btn-sm btn-danger" onclick="window._adminDeleteSubscriber(' + s.id + ')">Delete</button>' +
+            '</td></tr>';
+        }).join('') +
+        '</tbody></table>' + renderPagination(res.meta, 'loadSubscribers') + '</div>';
+  }
+
+  window._adminToggleSubscriber = async function(id) {
+    await api('/admin/subscribers/' + id + '/toggle', { method: 'PUT' });
+    showToast('Subscriber updated');
+    loadPage('subscribers');
+  };
+
+  window._adminDeleteSubscriber = async function(id) {
+    if (!confirm('Remove this subscriber?')) return;
+    await api('/admin/subscribers/' + id, { method: 'DELETE' });
+    showToast('Subscriber removed');
+    loadPage('subscribers');
+  };
+
   // ============ SETTINGS ============
   async function loadSettings(el) {
     var res = await api('/admin/settings');
@@ -586,7 +715,7 @@
   }
 
   window._adminPaginate = function(loaderName, page) {
-    var loaders = { loadUsers: loadUsers, loadProducts: loadProducts, loadOrders: loadOrders, loadLicenses: loadLicenses, loadTickets: loadTickets, loadLogs: loadLogs, loadContacts: loadContacts };
+    var loaders = { loadUsers: loadUsers, loadProducts: loadProducts, loadOrders: loadOrders, loadLicenses: loadLicenses, loadTickets: loadTickets, loadLogs: loadLogs, loadContacts: loadContacts, loadCoupons: loadCoupons, loadSubscribers: loadSubscribers };
     if (loaders[loaderName]) loaders[loaderName](document.getElementById('page-content'), page);
   };
 
