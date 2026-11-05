@@ -38,13 +38,13 @@ async function main() {
 
   // Security
   app.use(helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'", "https://cdn.jsdelivr.net"], styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"], fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"], imgSrc: ["'self'", "data:", "https:"], connectSrc: ["'self'", "https:"], objectSrc: ["'none'"], baseUri: ["'self'"], frameAncestors: ["'none'"], formAction: ["'self'"] } },
     crossOriginEmbedderPolicy: false,
   }));
 
   // CORS
   app.use(cors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
     credentials: true,
   }));
 
@@ -55,8 +55,8 @@ async function main() {
   app.use(logger);
 
   // Body parsing
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({ limit: '1mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '100kb' }));
   app.use(cookieParser());
 
   // Rate limiting

@@ -894,6 +894,7 @@
     safe(initDocsSearch);
     safe(initReadingProgress);
     safe(initStatusDashboard);
+    safe(initPremiumInteractions);
   });
 
 })();

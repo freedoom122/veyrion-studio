@@ -25,12 +25,9 @@ npm start
 - **API**: http://localhost:3000/api/v1
 - **Health**: http://localhost:3000/health
 
-## Default Admin
+## Admin setup
 
-- **Email**: admin@veyrion.dev
-- **Password**: SuperAdmin123!@#
-
-Change these in `.env` before deploying to production.
+The admin account is created from the ADMIN_EMAIL and ADMIN_PASSWORD values in .env. Never commit production credentials or publish a default password.
 
 ## Environment Variables
 
