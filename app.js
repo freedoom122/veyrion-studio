@@ -345,12 +345,10 @@
       },
       "--benchmarks": function () {
         return [
-          '<span class="t-key">p50_latency</span>   <span class="t-num">38ms</span>',
-          '<span class="t-key">p99_latency</span>   <span class="t-num">142ms</span>',
-          '<span class="t-key">throughput</span>    <span class="t-num">24,000 ops/sec</span> sustained',
-          '<span class="t-key">uptime</span>        <span class="t-num">99.99%</span> across 147 systems',
-          '<span class="t-key">mttr</span>          <span class="t-num">&lt;4 min</span> median',
-          '<span class="t-key">deploy_freq</span>   <span class="t-num">daily</span> per service'
+          '<span class="t-key">performance</span> measured against the actual workload',
+          '<span class="t-key">latency</span>     budget defined with the team',
+          '<span class="t-key">throughput</span>  load-tested before release',
+          '<span class="t-key">reliability</span> failure modes documented and exercised'
         ].join("\n");
       },
       "--architecture": function () {
@@ -373,7 +371,7 @@
         ].join("\n");
       },
       "--contact": function () {
-        return '<span class="t-str">Contact via form</span>  \u2014  2 business day response  \u2014  New York, remote-first';
+        return '<span class="t-str">Contact via form</span>  \u2014  2 business day response  \u2014  Remote-first';
       },
       "help": function () {
         return "available commands:\n  --show-stack\n  --benchmarks\n  --architecture\n  --security\n  --contact\n  clear";
@@ -449,7 +447,7 @@
     /* typewriter startup */
     var lines = [
       '<span class="t-str">VEYRION ARCHITECTURE CONSOLE</span>',
-      'System ready. 147 systems online.',
+      'Architecture notes are ready.',
       'Type a command or click a chip below.',
       'Type <span class="t-dim">"help"</span> for available commands.',
       ''
@@ -879,8 +877,7 @@
     safe(initBackToTop);
     safe(initMobileNav);
     safe(initSmoothScroll);
-    safe(initCursor);
-    safe(initCanvas);
+    // Decorative cursor and ambient canvas intentionally removed.
     safe(initTerminal);
     safe(initArchDiagram);
     safe(initEstimator);

@@ -10,16 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="is-loading">
+<body>
 
   <a class="skip-link" href="#main">Skip to content</a>
-
-  <div class="cursor-dot" aria-hidden="true"></div>
-  <div class="cursor-ring" aria-hidden="true"></div>
-
-  <div class="page-loader" aria-hidden="true">
-    <span class="page-loader__text">VEYRION</span>
-  </div>
 
   <div class="scroll-progress" aria-hidden="true"></div>
 
@@ -39,9 +32,9 @@
       <div class="header__right">
         <span class="header__status">
           <span class="header__dot"></span>
-          OPEN FOR SELECT PROJECTS
+          Studio / engineering
         </span>
-        <a href="#contact" class="header__cta">BOOK ARCHITECTURE CALL</a>
+        <a href="#contact" class="header__cta">Discuss a project</a>
       </div>
       <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span><span></span>
@@ -55,8 +48,6 @@
     <a href="case-studies.html">Case Studies</a>
     <a href="services.html">Services</a>
         <a href="blog.html">Blog</a>
-    <a href="blog.html">Blog</a>
-    <a href="blog.html">Blog</a>
     <a href="about.html">About</a>
     <a href="store.html">Store</a>
         <a href="#contact">Contact</a>
@@ -66,16 +57,14 @@
 
     <!-- ====== HERO ====== -->
     <section class="hero" id="hero">
-      <canvas id="hero-canvas" aria-hidden="true"></canvas>
       <div class="hero__inner">
         <div class="hero__left">
-          <p class="hero__eyebrow">STUDIO / SYSTEMS ARCHITECTURE / EST. 2019</p>
+          <p class="hero__eyebrow">Studio · systems architecture</p>
           <h1 class="hero__title">
-            <span>SOFTWARE</span>
-            <span>BUILT WITHOUT</span>
-            <span>COMPROMISE.</span>
+            <span>Systems that</span>
+            <span>fit the work.</span>
           </h1>
-          <p class="hero__body">Veyrion architects bespoke software systems for companies whose technical requirements have exceeded conventional tools. We design, build, and operate infrastructure that agencies cannot ship and platforms will not customize.</p>
+          <p class="hero__body">We design and build custom applications, backend platforms and automation around the constraints your existing tools cannot handle. From data boundaries to operator interfaces, every part has a reason to exist.</p>
           <div class="hero__actions">
             <a href="#capabilities" class="btn btn--primary">Explore Capabilities</a>
             <a href="#contact" class="btn">Schedule Briefing</a>
@@ -83,22 +72,10 @@
         </div>
         <div class="hero__right">
           <ul class="hero__metrics">
-            <li>
-              <span class="metric__value" data-count="99.99" data-suffix="%">99.99%</span>
-              <span class="metric__label">Reliability</span>
-            </li>
-            <li>
-              <span class="metric__value">&lt;50ms</span>
-              <span class="metric__label">Typical Latency</span>
-            </li>
-            <li>
-              <span class="metric__value">24/7</span>
-              <span class="metric__label">Observability</span>
-            </li>
-            <li>
-              <span class="metric__value" data-count="100" data-suffix="%">100%</span>
-              <span class="metric__label">Bespoke</span>
-            </li>
+            <li><span class="metric__value">Design</span><span class="metric__label">Start with constraints</span></li>
+            <li><span class="metric__value">Build</span><span class="metric__label">Fit the domain</span></li>
+            <li><span class="metric__value">Operate</span><span class="metric__label">Make systems observable</span></li>
+            <li><span class="metric__value">Improve</span><span class="metric__label">Measure real workloads</span></li>
           </ul>
 
           <!-- TERMINAL -->
@@ -136,26 +113,14 @@
       </div>
     </section>
 
-    <!-- ====== STATUS ====== -->
+    <!-- ====== ENGINEERING POSTURE ====== -->
     <section class="section" style="padding:48px var(--gutter);">
       <div class="section__inner">
-        <div class="status-dash">
-          <div class="status-card">
-            <span class="status-card__label">STATUS</span>
-            <span class="status-card__value status-card__value--ok">All systems operational</span>
-          </div>
-          <div class="status-card">
-            <span class="status-card__label">UPTIME</span>
-            <span class="status-card__value">99.99%</span>
-          </div>
-          <div class="status-card">
-            <span class="status-card__label">RESPONSE TIME</span>
-            <span class="status-card__value">38ms p50</span>
-          </div>
-          <div class="status-card">
-            <span class="status-card__label">ERROR BUDGET</span>
-            <span class="status-card__value">98.2% remaining</span>
-          </div>
+        <div class="status-dash" aria-label="Engineering principles">
+          <div class="status-card"><span class="status-card__label">Security</span><span class="status-card__value">Threat models, access rules and audit trails are designed in.</span></div>
+          <div class="status-card"><span class="status-card__label">Observability</span><span class="status-card__value">Logs, traces and metrics are part of the delivery.</span></div>
+          <div class="status-card"><span class="status-card__label">Ownership</span><span class="status-card__value">Clear boundaries for the teams that run the system.</span></div>
+          <div class="status-card"><span class="status-card__label">Performance</span><span class="status-card__value">Budgets are set against the workload, not a template.</span></div>
         </div>
       </div>
     </section>
@@ -163,7 +128,7 @@
     <!-- ====== CAPABILITIES ====== -->
     <section class="section" id="capabilities">
       <div class="section__inner">
-        <p class="section__label">01 / CAPABILITIES</p>
+        <p class="section__label">01 / Capabilities</p>
         <h2 class="section__title">What we actually build</h2>
         <div class="bento">
           <article class="bento-card bento-card--wide">
@@ -209,7 +174,7 @@
     <!-- ====== ARCHITECTURE ====== -->
     <section class="section section--alt" id="architecture">
       <div class="section__inner">
-        <p class="section__label">02 / SYSTEM ARCHITECTURE</p>
+        <p class="section__label">02 / System architecture</p>
         <h2 class="section__title">Six layers. One system.</h2>
         <div class="arch" id="arch-diagram">
           <div class="arch__layers">
@@ -268,7 +233,7 @@
     <!-- ====== SERVICES ====== -->
     <section class="section" id="services">
       <div class="section__inner">
-        <p class="section__label">03 / SERVICES</p>
+        <p class="section__label">03 / Services</p>
         <h2 class="section__title">Engagement surfaces</h2>
         <div class="services-list">
           <details class="service-item" open>
@@ -434,7 +399,7 @@
     <!-- ====== STACK MARQUEE ====== -->
     <section class="section" id="stack">
       <div class="section__inner">
-        <p class="section__label">05 / STACK</p>
+        <p class="section__label">05 / Tools</p>
         <h2 class="section__title">Tools we reach for first</h2>
         <div class="stack-marquee">
           <div class="stack-marquee__track">
@@ -452,7 +417,7 @@
     <!-- ====== BUILDS ====== -->
     <section class="section section--alt" id="builds">
       <div class="section__inner">
-        <p class="section__label">06 / REPRESENTATIVE BUILDS</p>
+        <p class="section__label">06 / Representative builds</p>
         <p class="builds-eyebrow">Representative builds. Details composited from real engagement patterns. Not client endorsements.</p>
         <div class="builds-grid">
 
@@ -535,7 +500,7 @@
     <!-- ====== APPROACH ====== -->
     <section class="section" id="approach">
       <div class="section__inner">
-        <p class="section__label">07 / APPROACH</p>
+        <p class="section__label">07 / Approach</p>
         <h2 class="section__title">How an engagement runs</h2>
         <div class="timeline">
           <div class="timeline-step">
@@ -587,7 +552,7 @@
     <!-- ====== PRINCIPLES ====== -->
     <section class="section section--alt" id="principles">
       <div class="section__inner">
-        <p class="section__label">08 / PRINCIPLES</p>
+        <p class="section__label">08 / Principles</p>
         <h2 class="section__title">Non-negotiable engineering</h2>
         <div class="principles-grid">
           <blockquote class="principle">
@@ -615,17 +580,17 @@
       <div class="section__inner">
         <div class="contact-layout">
           <div class="contact-left">
-            <p class="section__label">09 / CONTACT</p>
+            <p class="section__label">09 / Contact</p>
             <h2 class="section__title">Start with an architecture call</h2>
             <p class="contact__sub">45 minutes. Technical conversation, not a sales pitch. We talk about your constraints and whether the work is in our range. If it's not, we'll tell you.</p>
             <div class="contact__details">
               <p><strong>Email</strong> <a href="contact.html">Contact via form</a></p>
               <p><strong>Response</strong> 2 business days</p>
-              <p><strong>Location</strong> New York, remote-first</p>
+              <p><strong>Location</strong> Remote-first</p>
             </div>
             <div class="contact__clock">
               <span class="contact__clock-label">STUDIO TIME</span>
-              <span class="contact__clock-value" id="studio-clock">New York &middot; --:--:-- &middot; --</span>
+              <span class="contact__clock-value" id="studio-clock">Remote-first</span>
             </div>
             <button type="button" class="btn btn--copy-email" id="copy-email">Contact us</button>
             <div class="toast" id="toast" aria-live="polite"></div>
@@ -692,7 +657,6 @@
         <a href="case-studies.html">Case Studies</a>
         <a href="services.html">Services</a>
         <a href="blog.html">Blog</a>
-    <a href="blog.html">Blog</a>
         <a href="process.html">Process</a>
         <a href="about.html">About</a>
         <a href="store.html">Store</a>
