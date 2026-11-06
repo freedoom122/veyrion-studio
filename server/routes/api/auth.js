@@ -8,18 +8,18 @@ const { authLimiter } = require('../../middleware/rateLimiter');
 const { z } = require('zod');
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
+  email: z.string().trim().email().max(254),
+  password: z.string().min(1).max(200),
+});
+const registerSchema = z.object({
+  email: z.string().trim().email().max(254),
+  password: z.string().min(14).max(200),
+  name: z.string().trim().min(2).max(100),
+  company: z.string().trim().min(2).max(120),
+  phone: z.string().trim().max(40).optional(),
 });
 
-// Public customer account creation is disabled. The configured owner is
-// activated only through the private, one-time admin setup flow.
-router.post('/register', (req, res) => {
-  res.status(403).json({
-    success: false,
-    error: { code: 'REGISTRATION_DISABLED', message: 'Public account registration is disabled.' },
-  });
-});
+router.post('/register', authLimiter, validate(registerSchema), authController.register);
 router.post('/login', authLimiter, validate(loginSchema), authController.login);
 router.post('/refresh', authController.refreshToken);
 router.post('/logout', requireAuth, authController.logout);

@@ -27,6 +27,7 @@
         <a href="contact.html" class="is-active">Contact</a>
       </nav>
       <div class="header__right">
+        <div class="auth-nav" id="auth-nav"><button class="header__auth" id="auth-open" type="button">Sign in</button><button class="header__auth header__auth--primary" id="signup-open" type="button">Create account</button><button class="header__auth" id="auth-logout" type="button" hidden>Sign out</button></div>
         <a href="contact.html" class="header__cta">BOOK ARCHITECTURE CALL</a>
       </div>
       <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -186,5 +187,6 @@
   </footer>
 
   <script src="app.js" defer></script>
+  <div class="auth-modal" id="auth-modal" hidden><div class="auth-modal__backdrop" data-auth-close></div><section class="auth-modal__card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title"><button class="auth-modal__close" type="button" data-auth-close aria-label="Close">×</button><p class="section__label" id="auth-modal-mode">ACCOUNT ACCESS</p><h2 id="auth-modal-title">Welcome to Veyrion.</h2><p class="auth-modal__sub" id="auth-modal-sub">Sign in to send a project brief.</p><form id="auth-login-form" class="auth-form"><div class="field"><label>Email</label><input id="auth-email" type="email" autocomplete="email" required></div><div class="field"><label>Password</label><input id="auth-password" type="password" autocomplete="current-password" required></div><button class="btn btn--primary" type="submit">Sign in</button><p class="auth-error" id="auth-login-error"></p></form><form id="auth-signup-form" class="auth-form" hidden><div class="field"><label>Name</label><input id="auth-name" type="text" autocomplete="name" minlength="2" required></div><div class="field"><label>Work email</label><input id="auth-signup-email" type="email" autocomplete="email" required></div><div class="field"><label>Company</label><input id="auth-company" type="text" autocomplete="organization" minlength="2" required></div><div class="field"><label>Password</label><input id="auth-signup-password" type="password" autocomplete="new-password" minlength="14" required></div><button class="btn btn--primary" type="submit">Create account</button><p class="auth-error" id="auth-signup-error"></p></form><button class="auth-switch" id="auth-switch" type="button">Need an account? Create one</button><p class="auth-modal__note">Account required for enquiries. This helps prevent spam and keeps your project history attached to you.</p></section></div>
 </body>
 </html>

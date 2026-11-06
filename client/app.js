@@ -15,6 +15,20 @@
   var hasST = hasGSAP && typeof ScrollTrigger !== "undefined";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var coarse = window.matchMedia("(pointer: coarse)").matches;
+  var CUSTOMER_TOKEN_KEY = "veyrion_customer_token";
+  function customerToken(){try{return sessionStorage.getItem(CUSTOMER_TOKEN_KEY)||"";}catch(_){return "";}}
+  function setCustomerToken(t){try{sessionStorage.setItem(CUSTOMER_TOKEN_KEY,t);}catch(_){}}
+  function clearCustomerToken(){try{sessionStorage.removeItem(CUSTOMER_TOKEN_KEY);}catch(_){}}
+  function authHeaders(h){h=h||{};var t=customerToken();if(t)h.Authorization="Bearer "+t;return h;}
+  function openAuth(mode){var m=$("#auth-modal");if(!m)return;m.hidden=false;var s=mode==="signup";$("#auth-login-form").hidden=s;$("#auth-signup-form").hidden=!s;$("#auth-modal-mode").textContent=s?"CREATE ACCOUNT":"ACCOUNT ACCESS";$("#auth-modal-title").textContent=s?"Create your Veyrion account.":"Welcome back.";$("#auth-modal-sub").textContent=s?"Create an account before sending a project brief.":"Sign in to send a project brief.";$("#auth-switch").textContent=s?"Already have an account? Sign in":"Need an account? Create one";setTimeout(function(){(s?$("#auth-name"):$("#auth-email")).focus();},30);}
+  function closeAuth(){var m=$("#auth-modal");if(m)m.hidden=true;}
+  function updateAuthNav(){var t=customerToken(),a=$("#auth-open"),s=$("#signup-open"),l=$("#auth-logout");if(a)a.hidden=!!t;if(s)s.hidden=!!t;if(l)l.hidden=!t;}
+  function authApi(path,opts){opts=opts||{};opts.headers=authHeaders(Object.assign({"Content-Type":"application/json"},opts.headers||{}));return fetch(API_BASE+"/api/v1/auth"+path,opts).then(function(r){return r.json().catch(function(){return {};}).then(function(d){if(!r.ok){var e=new Error((d.error&&d.error.message)||"Authentication failed.");e.status=r.status;throw e;}return d.data||d;});});}
+  function requireCustomerAuth(){if(customerToken())return true;openAuth("login");return false;}
+  function initCustomerAuth(){if(!$("#auth-modal"))return;updateAuthNav();$("#auth-open")&&$("#auth-open").addEventListener("click",function(){openAuth("login");});$("#signup-open")&&$("#signup-open").addEventListener("click",function(){openAuth("signup");});$("#auth-logout")&&$("#auth-logout").addEventListener("click",function(){clearCustomerToken();updateAuthNav();});$$(".auth-modal [data-auth-close]").forEach(function(x){x.addEventListener("click",closeAuth);});$("#auth-switch").addEventListener("click",function(){openAuth($("#auth-signup-form").hidden?"signup":"login");});
+    $("#auth-login-form").addEventListener("submit",function(e){e.preventDefault();$("#auth-login-error").textContent="";authApi("/login",{method:"POST",body:JSON.stringify({email:$("#auth-email").value.trim(),password:$("#auth-password").value})}).then(function(d){setCustomerToken(d.token);updateAuthNav();closeAuth();}).catch(function(e){$("#auth-login-error").textContent=e.message;});});
+    $("#auth-signup-form").addEventListener("submit",function(e){e.preventDefault();$("#auth-signup-error").textContent="";authApi("/register",{method:"POST",body:JSON.stringify({name:$("#auth-name").value.trim(),email:$("#auth-signup-email").value.trim(),company:$("#auth-company").value.trim(),password:$("#auth-signup-password").value})}).then(function(d){setCustomerToken(d.token);updateAuthNav();closeAuth();}).catch(function(e){$("#auth-signup-error").textContent=e.message;});});
+  }
 
   var $ = function (s, p) { return (p || document).querySelector(s); };
   var $$ = function (s, p) { return Array.prototype.slice.call((p || document).querySelectorAll(s)); };
@@ -414,6 +428,7 @@
       return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
+    form.dataset.startedAt = String(Date.now());
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       run(input.value);
@@ -656,14 +671,20 @@
         website: form.elements.website ? form.elements.website.value : ""
       };
 
+      if (!requireCustomerAuth()) {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+        return;
+      }
+
       fetch(API_BASE + "/api/v1/bookings", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders({ "Content-Type": "application/json", "X-Form-Started-At": String(form.dataset.startedAt || Date.now()) }),
         body: JSON.stringify(payload)
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (data) {
           if (!res.ok || !data.success) {
-            throw new Error(data.message || "We could not send your request. Please try again.");
+            if (res.status === 401) { clearCustomerToken(); updateAuthNav(); openAuth("login"); }
+            throw new Error((data.error && data.error.message) || data.message || "We could not send your request. Please try again.");
           }
           return data;
         });

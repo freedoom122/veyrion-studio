@@ -10,15 +10,17 @@ const authController = {
   async register(req, res, next) {
     try {
       const { email, password, name, company, phone } = req.body;
+      const normalizedEmail = String(email || '').trim().toLowerCase();
+      if (!normalizedEmail || String(password || '').length < 14) return res.status(400).json({ success: false, error: { code: 'WEAK_PASSWORD', message: 'Use a password with at least 14 characters.' } });
 
-      if (User.findByEmail(email)) {
+      if (User.findByEmail(normalizedEmail)) {
         return res.status(409).json({
           success: false,
           error: { code: 'EMAIL_EXISTS', message: 'An account with this email already exists' }
         });
       }
 
-      const user = User.create({ email, password, name, company, phone });
+      const user = User.create({ email: normalizedEmail, password, name: String(name || '').trim(), company: String(company || '').trim(), phone: String(phone || '').trim() || null });
       const token = generateToken(user);
       const refreshToken = generateRefreshToken(user);
 
@@ -49,8 +51,9 @@ const authController = {
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
+      const normalizedEmail = String(email || '').trim().toLowerCase();
 
-      const user = User.findByEmail(email);
+      const user = User.findByEmail(normalizedEmail);
       if (!user || !User.verifyPassword(user, password)) {
         return res.status(401).json({
           success: false,
