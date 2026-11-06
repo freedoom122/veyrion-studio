@@ -1,24 +1,10 @@
 const { getDb } = require('../config/database');
 const db = getDb();
-const bcrypt = require('bcryptjs');
 
 function seed() {
   console.log('[DB] Seeding database...');
 
-  const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(process.env.ADMIN_EMAIL || 'admin@example.com');
-
-  if (!existingAdmin) {
-    const passwordHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'CHANGE_ME_TO_A_STRONG_PASSWORD', 12);
-    db.prepare(`
-      INSERT INTO users (email, password_hash, name, role, email_verified)
-      VALUES (?, ?, ?, 'superadmin', 1)
-    `).run(
-      process.env.ADMIN_EMAIL || 'admin@example.com',
-      passwordHash,
-      'Studio Admin'
-    );
-    console.log('[DB] Default admin created.');
-  }
+  // Owner accounts are activated only through the one-time, allowlisted admin setup flow.
 
   // Seed categories
   const categories = [

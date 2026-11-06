@@ -30,8 +30,10 @@ async function main() {
   // Database setup
   const { migrate } = require('./server/database/migrate');
   const { seed } = require('./server/database/seed');
+  const { migrateSecureAdmin } = require('./server/database/secureAdmin');
   migrate();
   seed();
+  migrateSecureAdmin();
 
   const app = express();
   app.set('trust proxy', 1);
@@ -72,10 +74,7 @@ async function main() {
   app.use('/api/v1/', apiLimiter);
 
   // API routes
-  // Google OAuth
-  const googleAuthRoutes = require('./server/routes/auth/google');
-  app.use('/auth/google', googleAuthRoutes);
-
+  // Google OAuth admin login is disabled until verified token handling is implemented.
   app.use('/api/v1', apiRoutes);
 
   // Webhook routes (raw body for Stripe)

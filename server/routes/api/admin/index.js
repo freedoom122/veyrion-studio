@@ -1,323 +1,140 @@
+
 const express = require('express');
+const rateLimit = require('express-rate-limit');
+const { getDb } = require('../../../config/database');
+const { sendEmail, isEmailConfigured } = require('../../../config/email');
+const adminAuth = require('../../../controllers/adminAuthController');
+const { requireAdminSession, requirePasswordChanged, requireSameOrigin } = require('../../../middleware/adminSession');
+
 const router = express.Router();
-const adminController = require('../../../controllers/adminController');
-const { requireAuth, requireRole } = require('../../../middleware/auth');
-const authController = require('../../../controllers/authController');
-const validate = require('../../../middleware/validate');
-const { z } = require('zod');
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 6,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: { code: 'RATE_LIMITED', message: 'Too many attempts. Try again later.' } },
 });
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[character]);
+}
+function ensureBookingsTable(db) {
+  db.exec(
+    "CREATE TABLE IF NOT EXISTS call_bookings (" +
+    "id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, company TEXT NOT NULL, " +
+    "project_type TEXT NOT NULL, brief TEXT NOT NULL, preferred_date TEXT NOT NULL, " +
+    "preferred_time TEXT NOT NULL, timezone TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', " +
+    "notification_status TEXT NOT NULL DEFAULT 'pending', ip TEXT, user_agent TEXT, " +
+    "created_at TEXT NOT NULL DEFAULT (datetime('now')))"
+  );
+}
+router.use(requireSameOrigin);
 
-const settingSchema = z.object({
-  key: z.string().min(1),
-  value: z.string(),
-});
+router.get('/setup-status', adminAuth.setupStatus);
+router.post('/setup', authLimiter, adminAuth.setup);
+router.post('/login', authLimiter, adminAuth.login);
+router.post('/forgot-password', authLimiter, adminAuth.forgotPassword);
+router.post('/reset-password', authLimiter, adminAuth.resetPassword);
 
-const userUpdateSchema = z.object({
-  name: z.string().min(2).optional(),
-  role: z.enum(['customer', 'admin', 'superadmin']).optional(),
-  company: z.string().optional(),
-  phone: z.string().optional(),
-  timezone: z.string().optional(),
-});
+router.get('/me', requireAdminSession, adminAuth.me);
+router.post('/logout', requireAdminSession, adminAuth.logout);
+router.post('/change-password', requireAdminSession, adminAuth.changePassword);
 
-// Admin login (no auth required)
-router.post('/login', validate(loginSchema), authController.login);
+router.use(requireAdminSession, requirePasswordChanged);
 
-// All routes below require admin auth
-router.use(requireAuth, requireRole('admin', 'superadmin'));
-
-// Dashboard
-router.get('/dashboard', adminController.dashboard);
-
-// Users
-router.get('/users', adminController.listUsers);
-router.get('/users/:id', adminController.getUser);
-router.put('/users/:id', validate(userUpdateSchema), adminController.updateUser);
-router.post('/users/:id/ban', adminController.banUser);
-router.post('/users/:id/unban', adminController.unbanUser);
-
-// Products (re-use product routes)
-const productController = require('../../../controllers/productController');
-const { uploadProductFile, uploadThumbnail } = require('../../../middleware/upload');
-
-router.get('/products', productController.adminList);
-router.get('/products/:id', productController.adminDetail);
-router.post('/products', productController.create);
-router.put('/products/:id', productController.update);
-router.delete('/products/:id', productController.delete);
-router.post('/products/:id/upload', uploadProductFile.single('file'), (req, res) => {
-  res.json({ success: true, data: { file_path: req.file.path, filename: req.file.filename } });
-});
-router.post('/products/:id/thumbnail', uploadThumbnail.single('file'), (req, res) => {
-  res.json({ success: true, data: { thumbnail: req.file.path, filename: req.file.filename } });
-});
-
-// Orders
-const orderController = require('../../../controllers/orderController');
-router.get('/orders', adminController.listOrders);
-router.get('/orders/:id', adminController.getOrder);
-router.put('/orders/:id', adminController.updateOrder);
-
-// Licenses
-router.get('/licenses', adminController.listLicenses);
-router.put('/licenses/:id/revoke', adminController.revokeLicense);
-
-// Tickets
-const ticketController = require('../../../controllers/ticketController');
-router.get('/tickets', ticketController.adminList);
-router.put('/tickets/:id/status', ticketController.adminUpdateStatus);
-
-// Settings
-router.get('/settings', adminController.getSettings);
-router.put('/settings', requireRole('superadmin'), validate(settingSchema), adminController.updateSetting);
-
-// Audit logs (superadmin only)
-router.get('/logs', requireRole('superadmin'), adminController.getAuditLogs);
-
-// Change user password (superadmin only)
-router.put('/users/:id/password', requireRole('superadmin'), (req, res, next) => {
+router.get('/dashboard', (req, res, next) => {
   try {
-    const { password } = req.body;
-    if (!password || password.length < 8) {
-      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Password must be at least 8 characters' } });
-    }
-    const User = require('../../../models/User');
-    const user = User.changePassword(parseInt(req.params.id), password);
-    if (!user) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'User not found' } });
-    const { getDb } = require('../../../config/database');
     const db = getDb();
-    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, ip_address) VALUES (?, 'change_password', 'user', ?, ?)`).run(req.user.id, user.id, req.ip);
-    res.json({ success: true, data: { id: user.id, email: user.email, message: 'Password updated' } });
-  } catch (err) { next(err); }
+    ensureBookingsTable(db);
+    const scalar = (sql) => db.prepare(sql).get().count || 0;
+    const stats = {
+      customers: scalar("SELECT COUNT(*) AS count FROM users WHERE role = 'customer'"),
+      totalCalls: scalar('SELECT COUNT(*) AS count FROM call_bookings'),
+      pendingCalls: scalar("SELECT COUNT(*) AS count FROM call_bookings WHERE status IN ('pending','pending_confirmation')"),
+      confirmedCalls: scalar("SELECT COUNT(*) AS count FROM call_bookings WHERE status = 'confirmed'"),
+      totalOrders: scalar('SELECT COUNT(*) AS count FROM orders'),
+    };
+    stats.recentCalls = db.prepare(
+      'SELECT id, name, email, company, preferred_date, preferred_time, timezone, status, created_at FROM call_bookings ORDER BY created_at DESC LIMIT 6'
+    ).all();
+    res.json({ success: true, data: stats });
+  } catch (error) { next(error); }
 });
 
-// Change user role (superadmin only)
-router.put('/users/:id/role', requireRole('superadmin'), (req, res, next) => {
+router.get('/bookings', (req, res, next) => {
   try {
-    const { role } = req.body;
-    const User = require('../../../models/User');
-    const user = User.setRole(parseInt(req.params.id), role);
-    if (!user) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'User not found' } });
-    const { getDb } = require('../../../config/database');
     const db = getDb();
-    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, new_values, ip_address) VALUES (?, 'change_role', 'user', ?, ?, ?)`).run(req.user.id, user.id, JSON.stringify({ role }), req.ip);
-    res.json({ success: true, data: user });
-  } catch (err) { next(err); }
+    ensureBookingsTable(db);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+    const rows = db.prepare(
+      'SELECT id, name, email, company, project_type, brief, preferred_date, preferred_time, timezone, status, notification_status, created_at FROM call_bookings ORDER BY created_at DESC LIMIT ?'
+    ).all(limit);
+    res.json({ success: true, data: rows });
+  } catch (error) { next(error); }
 });
 
-// Create admin user (superadmin only)
-router.post('/create-admin', requireRole('superadmin'), (req, res, next) => {
+router.put('/bookings/:id/status', async (req, res, next) => {
   try {
-    const { email, password, name } = req.body;
-    if (!email || !password || !name) {
-      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Email, password, and name are required' } });
+    const status = String(req.body.status || '');
+    const allowed = ['pending_confirmation', 'confirmed', 'declined', 'completed'];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ success: false, error: { code: 'INVALID_STATUS', message: 'Choose a valid call request status.' } });
     }
-    const User = require('../../../models/User');
-    const existing = User.findByEmail(email);
-    if (existing) {
-      return res.status(409).json({ success: false, error: { code: 'CONFLICT', message: 'Email already exists' } });
-    }
-    const user = User.createAdmin({ email, password, name });
-    const { getDb } = require('../../../config/database');
     const db = getDb();
-    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, new_values, ip_address) VALUES (?, 'create_admin', 'user', ?, ?, ?)`).run(req.user.id, user.id, JSON.stringify({ email, name }), req.ip);
-    res.json({ success: true, data: { id: user.id, email: user.email, name: user.name, role: user.role } });
-  } catch (err) { next(err); }
-});
-
-// Google OAuth login (restricted to admin@example.com)
-router.post('/google-login', async (req, res, next) => {
-  try {
-    const { credential } = req.body;
-    if (!credential) {
-      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Google credential required' } });
+    ensureBookingsTable(db);
+    const booking = db.prepare('SELECT * FROM call_bookings WHERE id = ?').get(String(req.params.id));
+    if (!booking) {
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Call request not found.' } });
     }
-
-    // Decode the JWT token from Google (no verification needed for email extraction)
-    const parts = credential.split('.');
-    if (parts.length !== 3) {
-      return res.status(400).json({ success: false, error: { code: 'INVALID_TOKEN', message: 'Invalid Google token' } });
-    }
-
-    let payload;
-    try {
-      payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
-    } catch (e) {
-      return res.status(400).json({ success: false, error: { code: 'INVALID_TOKEN', message: 'Cannot decode Google token' } });
-    }
-
-    const email = payload.email;
-    const allowedEmail = process.env.ADMIN_GOOGLE_EMAIL || 'admin@example.com';
-
-    if (email !== allowedEmail) {
-      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Only ' + allowedEmail + ' can access the admin panel' } });
-    }
-
-    // Find or create the user
-    const User = require('../../../models/User');
-    let user = User.findByEmail(email);
-    if (!user) {
-      user = User.create({
-        email,
-        password: require('crypto').randomBytes(32).toString('hex'),
-        name: payload.name || email.split('@')[0],
-        role: 'superadmin',
-      });
-    } else if (user.role !== 'admin' && user.role !== 'superadmin') {
-      // Promote to superadmin if they're the allowed Google user
-      user = User.setRole(user.id, 'superadmin');
-    }
-
-    const { generateToken } = require('../../../middleware/auth');
-    const token = generateToken(user);
-
-    const { getDb } = require('../../../config/database');
-    const db = getDb();
-    db.prepare(`INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, ip_address) VALUES (?, 'google_login', 'user', ?, ?)`).run(user.id, user.id, req.ip);
-
-    res.json({
-      success: true,
-      data: {
-        token,
-        user: { id: user.id, email: user.email, name: user.name, role: user.role }
-      }
-    });
-  } catch (err) { next(err); }
-});
-
-// Coupons
-router.get('/coupons', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
-    const offset = (page - 1) * limit;
-    const total = db.prepare('SELECT COUNT(*) as count FROM coupons').get().count;
-    const rows = db.prepare('SELECT * FROM coupons ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
-    res.json({ success: true, data: rows, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } });
-  } catch (err) { console.error('[ADMIN] Coupons error:', err.message); res.json({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } }); }
-});
-
-router.post('/coupons', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
-  try {
-    const { code, discount_type, discount_value, max_uses, min_order_amount, expires_at } = req.body;
-    if (!code || !discount_type || discount_value === undefined) {
-      return res.status(400).json({ success: false, error: { code: 'VALIDATION', message: 'Code, type, and value are required' } });
-    }
-    const result = db.prepare(
-      'INSERT INTO coupons (code, discount_type, discount_value, max_uses, min_order_amount, expires_at) VALUES (?, ?, ?, ?, ?, ?)'
-    ).run(code.toUpperCase(), discount_type, discount_value, max_uses || null, min_order_amount || 0, expires_at || null);
-    res.json({ success: true, data: { id: result.lastInsertRowid, code: code.toUpperCase() } });
-  } catch (err) {
-    if (err.message && err.message.includes('UNIQUE')) {
-      return res.status(409).json({ success: false, error: { code: 'CONFLICT', message: 'Coupon code already exists' } });
-    }
-    console.error('[ADMIN] Create coupon error:', err.message);
-    next(err);
-  }
-});
-
-router.put('/coupons/:id', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
-  try {
-    const { code, discount_type, discount_value, max_uses, min_order_amount, expires_at, is_active } = req.body;
+    db.prepare('UPDATE call_bookings SET status = ? WHERE id = ?').run(status, booking.id);
     db.prepare(
-      'UPDATE coupons SET code=COALESCE(?,code), discount_type=COALESCE(?,discount_type), discount_value=COALESCE(?,discount_value), max_uses=COALESCE(?,max_uses), min_order_amount=COALESCE(?,min_order_amount), expires_at=COALESCE(?,expires_at), is_active=COALESCE(?,is_active) WHERE id=?'
-    ).run(code ? code.toUpperCase() : null, discount_type, discount_value, max_uses, min_order_amount, expires_at, is_active, parseInt(req.params.id));
-    const coupon = db.prepare('SELECT * FROM coupons WHERE id = ?').get(parseInt(req.params.id));
-    res.json({ success: true, data: coupon });
-  } catch (err) { console.error('[ADMIN] Update coupon error:', err.message); next(err); }
+      "INSERT INTO admin_logs (admin_id, action, entity_type, entity_id, new_values, ip_address, user_agent) " +
+      "VALUES (?, 'booking_status_changed', 'call_booking', NULL, ?, ?, ?)"
+    ).run(req.user.id, JSON.stringify({ bookingId: booking.id, status }), req.ip || '', String(req.get('user-agent') || '').slice(0, 500));
+
+    if (isEmailConfigured() && (status === 'confirmed' || status === 'declined')) {
+      const confirmed = status === 'confirmed';
+      const subject = confirmed ? 'Your Veyrion call is confirmed' : 'An update about your Veyrion call request';
+      const detail = confirmed
+        ? 'Your 45-minute call is confirmed for ' + booking.preferred_date + ' at ' + booking.preferred_time + ' (' + booking.timezone + ').'
+        : 'We cannot confirm the requested time of ' + booking.preferred_date + ' at ' + booking.preferred_time + ' (' + booking.timezone + '). Please reply to arrange another time.';
+      try {
+        await sendEmail({
+          to: booking.email,
+          subject,
+          text: 'Hi ' + booking.name + ',\n\n' + detail + '\n\nVeyrion Studio',
+          html: '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:28px;color:#202630"><p>Hi ' +
+            escapeHtml(booking.name) + ',</p><p>' + escapeHtml(detail) + '</p><p>Veyrion Studio</p></div>',
+          replyTo: process.env.ADMIN_EMAIL,
+        });
+      } catch (mailError) {
+        console.error('[ADMIN] Booking status email failed:', mailError.message);
+      }
+    }
+    res.json({ success: true, data: { id: booking.id, status } });
+  } catch (error) { next(error); }
 });
 
-router.delete('/coupons/:id', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
+router.get('/customers', (req, res, next) => {
   try {
-    db.prepare('DELETE FROM coupons WHERE id = ?').run(parseInt(req.params.id));
-    res.json({ success: true, message: 'Coupon deleted' });
-  } catch (err) { console.error('[ADMIN] Delete coupon error:', err.message); next(err); }
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+    const rows = getDb().prepare(
+      "SELECT id, email, name, company, phone, created_at, last_login, is_banned FROM users " +
+      "WHERE role = 'customer' ORDER BY created_at DESC LIMIT ?"
+    ).all(limit);
+    res.json({ success: true, data: rows });
+  } catch (error) { next(error); }
 });
 
-// Subscribers
-router.get('/subscribers', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
+router.get('/activity', (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
-    const offset = (page - 1) * limit;
-    const total = db.prepare('SELECT COUNT(*) as count FROM subscribers').get().count;
-    const rows = db.prepare('SELECT * FROM subscribers ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
-    res.json({ success: true, data: rows, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } });
-  } catch (err) { console.error('[ADMIN] Subscribers error:', err.message); res.json({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } }); }
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 100);
+    const rows = getDb().prepare(
+      'SELECT id, action, entity_type, entity_id, ip_address, created_at FROM admin_logs ORDER BY created_at DESC LIMIT ?'
+    ).all(limit);
+    res.json({ success: true, data: rows });
+  } catch (error) { next(error); }
 });
-
-router.put('/subscribers/:id/toggle', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
-  try {
-    const sub = db.prepare('SELECT * FROM subscribers WHERE id = ?').get(parseInt(req.params.id));
-    if (!sub) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Subscriber not found' } });
-    db.prepare('UPDATE subscribers SET is_active = ? WHERE id = ?').run(sub.is_active ? 0 : 1, sub.id);
-    res.json({ success: true, data: { id: sub.id, is_active: sub.is_active ? 0 : 1 } });
-  } catch (err) { console.error('[ADMIN] Toggle subscriber error:', err.message); next(err); }
-});
-
-router.delete('/subscribers/:id', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
-  try {
-    db.prepare('DELETE FROM subscribers WHERE id = ?').run(parseInt(req.params.id));
-    res.json({ success: true, message: 'Subscriber removed' });
-  } catch (err) { console.error('[ADMIN] Delete subscriber error:', err.message); next(err); }
-});
-
-// Contact submissions
-router.get('/contact-submissions', (req, res) => {
-  const { getDb } = require('../../../config/database');
-  const db = getDb();
-  try {
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS contact_submissions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        company TEXT NOT NULL,
-        project_type TEXT,
-        brief TEXT NOT NULL,
-        ip TEXT,
-        user_agent TEXT,
-        created_at TEXT DEFAULT (datetime('now'))
-      )
-    `).run();
-
-    const page = parseInt(req.query.page) || 1;
-    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
-    const offset = (page - 1) * limit;
-
-    const total = db.prepare('SELECT COUNT(*) as count FROM contact_submissions').get().count;
-    const rows = db.prepare('SELECT * FROM contact_submissions ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
-
-    res.json({
-      success: true,
-      data: rows,
-      meta: { page, limit, total, totalPages: Math.ceil(total / limit) }
-    });
-  } catch (err) {
-    console.error('[ADMIN] Contact submissions error:', err.message);
-    res.json({ success: true, data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } });
-  }
-});
-
-// Backup (superadmin only)
-router.post('/backup', requireRole('superadmin'), adminController.triggerBackup);
 
 module.exports = router;

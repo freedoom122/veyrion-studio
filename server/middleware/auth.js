@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const { getDb } = require('../config/database');
 const db = getDb();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) throw new Error('JWT_SECRET must be configured.');
 
 function generateToken(user) {
   return jwt.sign(
@@ -13,9 +14,10 @@ function generateToken(user) {
 }
 
 function generateRefreshToken(user) {
+  if (!process.env.REFRESH_TOKEN_SECRET) throw new Error('REFRESH_TOKEN_SECRET must be configured.');
   return jwt.sign(
     { id: user.id, type: 'refresh' },
-    process.env.REFRESH_TOKEN_SECRET || 'dev-refresh-secret',
+    process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || '7d' }
   );
 }

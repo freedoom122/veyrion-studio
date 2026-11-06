@@ -1,103 +1,116 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Veyrion Admin</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="same-origin">
+  <title>Veyrion — Private Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin/css/admin.css">
-
 </head>
 <body>
-  <div id="app">
-    <!-- Login Screen -->
-    <div id="login-screen" class="login-screen">
-      <div class="login-card">
-        <img src="/admin/assets/logo.png" alt="Veyrion" class="login-logo">
-        <h1>Admin Panel</h1>
-
-        <!-- Google OAuth Button -->
-        <div class="google-btn-wrap">
-          <a href="/auth/google" class="btn-google">
-            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-            Sign in with Google
-          </a>
-        </div>
-
-        <div class="login-divider"><span>or</span></div>
-
-        <form id="login-form">
-          <div class="field">
-            <label for="login-email">Email</label>
-            <input type="email" id="login-email" required>
-          </div>
-          <div class="field">
-            <label for="login-password">Password</label>
-            <input type="password" id="login-password" required>
-          </div>
-          <div id="login-error" class="error-msg" hidden></div>
-          <button type="submit" class="btn btn-primary btn-full">Sign In</button>
-        </form>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main id="auth-shell" class="auth-shell">
+    <section class="auth-brand">
+      <a class="brand" href="/"><span class="brand-mark">V</span><span>VEYRION</span></a>
+      <div class="brand-copy">
+        <p class="eyebrow">PRIVATE WORKSPACE / 001</p>
+        <h1>Control the work.<br><span>Protect the details.</span></h1>
+        <p class="muted">A private operations space for the Veyrion owner.</p>
       </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboard-screen" class="dashboard-screen" hidden>
-      <!-- Sidebar -->
-      <aside id="sidebar" class="sidebar">
-        <img src="/admin/assets/logo.png" alt="Veyrion" class="sidebar-logo">
-        <nav class="sidebar-nav">
-          <a href="#" class="nav-item active" data-page="dashboard">Dashboard</a>
-          <a href="#" class="nav-item" data-page="users">Users</a>
-          <a href="#" class="nav-item" data-page="products">Products</a>
-          <a href="#" class="nav-item" data-page="orders">Orders</a>
-          <a href="#" class="nav-item" data-page="licenses">Licenses</a>
-          <a href="#" class="nav-item" data-page="tickets">Tickets</a>
-          <a href="#" class="nav-item" data-page="contacts">Contact Forms</a>
-          <a href="#" class="nav-item" data-page="coupons">Coupons</a>
-          <a href="#" class="nav-item" data-page="subscribers">Subscribers</a>
-          <a href="#" class="nav-item" data-page="settings">Settings</a>
-          <a href="#" class="nav-item" data-page="logs">Audit Logs</a>
-        </nav>
-        <div class="sidebar-footer">
-          <span class="sidebar-user" id="admin-name">Admin</span>
-          <button class="btn-link" id="logout-btn">Sign Out</button>
+      <div class="auth-foot"><span class="status-dot"></span> OWNER ACCESS ONLY <span>·</span> SECURE SESSION</div>
+    </section>
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-heading">
+          <p class="eyebrow" id="auth-kicker">OWNER ACCESS</p>
+          <h2 id="auth-title">Welcome back.</h2>
+          <p class="muted" id="auth-subtitle">Sign in to your private console.</p>
         </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="main-content">
-        <header class="main-header">
-          <button class="sidebar-toggle" id="sidebar-toggle">&#9776;</button>
-          <h2 id="page-title">Dashboard</h2>
-          <div class="header-actions">
-            <button class="btn btn-sm" id="refresh-btn">Refresh</button>
-          </div>
-        </header>
-
-        <div id="page-content" class="page-content"></div>
-      </main>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div id="toast" class="toast" hidden></div>
-
-  <!-- Modal -->
-  <div id="modal" class="modal" hidden>
-    <div class="modal-backdrop" onclick="window._hideModal()"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modal-title">Modal</h3>
-        <button class="modal-close" onclick="window._hideModal()">&times;</button>
+        <div id="login-view">
+          <form id="login-form" class="stack">
+            <label>Email address<input id="login-email" type="email" autocomplete="username" required></label>
+            <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
+            <button class="primary-btn" type="submit">Sign in <span>↗</span></button>
+            <div class="form-message" id="login-message" aria-live="polite"></div>
+          </form>
+          <div class="auth-links"><button id="forgot-open" class="text-btn" type="button">Forgot password?</button><button id="signup-open" class="text-btn" type="button" hidden>First time? Create owner account</button></div>
+        </div>
+        <div id="setup-view" hidden>
+          <form id="setup-form" class="stack">
+            <label>Owner name<input id="setup-name" type="text" autocomplete="name" minlength="2" maxlength="100" required></label>
+            <label>Owner email<input id="setup-email" type="email" autocomplete="username" required></label>
+            <label>One-time setup key<input id="setup-key" type="password" autocomplete="new-password" required></label>
+            <p class="form-hint">The setup key is configured privately in the Render environment. This activates the single owner account. Public sign-ups are disabled.</p>
+            <button class="primary-btn" type="submit">Activate owner account <span>↗</span></button>
+            <div class="form-message" id="setup-message" aria-live="polite"></div>
+          </form>
+          <div class="auth-links"><button id="back-login-1" class="text-btn" type="button">Back to sign in</button></div>
+        </div>
+        <div id="forgot-view" hidden>
+          <form id="forgot-form" class="stack">
+            <label>Owner email<input id="forgot-email" type="email" autocomplete="email" required></label>
+            <p class="form-hint">A one-time reset link will be sent to the configured owner email. Links expire after 30 minutes.</p>
+            <button class="primary-btn" type="submit">Send reset link <span>↗</span></button>
+            <div class="form-message" id="forgot-message" aria-live="polite"></div>
+          </form>
+          <div class="auth-links"><button id="back-login-2" class="text-btn" type="button">Back to sign in</button></div>
+        </div>
+        <div id="reset-view" hidden>
+          <form id="reset-form" class="stack">
+            <label>New password<input id="reset-password" type="password" autocomplete="new-password" minlength="14" required></label>
+            <label>Confirm new password<input id="reset-confirm" type="password" autocomplete="new-password" minlength="14" required></label>
+            <p class="form-hint">Use at least 14 characters. The reset link is single-use and expires after 30 minutes.</p>
+            <button class="primary-btn" type="submit">Set new password <span>↗</span></button>
+            <div class="form-message" id="reset-message" aria-live="polite"></div>
+          </form>
+        </div>
+        <div id="change-view" hidden>
+          <form id="change-form" class="stack">
+            <label>Temporary/current password<input id="current-password" type="password" autocomplete="current-password" required></label>
+            <label>New password<input id="new-password" type="password" autocomplete="new-password" minlength="14" required></label>
+            <label>Confirm new password<input id="new-password-confirm" type="password" autocomplete="new-password" minlength="14" required></label>
+            <p class="form-hint">Your temporary password must be replaced before the dashboard opens. Choose a unique password with at least 14 characters.</p>
+            <button class="primary-btn" type="submit">Secure my account <span>↗</span></button>
+            <div class="form-message" id="change-message" aria-live="polite"></div>
+          </form>
+          <div class="auth-links"><button id="change-logout" class="text-btn" type="button">Sign out</button></div>
+        </div>
+        <div class="auth-bottom"><span>VEYRION STUDIO</span><span>PRIVATE CONSOLE / BUILD 01</span></div>
       </div>
-      <div id="modal-body" class="modal-body"></div>
-      <div id="modal-footer" class="modal-footer"></div>
-    </div>
-  </div>
+    </section>
+  </main>
 
-  <script src="/admin/js/admin.js"></script>
+  <div id="dashboard" class="dashboard" hidden>
+    <aside class="sidebar">
+      <a class="brand sidebar-brand" href="/"><span class="brand-mark">V</span><span>VEYRION</span></a>
+      <p class="eyebrow sidebar-label">WORKSPACE</p>
+      <nav class="side-nav">
+        <button class="nav-link active" data-page="overview"><span>◫</span> Overview</button>
+        <button class="nav-link" data-page="bookings"><span>◷</span> Call requests <i id="pending-count" class="nav-count">0</i></button>
+        <button class="nav-link" data-page="customers"><span>◎</span> Customers</button>
+        <button class="nav-link" data-page="activity"><span>≡</span> Activity log</button>
+        <button class="nav-link" data-page="security"><span>⌑</span> Security</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="owner-chip"><span class="owner-avatar" id="owner-initial">V</span><span><strong id="owner-name">Owner</strong><small id="owner-email">—</small></span></div>
+        <button id="logout-btn" class="signout-btn">Sign out <span>↗</span></button>
+      </div>
+    </aside>
+    <section class="workspace">
+      <header class="topbar">
+        <div><p class="eyebrow">VEYRION / PRIVATE CONSOLE</p><h1 id="page-title">Overview</h1></div>
+        <div class="top-actions"><span class="secure-pill"><span class="status-dot"></span> SECURE SESSION</span><button id="refresh-btn" class="ghost-btn">Refresh ↻</button></div>
+      </header>
+      <main id="page-content" class="page-content"><div class="loading-state">Loading workspace…</div></main>
+      <footer class="workspace-foot"><span>VEYRION STUDIO</span><span>OWNER AUTHENTICATED SESSION</span></footer>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/admin/js/admin.js" defer></script>
 </body>
 </html>
