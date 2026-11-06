@@ -646,7 +646,7 @@
       }
 
       if (!name.value.trim() || name.value.trim().length < 2) fail(name, "Enter your name.");
-      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.value.trim())) fail(email, "Enter a valid email address.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) fail(email, "Enter a valid email address.");
       if (!company.value.trim() || company.value.trim().length < 2) fail(company, "Enter your company name.");
       if (!type.value) fail(type, "Select a project type.");
       if (!dateInput || !dateInput.value) fail(dateInput, "Choose a preferred date.");
