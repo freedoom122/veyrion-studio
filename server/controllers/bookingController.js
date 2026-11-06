@@ -39,7 +39,11 @@ const bookingController = {
       });
     }
 
-    if (!/^((09|10|11|12|13|14|15|16):(00|30))$/.test(preferredTime) ||
+    const parsedDate = new Date(preferredDate + 'T00:00:00Z');
+    const validDate = !Number.isNaN(parsedDate.getTime()) &&
+      parsedDate.toISOString().slice(0, 10) === preferredDate;
+    if (!validDate ||
+        !/^(?:(09|10|11|12|13|14|15):(00|30)|16:00)$/.test(preferredTime) ||
         !isFutureLocalSlot(preferredDate, preferredTime, timezone)) {
       return res.status(400).json({
         success: false,
