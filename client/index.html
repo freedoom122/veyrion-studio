@@ -13,11 +13,6 @@
 <body>
 
   <a class="skip-link" href="#main">Skip to content</a>
-
-  <div class="page-loader" aria-hidden="true">
-    <span class="page-loader__text">VEYRION</span><span class="page-loader__line"></span><span class="page-loader__meta">SYSTEMS / SOFTWARE / DESIGN</span>
-  </div>
-
   <div class="scroll-progress" aria-hidden="true"></div>
 
   <!-- ====== NAV ====== -->
@@ -59,7 +54,7 @@
 
     <!-- ====== HERO ====== -->
     <section class="hero" id="hero">
-      <canvas id="hero-canvas" aria-hidden="true"></canvas><div class="hero__grid" aria-hidden="true"></div><div class="hero__orb hero__orb--one" aria-hidden="true"></div><div class="hero__orb hero__orb--two" aria-hidden="true"></div>
+      <div class="hero__grid" aria-hidden="true"></div><div class="hero__orb hero__orb--one" aria-hidden="true"></div><div class="hero__orb hero__orb--two" aria-hidden="true"></div>
       <div class="hero__inner">
         <div class="hero__left">
           <p class="hero__eyebrow">INDEPENDENT SOFTWARE STUDIO <span>·</span> REMOTE-FIRST</p>
@@ -628,17 +623,37 @@
                 </select>
                 <p class="field-error" aria-live="polite"></p>
               </div>
+              <div class="booking-fields">
+                <div class="field field--booking">
+                  <label for="cf-date">Preferred date</label>
+                  <input type="date" id="cf-date" name="preferredDate" required>
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+                <div class="field field--booking">
+                  <label for="cf-time">Preferred time</label>
+                  <input type="time" id="cf-time" name="preferredTime" min="09:00" max="16:00" step="1800" required>
+                  <p class="field-help">45-minute call · 09:00–16:00 in your local time</p>
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+              </div>
+
               <div class="field">
                 <label for="cf-brief">Project Brief</label>
                 <textarea id="cf-brief" name="brief" required rows="4" minlength="40"></textarea>
                 <p class="field-error" aria-live="polite"></p>
               </div>
-              <button type="submit" class="btn btn--primary">Request architecture call</button>
-              <p class="contact__legal">We reply within two business days. No retainers sold from this form.</p>
+              <input type="hidden" id="cf-timezone" name="timezone">
+              <div class="form-honeypot" aria-hidden="true">
+                <label for="cf-website">Leave this field empty</label>
+                <input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
+              </div>
+              <p class="form-error" id="form-error" role="alert" hidden></p>
+              <button type="submit" class="btn btn--primary">Request a 45-minute call</button>
+              <p class="contact__legal">Choose a preferred slot. We will confirm the call by email before it is booked.</p>
             </form>
             <div id="form-success" hidden>
-              <h3>Brief received.</h3>
-              <p>A partner will reply within two business days. If the work is outside our range, we will say so plainly.</p>
+              <h3>Call request received.</h3>
+              <p>Your preferred time has been sent to the studio. The call is not confirmed until you receive a confirmation email.</p>
               <button type="button" data-reset-form class="btn btn--sm">Send another brief</button>
             </div>
           </div>

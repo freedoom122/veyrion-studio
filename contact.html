@@ -23,8 +23,6 @@
         <a href="case-studies.html">Case Studies</a>
         <a href="services.html">Services</a>
         <a href="blog.html">Blog</a>
-    <a href="blog.html">Blog</a>
-        <a href="blog.html">Blog</a>
         <a href="about.html">About</a>
         <a href="contact.html" class="is-active">Contact</a>
       </nav>
@@ -43,7 +41,6 @@
     <a href="case-studies.html">Case Studies</a>
     <a href="services.html">Services</a>
         <a href="blog.html">Blog</a>
-    <a href="blog.html">Blog</a>
     <a href="process.html">Process</a>
     <a href="about.html">About</a>
     <a href="store.html">Store</a>
@@ -95,17 +92,37 @@
                 </select>
                 <p class="field-error" aria-live="polite"></p>
               </div>
+              <div class="booking-fields">
+                <div class="field field--booking">
+                  <label for="cf-date">Preferred date</label>
+                  <input type="date" id="cf-date" name="preferredDate" required>
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+                <div class="field field--booking">
+                  <label for="cf-time">Preferred time</label>
+                  <input type="time" id="cf-time" name="preferredTime" min="09:00" max="16:00" step="1800" required>
+                  <p class="field-help">45-minute call · 09:00–16:00 in your local time</p>
+                  <p class="field-error" aria-live="polite"></p>
+                </div>
+              </div>
+
               <div class="field">
                 <label for="cf-brief">Project Brief</label>
                 <textarea id="cf-brief" name="brief" required rows="5" minlength="40" placeholder="Tell us what you're building and the constraints we should know about..."></textarea>
                 <p class="field-error" aria-live="polite"></p>
               </div>
-              <button type="submit" class="btn btn--primary">Request architecture call</button>
-              <p class="contact__legal">We reply within two business days. No retainers sold from this form.</p>
+              <input type="hidden" id="cf-timezone" name="timezone">
+              <div class="form-honeypot" aria-hidden="true">
+                <label for="cf-website">Leave this field empty</label>
+                <input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
+              </div>
+              <p class="form-error" id="form-error" role="alert" hidden></p>
+              <button type="submit" class="btn btn--primary">Request a 45-minute call</button>
+              <p class="contact__legal">Choose a preferred slot. We will confirm the call by email before it is booked.</p>
             </form>
             <div id="form-success" hidden>
-              <h3>Brief received.</h3>
-              <p>A partner will reply within two business days. If the work is outside our range, we will say so plainly.</p>
+              <h3>Call request received.</h3>
+              <p>Your preferred time has been sent to the studio. The call is not confirmed until you receive a confirmation email.</p>
               <button type="button" data-reset-form class="btn btn--sm">Send another brief</button>
             </div>
           </div>
@@ -157,7 +174,6 @@
         <a href="case-studies.html">Case Studies</a>
         <a href="services.html">Services</a>
         <a href="blog.html">Blog</a>
-    <a href="blog.html">Blog</a>
         <a href="about.html">About</a>
         <a href="store.html">Store</a>
         <a href="contact.html">Contact</a>

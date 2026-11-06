@@ -34,6 +34,7 @@ async function main() {
   seed();
 
   const app = express();
+  app.set('trust proxy', 1);
   const server = createServer(app);
 
   // Security
@@ -43,8 +44,16 @@ async function main() {
   }));
 
   // CORS
+  const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error('Origin is not allowed by CORS'));
+    },
     credentials: true,
   }));
 

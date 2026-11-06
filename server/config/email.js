@@ -2,11 +2,15 @@ const nodemailer = require('nodemailer');
 
 let transporter = null;
 
+function isEmailConfigured() {
+  return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
 function getTransporter() {
   if (transporter) return transporter;
 
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER) {
-    console.log('[EMAIL] SMTP not configured. Emails will be logged to console.');
+  if (!isEmailConfigured()) {
+    console.log('[EMAIL] SMTP is not fully configured.');
     return null;
   }
 
@@ -26,7 +30,7 @@ function getTransporter() {
   return transporter;
 }
 
-async function sendEmail({ to, subject, html, text }) {
+async function sendEmail({ to, subject, html, text, replyTo }) {
   const transport = getTransporter();
 
   if (!transport) {
@@ -41,9 +45,10 @@ async function sendEmail({ to, subject, html, text }) {
     subject,
     html,
     text: text || html.replace(/<[^>]+>/g, ''),
+    ...(replyTo ? { replyTo } : {}),
   });
 
   return result;
 }
 
-module.exports = { sendEmail, getTransporter };
+module.exports = { sendEmail, getTransporter, isEmailConfigured };

@@ -594,10 +594,25 @@
     var success = $("#form-success");
     if (!form || !success) return;
 
+    var dateInput = form.elements.preferredDate;
+    var timeInput = form.elements.preferredTime;
+    var timezoneInput = form.elements.timezone;
+    var errorBox = $("#form-error", form);
+
+    if (timezoneInput) {
+      try { timezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+      catch (_) { timezoneInput.value = "UTC"; }
+    }
+    if (dateInput) {
+      var now = new Date();
+      dateInput.min = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       $$(".is-invalid", form).forEach(function (n) { n.classList.remove("is-invalid"); });
       $$(".field-error", form).forEach(function (n) { n.textContent = ""; });
+      if (errorBox) { errorBox.hidden = true; errorBox.textContent = ""; }
 
       var name = form.elements.name;
       var email = form.elements.email;
@@ -614,42 +629,54 @@
       }
 
       if (!name.value.trim() || name.value.trim().length < 2) fail(name, "Enter your name.");
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) fail(email, "Use a work email.");
+      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.value.trim())) fail(email, "Enter a valid email address.");
       if (!company.value.trim() || company.value.trim().length < 2) fail(company, "Enter your company name.");
       if (!type.value) fail(type, "Select a project type.");
+      if (!dateInput || !dateInput.value) fail(dateInput, "Choose a preferred date.");
+      if (!timeInput || !timeInput.value) fail(timeInput, "Choose a preferred time.");
       if (!brief.value.trim() || brief.value.trim().length < 40) fail(brief, "Give us at least 40 characters so we can prepare.");
 
       if (firstBad) { firstBad.focus(); return; }
 
       var submitBtn = form.querySelector("button[type=submit]");
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Sending..."; }
+      var originalLabel = submitBtn ? submitBtn.textContent : "";
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Sending request..."; }
 
       var payload = {
         name: name.value.trim(),
         email: email.value.trim(),
         company: company.value.trim(),
         type: type.value,
-        brief: brief.value.trim()
+        brief: brief.value.trim(),
+        preferredDate: dateInput.value,
+        preferredTime: timeInput.value,
+        timezone: timezoneInput && timezoneInput.value ? timezoneInput.value : "UTC",
+        website: form.elements.website ? form.elements.website.value : ""
       };
 
-      fetch(API_BASE + "/api/v1/contact", {
+      fetch(API_BASE + "/api/v1/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       }).then(function (res) {
-        return res.json().then(function () { return res; });
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          if (!res.ok || !data.success) {
+            throw new Error(data.message || "We could not send your request. Please try again.");
+          }
+          return data;
+        });
       }).then(function () {
         form.hidden = true;
         success.hidden = false;
-        var heading = success.querySelector("h3, p");
-        if (heading && heading.focus) heading.focus();
-      }).catch(function () {
-        form.hidden = true;
-        success.hidden = false;
-        var heading = success.querySelector("h3, p");
-        if (heading && heading.focus) heading.focus();
+        var heading = success.querySelector("h3");
+        if (heading) { heading.setAttribute("tabindex", "-1"); heading.focus(); }
+      }).catch(function (err) {
+        if (errorBox) {
+          errorBox.textContent = err.message || "Something went wrong. Please try again.";
+          errorBox.hidden = false;
+        }
       }).finally(function () {
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Request architecture call"; }
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
       });
     });
 
@@ -659,6 +686,11 @@
         success.hidden = true;
         form.hidden = false;
         form.reset();
+        if (timezoneInput) {
+          try { timezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+          catch (_) { timezoneInput.value = "UTC"; }
+        }
+        if (errorBox) { errorBox.hidden = true; errorBox.textContent = ""; }
         form.elements.name.focus();
       });
     }
@@ -668,6 +700,7 @@
         el.classList.remove("is-invalid");
         var err = el.parentElement.querySelector(".field-error");
         if (err) err.textContent = "";
+        if (errorBox) { errorBox.hidden = true; errorBox.textContent = ""; }
       });
     });
   }
