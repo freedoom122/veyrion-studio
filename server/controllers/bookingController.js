@@ -54,7 +54,7 @@ const bookingController = {
         'company TEXT NOT NULL, project_type TEXT NOT NULL, brief TEXT NOT NULL, ' +
         'preferred_date TEXT NOT NULL, preferred_time TEXT NOT NULL, timezone TEXT NOT NULL, ' +
         "status TEXT NOT NULL DEFAULT 'pending', notification_status TEXT NOT NULL DEFAULT 'pending', " +
-        'ip TEXT, user_agent TEXT, created_at TEXT DEFAULT (datetime(\'now\'))' +
+        "ip TEXT, user_agent TEXT, created_at TEXT DEFAULT (datetime('now'))" +
       ')');
 
       const normalizedEmail = email.trim().toLowerCase();
@@ -81,7 +81,7 @@ const bookingController = {
       );
 
       const recipient = process.env.BOOKING_NOTIFY_EMAIL || process.env.ADMIN_EMAIL || 'marcubrsv@gmail.com';
-      const safeCompany = company.replace(/[\\r\\n]+/g, ' ').slice(0, 120);
+      const safeCompany = company.replace(/[\r\n]+/g, ' ').slice(0, 120);
       const subject = '[Veyrion] New call request — ' + safeCompany;
       const details = [
         'Name: ' + name, 'Email: ' + normalizedEmail, 'Company: ' + company,
@@ -89,7 +89,7 @@ const bookingController = {
         'Preferred time: ' + preferredDate + ' at ' + preferredTime + ' (' + timezone + ')',
         'Duration: 45 minutes', '', 'Project brief:', brief, '',
         'Request ID: ' + bookingId, 'Status: Pending confirmation',
-      ].join('\\n');
+      ].join('\n');
 
       const rows = [
         ['Name', name], ['Email', normalizedEmail], ['Company', company],
@@ -130,7 +130,7 @@ const bookingController = {
       ).run(bookingId);
 
       try {
-        const visitorText = 'Hi ' + name + ',\\n\\nWe received your request for a 45-minute call on ' +
+        const visitorText = 'Hi ' + name + ',\n\nWe received your request for a 45-minute call on ' +
           preferredDate + ' at ' + preferredTime + ' (' + timezone +
           '). This time is not confirmed yet. We will reply to confirm or suggest another slot.\\n\\nVeyrion Studio';
         const visitorHtml =
