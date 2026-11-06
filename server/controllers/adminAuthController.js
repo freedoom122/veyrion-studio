@@ -209,7 +209,7 @@ async function forgotPassword(req, res, next) {
       db.prepare('DELETE FROM admin_password_resets WHERE user_id = ?').run(owner.id);
       db.prepare("INSERT INTO admin_password_resets (user_id, token_hash, expires_at) VALUES (?, ?, datetime('now', '+30 minutes'))").run(owner.id, tokenHash);
       const panelUrl = String(process.env.ADMIN_PANEL_URL || 'https://veyrion-studio.onrender.com/admin/').replace(/\/$/, '');
-      const resetUrl = panelUrl + '/?token=' + encodeURIComponent(token);
+      const resetUrl = panelUrl + '/#token=' + encodeURIComponent(token);
       try {
         await sendEmail({
           to: ownerEmail,

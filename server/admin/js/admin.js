@@ -4,7 +4,7 @@
   const API = '/api/v1/admin';
   let currentUser = null;
   let currentPage = 'overview';
-  let resetToken = new URLSearchParams(window.location.search).get('token') || '';
+  let resetToken = new URLSearchParams(window.location.hash.replace(/^#/, '')).get('token') || '';
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
