@@ -17,14 +17,41 @@
   var coarse = window.matchMedia("(pointer: coarse)").matches;
   var SUPABASE_URL = "https://dhqtzbagyvsoooyjqauh.supabase.co";
   var SUPABASE_PUBLIC_KEY = "sb_publishable_1zqs825S2m9GA1lIgTkzIA_IYdxO7p6";
-  var supabaseClient = null;
+  var AUTH_SESSION_KEY = "veyrion.auth.session.v1";
   var currentAccessToken = "";
-  var authSubscription = null;
 
   function authHeaders(headers) {
     headers = headers || {};
     if (currentAccessToken) headers.Authorization = "Bearer " + currentAccessToken;
     return headers;
+  }
+  function authRequest(path, body, token) {
+    var headers = { apikey:SUPABASE_PUBLIC_KEY, "Content-Type":"application/json" };
+    if (token) headers.Authorization = "Bearer " + token;
+    return fetch(SUPABASE_URL + path, { method:"POST", headers:headers, body:JSON.stringify(body || {}), cache:"no-store" })
+      .then(function(response){ return response.json().catch(function(){return {};}).then(function(data){ if(!response.ok) throw new Error(data.msg || data.message || data.error_description || data.error || "Account request failed."); return data; }); });
+  }
+  function setCustomerSession(data) {
+    var session = data && data.session ? data.session : data;
+    if (!session || !session.access_token) return false;
+    var stored = { access_token:session.access_token, refresh_token:session.refresh_token || "", expires_at:session.expires_at || (Math.floor(Date.now()/1000) + (session.expires_in || 3600)) };
+    currentAccessToken = stored.access_token;
+    try { localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(stored)); } catch (_) {}
+    updateAuthNav(); return true;
+  }
+  function clearCustomerSession() {
+    currentAccessToken = "";
+    try { localStorage.removeItem(AUTH_SESSION_KEY); } catch (_) {}
+    updateAuthNav();
+  }
+  function restoreCustomerSession() {
+    var stored;
+    try { stored = JSON.parse(localStorage.getItem(AUTH_SESSION_KEY) || "null"); } catch (_) { stored = null; }
+    if (!stored || !stored.access_token) { updateAuthNav(); return; }
+    if (stored.expires_at > Math.floor(Date.now()/1000) + 60) { currentAccessToken = stored.access_token; updateAuthNav(); return; }
+    if (!stored.refresh_token) { clearCustomerSession(); return; }
+    authRequest("/auth/v1/token?grant_type=refresh_token", {refresh_token:stored.refresh_token})
+      .then(setCustomerSession).catch(clearCustomerSession);
   }
   function ensureAuthUI() {
     if (!$("#auth-modal")) {
@@ -39,20 +66,20 @@
       nav.innerHTML = '<button class="header__auth" id="auth-open" type="button">Sign in</button><button class="header__auth header__auth--primary" id="signup-open" type="button">Create account</button><button class="header__auth" id="auth-logout" type="button" hidden>Sign out</button>';
       headerRight.insertBefore(nav, headerRight.firstChild);
     }
-    var currentPage = location.pathname.split('/').pop() || 'index.html';
-    $$(".header__nav a, .mobile-nav a").forEach(function(link){
-      var href = link.getAttribute("href") || "";
-      if (href === "#contact" && currentPage !== "index.html") link.setAttribute("href", "contact.html");
-      else if (href.charAt(0) === "#" && currentPage !== "index.html") link.setAttribute("href", "index.html" + href);
-      var target = link.getAttribute("href") || "";
-      if (target === currentPage || (currentPage === "" && target === "index.html")) link.classList.add("is-active");
-    });
     var mobile = $("#mobile-menu");
     if (mobile && !$(".mobile-nav__account", mobile)) {
       var account = document.createElement("div"); account.className = "mobile-nav__account";
       account.innerHTML = '<button type="button" data-auth-open>Sign in</button><button type="button" data-auth-signup>Create account</button><button type="button" data-auth-logout hidden>Sign out</button>';
       mobile.appendChild(account);
     }
+    var currentPage = location.pathname.split('/').pop() || 'index.html';
+    $$(".header__nav a, .mobile-nav a").forEach(function(link){
+      var href = link.getAttribute("href") || "";
+      if (href === "#contact" && currentPage !== "index.html") link.setAttribute("href", "contact.html");
+      else if (href.charAt(0) === "#" && currentPage !== "index.html") link.setAttribute("href", "index.html" + href);
+      var target = link.getAttribute("href") || "";
+      if (target === currentPage) link.classList.add("is-active");
+    });
   }
   function openAuth(mode) {
     var modal = $("#auth-modal"); if (!modal) return;
@@ -75,30 +102,28 @@
   }
   function requireCustomerAuth() { if (currentAccessToken) return true; openAuth("login"); return false; }
   function initCustomerAuth() {
-    ensureAuthUI();
-    if (!window.supabase || !window.supabase.createClient) {
-      var loginError=$("#auth-login-error"); if(loginError) loginError.textContent="Account service is loading. Please refresh and try again.";
-      return;
-    }
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, { auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
-    updateAuthNav();
-    supabaseClient.auth.getSession().then(function(result){ currentAccessToken=result.data.session ? result.data.session.access_token : ""; updateAuthNav(); }).catch(function(){});
-    if (authSubscription) authSubscription.unsubscribe();
-    authSubscription = supabaseClient.auth.onAuthStateChange(function(_event, session){ currentAccessToken=session ? session.access_token : ""; updateAuthNav(); }).data.subscription;
+    ensureAuthUI(); restoreCustomerSession();
     $("#auth-open") && $("#auth-open").addEventListener("click",function(){openAuth("login");});
     $("#signup-open") && $("#signup-open").addEventListener("click",function(){openAuth("signup");});
     $$("[data-auth-open]").forEach(function(el){el.addEventListener("click",function(){openAuth("login");});});
     $$("[data-auth-signup]").forEach(function(el){el.addEventListener("click",function(){openAuth("signup");});});
-    ["#auth-logout","[data-auth-logout]"].forEach(function(sel){$$(sel).forEach(function(el){el.addEventListener("click",function(){supabaseClient.auth.signOut().then(function(){currentAccessToken="";updateAuthNav();closeAuth();});});});});
+    ["#auth-logout","[data-auth-logout]"].forEach(function(sel){$$(sel).forEach(function(el){el.addEventListener("click",function(){authRequest("/auth/v1/logout",{},currentAccessToken).catch(function(){}).finally(function(){clearCustomerSession();closeAuth();});});});});
     $$("#auth-modal [data-auth-close]").forEach(function(el){el.addEventListener("click",closeAuth);});
     $("#auth-switch").addEventListener("click",function(){openAuth($("#auth-signup-form").hidden?"signup":"login");});
     $("#auth-login-form").addEventListener("submit",function(event){
       event.preventDefault(); var button=$("button[type=submit]",event.currentTarget); var error=$("#auth-login-error"); error.textContent=""; if(button){button.disabled=true;button.textContent="Signing in…";}
-      supabaseClient.auth.signInWithPassword({email:$("#auth-email").value.trim(),password:$("#auth-password").value}).then(function(result){if(result.error)throw result.error;currentAccessToken=result.data.session.access_token;updateAuthNav();closeAuth();}).catch(function(err){error.textContent=err.message||"We could not sign you in.";}).finally(function(){if(button){button.disabled=false;button.textContent="Sign in";}});
+      authRequest("/auth/v1/token?grant_type=password",{email:$("#auth-email").value.trim(),password:$("#auth-password").value})
+        .then(function(data){if(!setCustomerSession(data))throw new Error("No session was returned. Please try again.");closeAuth();})
+        .catch(function(err){error.textContent=err.message||"We could not sign you in.";})
+        .finally(function(){if(button){button.disabled=false;button.textContent="Sign in";}});
     });
     $("#auth-signup-form").addEventListener("submit",function(event){
       event.preventDefault(); var button=$("button[type=submit]",event.currentTarget); var error=$("#auth-signup-error"); error.textContent=""; if(button){button.disabled=true;button.textContent="Creating account…";}
-      supabaseClient.auth.signUp({email:$("#auth-signup-email").value.trim(),password:$("#auth-signup-password").value,options:{emailRedirectTo:location.origin+"/",data:{full_name:$("#auth-name").value.trim(),company:$("#auth-company").value.trim()}}}).then(function(result){if(result.error)throw result.error;if(result.data.session){currentAccessToken=result.data.session.access_token;updateAuthNav();closeAuth();}else{error.textContent="Account created. Check your inbox and confirm your email before signing in.";}}).catch(function(err){error.textContent=err.message||"We could not create your account.";}).finally(function(){if(button){button.disabled=false;button.textContent="Create account";}});
+      var redirect="/auth/v1/signup?redirect_to="+encodeURIComponent(location.origin+"/");
+      authRequest(redirect,{email:$("#auth-signup-email").value.trim(),password:$("#auth-signup-password").value,data:{full_name:$("#auth-name").value.trim(),company:$("#auth-company").value.trim()}})
+        .then(function(data){if(!setCustomerSession(data))throw new Error("Your account was created. Please sign in to continue.");closeAuth();})
+        .catch(function(err){error.textContent=err.message||"We could not create your account.";})
+        .finally(function(){if(button){button.disabled=false;button.textContent="Create account";}});
     });
     document.addEventListener("keydown",function(event){if(event.key==="Escape" && !$("#auth-modal").hidden)closeAuth();});
   }
