@@ -31,14 +31,14 @@ const contactSchema = z.object({
   type: z.string().optional(),
   brief: z.string().min(40).max(5000),
 });
+const contactLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3, standardHeaders: true, legacyHeaders: false, message: { success: false, error: { code: 'RATE_LIMITED', message: 'Too many contact requests. Please try again later.' } } });
+
 router.post('/contact', contactLimiter, requireAuth, validate(contactSchema), (req, res, next) => {
   const started = Number(req.get('x-form-started-at') || 0);
   if (String(req.body.website || '') || !started || Date.now() - started < 2500 || Date.now() - started > 86400000) return res.status(400).json({ success:false, error:{code:'BOT_CHECK_FAILED', message:'Please complete the form normally and try again.'} });
   req.body.email = req.user.email; req.body.name = req.user.name || req.body.name;
   return contactController.submit(req,res,next);
 });
-
-const contactLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3, standardHeaders: true, legacyHeaders: false, message: { success: false, error: { code: 'RATE_LIMITED', message: 'Too many contact requests. Please try again later.' } } });
 
 const bookingLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
