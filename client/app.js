@@ -15,19 +15,92 @@
   var hasST = hasGSAP && typeof ScrollTrigger !== "undefined";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var coarse = window.matchMedia("(pointer: coarse)").matches;
-  var CUSTOMER_TOKEN_KEY = "veyrion_customer_token";
-  function customerToken(){try{return sessionStorage.getItem(CUSTOMER_TOKEN_KEY)||"";}catch(_){return "";}}
-  function setCustomerToken(t){try{sessionStorage.setItem(CUSTOMER_TOKEN_KEY,t);}catch(_){}}
-  function clearCustomerToken(){try{sessionStorage.removeItem(CUSTOMER_TOKEN_KEY);}catch(_){}}
-  function authHeaders(h){h=h||{};var t=customerToken();if(t)h.Authorization="Bearer "+t;return h;}
-  function openAuth(mode){var m=$("#auth-modal");if(!m)return;m.hidden=false;var s=mode==="signup";$("#auth-login-form").hidden=s;$("#auth-signup-form").hidden=!s;$("#auth-modal-mode").textContent=s?"CREATE ACCOUNT":"ACCOUNT ACCESS";$("#auth-modal-title").textContent=s?"Create your Veyrion account.":"Welcome back.";$("#auth-modal-sub").textContent=s?"Create an account before sending a project brief.":"Sign in to send a project brief.";$("#auth-switch").textContent=s?"Already have an account? Sign in":"Need an account? Create one";setTimeout(function(){(s?$("#auth-name"):$("#auth-email")).focus();},30);}
-  function closeAuth(){var m=$("#auth-modal");if(m)m.hidden=true;}
-  function updateAuthNav(){var t=customerToken(),a=$("#auth-open"),s=$("#signup-open"),l=$("#auth-logout");if(a)a.hidden=!!t;if(s)s.hidden=!!t;if(l)l.hidden=!t;}
-  function authApi(path,opts){opts=opts||{};opts.headers=authHeaders(Object.assign({"Content-Type":"application/json"},opts.headers||{}));return fetch(API_BASE+"/api/v1/auth"+path,opts).then(function(r){return r.json().catch(function(){return {};}).then(function(d){if(!r.ok){var e=new Error((d.error&&d.error.message)||"Authentication failed.");e.status=r.status;throw e;}return d.data||d;});});}
-  function requireCustomerAuth(){if(customerToken())return true;openAuth("login");return false;}
-  function initCustomerAuth(){if(!$("#auth-modal"))return;updateAuthNav();$("#auth-open")&&$("#auth-open").addEventListener("click",function(){openAuth("login");});$("#signup-open")&&$("#signup-open").addEventListener("click",function(){openAuth("signup");});$("#auth-logout")&&$("#auth-logout").addEventListener("click",function(){clearCustomerToken();updateAuthNav();});$$(".auth-modal [data-auth-close]").forEach(function(x){x.addEventListener("click",closeAuth);});$("#auth-switch").addEventListener("click",function(){openAuth($("#auth-signup-form").hidden?"signup":"login");});
-    $("#auth-login-form").addEventListener("submit",function(e){e.preventDefault();$("#auth-login-error").textContent="";authApi("/login",{method:"POST",body:JSON.stringify({email:$("#auth-email").value.trim(),password:$("#auth-password").value})}).then(function(d){setCustomerToken(d.token);updateAuthNav();closeAuth();}).catch(function(e){$("#auth-login-error").textContent=e.message;});});
-    $("#auth-signup-form").addEventListener("submit",function(e){e.preventDefault();$("#auth-signup-error").textContent="";authApi("/register",{method:"POST",body:JSON.stringify({name:$("#auth-name").value.trim(),email:$("#auth-signup-email").value.trim(),company:$("#auth-company").value.trim(),password:$("#auth-signup-password").value})}).then(function(d){setCustomerToken(d.token);updateAuthNav();closeAuth();}).catch(function(e){$("#auth-signup-error").textContent=e.message;});});
+  var SUPABASE_URL = "https://dhqtzbagyvsoooyjqauh.supabase.co";
+  var SUPABASE_PUBLIC_KEY = "sb_publishable_1zqs825S2m9GA1lIgTkzIA_IYdxO7p6";
+  var supabaseClient = null;
+  var currentAccessToken = "";
+  var authSubscription = null;
+
+  function authHeaders(headers) {
+    headers = headers || {};
+    if (currentAccessToken) headers.Authorization = "Bearer " + currentAccessToken;
+    return headers;
+  }
+  function ensureAuthUI() {
+    if (!$("#auth-modal")) {
+      var modal = document.createElement("div");
+      modal.className = "auth-modal"; modal.id = "auth-modal"; modal.hidden = true;
+      modal.innerHTML = '<div class="auth-modal__backdrop" data-auth-close></div><section class="auth-modal__card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title"><button class="auth-modal__close" type="button" data-auth-close aria-label="Close">×</button><p class="section__label" id="auth-modal-mode">ACCOUNT ACCESS</p><h2 id="auth-modal-title">Welcome back.</h2><p class="auth-modal__sub" id="auth-modal-sub">Sign in to continue.</p><form id="auth-login-form" class="auth-form"><div class="field"><label for="auth-email">Email</label><input id="auth-email" type="email" autocomplete="email" required></div><div class="field"><label for="auth-password">Password</label><input id="auth-password" type="password" autocomplete="current-password" required></div><button class="btn btn--primary" type="submit">Sign in</button><p class="auth-error" id="auth-login-error" role="alert"></p></form><form id="auth-signup-form" class="auth-form" hidden><div class="field"><label for="auth-name">Name</label><input id="auth-name" type="text" autocomplete="name" minlength="2" required></div><div class="field"><label for="auth-signup-email">Email</label><input id="auth-signup-email" type="email" autocomplete="email" required></div><div class="field"><label for="auth-company">Company</label><input id="auth-company" type="text" autocomplete="organization" minlength="2" required></div><div class="field"><label for="auth-signup-password">Password</label><input id="auth-signup-password" type="password" autocomplete="new-password" minlength="14" required><p class="field-help">At least 14 characters.</p></div><button class="btn btn--primary" type="submit">Create account</button><p class="auth-error" id="auth-signup-error" role="status"></p></form><button class="auth-switch" id="auth-switch" type="button">Need an account? Create one</button><p class="auth-modal__note">Your account keeps enquiries and call requests attached to you.</p></section>';
+      document.body.appendChild(modal);
+    }
+    var headerRight = $(".header__right");
+    if (headerRight && !$("#auth-nav")) {
+      var nav = document.createElement("div"); nav.className = "auth-nav"; nav.id = "auth-nav";
+      nav.innerHTML = '<button class="header__auth" id="auth-open" type="button">Sign in</button><button class="header__auth header__auth--primary" id="signup-open" type="button">Create account</button><button class="header__auth" id="auth-logout" type="button" hidden>Sign out</button>';
+      headerRight.insertBefore(nav, headerRight.firstChild);
+    }
+    var currentPage = location.pathname.split('/').pop() || 'index.html';
+    $$(".header__nav a, .mobile-nav a").forEach(function(link){
+      var href = link.getAttribute("href") || "";
+      if (href === "#contact" && currentPage !== "index.html") link.setAttribute("href", "contact.html");
+      else if (href.charAt(0) === "#" && currentPage !== "index.html") link.setAttribute("href", "index.html" + href);
+      var target = link.getAttribute("href") || "";
+      if (target === currentPage || (currentPage === "" && target === "index.html")) link.classList.add("is-active");
+    });
+    var mobile = $("#mobile-menu");
+    if (mobile && !$(".mobile-nav__account", mobile)) {
+      var account = document.createElement("div"); account.className = "mobile-nav__account";
+      account.innerHTML = '<button type="button" data-auth-open>Sign in</button><button type="button" data-auth-signup>Create account</button><button type="button" data-auth-logout hidden>Sign out</button>';
+      mobile.appendChild(account);
+    }
+  }
+  function openAuth(mode) {
+    var modal = $("#auth-modal"); if (!modal) return;
+    var signup = mode === "signup";
+    $("#auth-login-form").hidden = signup; $("#auth-signup-form").hidden = !signup;
+    $("#auth-modal-mode").textContent = signup ? "CREATE ACCOUNT" : "ACCOUNT ACCESS";
+    $("#auth-modal-title").textContent = signup ? "A better way to work starts here." : "Welcome back.";
+    $("#auth-modal-sub").textContent = signup ? "Create an account to send a project brief or request a call." : "Sign in to continue to your project workspace.";
+    $("#auth-switch").textContent = signup ? "Already have an account? Sign in" : "New to Veyrion? Create an account";
+    $("#auth-login-error").textContent = ""; $("#auth-signup-error").textContent = "";
+    modal.hidden = false; document.body.classList.add("auth-open");
+    window.setTimeout(function(){ (signup ? $("#auth-name") : $("#auth-email")).focus(); },40);
+  }
+  function closeAuth() { var modal=$("#auth-modal"); if(modal) modal.hidden=true; document.body.classList.remove("auth-open"); }
+  function updateAuthNav() {
+    var signedIn = Boolean(currentAccessToken);
+    ["#auth-open","[data-auth-open]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=signedIn;}); });
+    ["#signup-open","[data-auth-signup]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=signedIn;}); });
+    ["#auth-logout","[data-auth-logout]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=!signedIn;}); });
+  }
+  function requireCustomerAuth() { if (currentAccessToken) return true; openAuth("login"); return false; }
+  function initCustomerAuth() {
+    ensureAuthUI();
+    if (!window.supabase || !window.supabase.createClient) {
+      var loginError=$("#auth-login-error"); if(loginError) loginError.textContent="Account service is loading. Please refresh and try again.";
+      return;
+    }
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, { auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
+    updateAuthNav();
+    supabaseClient.auth.getSession().then(function(result){ currentAccessToken=result.data.session ? result.data.session.access_token : ""; updateAuthNav(); }).catch(function(){});
+    if (authSubscription) authSubscription.unsubscribe();
+    authSubscription = supabaseClient.auth.onAuthStateChange(function(_event, session){ currentAccessToken=session ? session.access_token : ""; updateAuthNav(); }).data.subscription;
+    $("#auth-open") && $("#auth-open").addEventListener("click",function(){openAuth("login");});
+    $("#signup-open") && $("#signup-open").addEventListener("click",function(){openAuth("signup");});
+    $$("[data-auth-open]").forEach(function(el){el.addEventListener("click",function(){openAuth("login");});});
+    $$("[data-auth-signup]").forEach(function(el){el.addEventListener("click",function(){openAuth("signup");});});
+    ["#auth-logout","[data-auth-logout]"].forEach(function(sel){$$(sel).forEach(function(el){el.addEventListener("click",function(){supabaseClient.auth.signOut().then(function(){currentAccessToken="";updateAuthNav();closeAuth();});});});});
+    $$("#auth-modal [data-auth-close]").forEach(function(el){el.addEventListener("click",closeAuth);});
+    $("#auth-switch").addEventListener("click",function(){openAuth($("#auth-signup-form").hidden?"signup":"login");});
+    $("#auth-login-form").addEventListener("submit",function(event){
+      event.preventDefault(); var button=$("button[type=submit]",event.currentTarget); var error=$("#auth-login-error"); error.textContent=""; if(button){button.disabled=true;button.textContent="Signing in…";}
+      supabaseClient.auth.signInWithPassword({email:$("#auth-email").value.trim(),password:$("#auth-password").value}).then(function(result){if(result.error)throw result.error;currentAccessToken=result.data.session.access_token;updateAuthNav();closeAuth();}).catch(function(err){error.textContent=err.message||"We could not sign you in.";}).finally(function(){if(button){button.disabled=false;button.textContent="Sign in";}});
+    });
+    $("#auth-signup-form").addEventListener("submit",function(event){
+      event.preventDefault(); var button=$("button[type=submit]",event.currentTarget); var error=$("#auth-signup-error"); error.textContent=""; if(button){button.disabled=true;button.textContent="Creating account…";}
+      supabaseClient.auth.signUp({email:$("#auth-signup-email").value.trim(),password:$("#auth-signup-password").value,options:{emailRedirectTo:location.origin+"/",data:{full_name:$("#auth-name").value.trim(),company:$("#auth-company").value.trim()}}}).then(function(result){if(result.error)throw result.error;if(result.data.session){currentAccessToken=result.data.session.access_token;updateAuthNav();closeAuth();}else{error.textContent="Account created. Check your inbox and confirm your email before signing in.";}}).catch(function(err){error.textContent=err.message||"We could not create your account.";}).finally(function(){if(button){button.disabled=false;button.textContent="Create account";}});
+    });
+    document.addEventListener("keydown",function(event){if(event.key==="Escape" && !$("#auth-modal").hidden)closeAuth();});
   }
 
   var $ = function (s, p) { return (p || document).querySelector(s); };
@@ -122,6 +195,7 @@
     if (toggle) toggle.addEventListener("click", function () { menu.hidden ? openMenu() : closeMenu(); });
     if (closeBtn) closeBtn.addEventListener("click", closeMenu);
     if (menu) $$("a", menu).forEach(function (a) { a.addEventListener("click", closeMenu); });
+    if (menu) $$(".mobile-nav__account button", menu).forEach(function (button) { button.addEventListener("click", closeMenu); });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && menu && !menu.hidden) closeMenu();
     });
@@ -615,6 +689,7 @@
     var timeInput = form.elements.preferredTime;
     var timezoneInput = form.elements.timezone;
     var errorBox = $("#form-error", form);
+    form.dataset.startedAt = String(Date.now());
 
     if (timezoneInput) {
       try { timezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
@@ -649,8 +724,9 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) fail(email, "Enter a valid email address.");
       if (!company.value.trim() || company.value.trim().length < 2) fail(company, "Enter your company name.");
       if (!type.value) fail(type, "Select a project type.");
-      if (!dateInput || !dateInput.value) fail(dateInput, "Choose a preferred date.");
-      if (!timeInput || !timeInput.value) fail(timeInput, "Choose a preferred time.");
+      var isBooking = Boolean(dateInput && timeInput);
+      if (isBooking && !dateInput.value) fail(dateInput, "Choose a preferred date.");
+      if (isBooking && !timeInput.value) fail(timeInput, "Choose a preferred time.");
       if (!brief.value.trim() || brief.value.trim().length < 40) fail(brief, "Give us at least 40 characters so we can prepare.");
 
       if (firstBad) { firstBad.focus(); return; }
@@ -665,25 +741,27 @@
         company: company.value.trim(),
         type: type.value,
         brief: brief.value.trim(),
-        preferredDate: dateInput.value,
-        preferredTime: timeInput.value,
-        timezone: timezoneInput && timezoneInput.value ? timezoneInput.value : "UTC",
         website: form.elements.website ? form.elements.website.value : ""
       };
+      if (isBooking) {
+        payload.preferredDate = dateInput.value;
+        payload.preferredTime = timeInput.value;
+        payload.timezone = timezoneInput && timezoneInput.value ? timezoneInput.value : "UTC";
+      }
 
       if (!requireCustomerAuth()) {
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
         return;
       }
 
-      fetch(API_BASE + "/api/v1/bookings", {
+      fetch(API_BASE + (isBooking ? "/api/v1/bookings" : "/api/v1/contact"), {
         method: "POST",
         headers: authHeaders({ "Content-Type": "application/json", "X-Form-Started-At": String(form.dataset.startedAt || Date.now()) }),
         body: JSON.stringify(payload)
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (data) {
           if (!res.ok || !data.success) {
-            if (res.status === 401) { clearCustomerToken(); updateAuthNav(); openAuth("login"); }
+            if (res.status === 401) { currentAccessToken = ""; updateAuthNav(); if (supabaseClient) supabaseClient.auth.signOut(); openAuth("login"); }
             throw new Error((data.error && data.error.message) || data.message || "We could not send your request. Please try again.");
           }
           return data;
@@ -709,6 +787,7 @@
         success.hidden = true;
         form.hidden = false;
         form.reset();
+        form.dataset.startedAt = String(Date.now());
         if (timezoneInput) {
           try { timezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
           catch (_) { timezoneInput.value = "UTC"; }
@@ -735,7 +814,7 @@
     var btn = $("#copy-email");
     if (!btn) return;
     btn.addEventListener("click", function () {
-      window.location.href = "contact.html";
+      window.location.href = "mailto:contact@veyrionstudios.com";
     });
   }
 
@@ -928,6 +1007,7 @@
   function safe(fn) { try { fn(); } catch (e) { /* silent */ } }
 
   document.addEventListener("DOMContentLoaded", function () {
+    safe(initCustomerAuth);
     safe(initLoader);
     safe(initScrollProgress);
     safe(initBackToTop);

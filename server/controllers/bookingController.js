@@ -1,5 +1,5 @@
 const { randomUUID } = require('crypto');
-const { sendEmail, isEmailConfigured } = require('../config/email');
+const { sendEmail } = require('../config/email');
 const { getDb } = require('../config/database');
 
 function escapeHtml(value) {
@@ -24,6 +24,39 @@ function isFutureLocalSlot(date, time, timezone) {
   }
 }
 
+
+async function sendViaFormSubmit({ to, subject, text, replyTo }) {
+  const response = await fetch('https://formsubmit.co/ajax/' + to, {
+    method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({_subject:subject,_template:'table',_replyto:replyTo,message:text}),
+    signal:AbortSignal.timeout(12000),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || result.success === false || result.success === 'false') {
+    throw new Error(result.message || 'Email provider rejected the request (' + response.status + ').');
+  }
+  return result;
+}
+
+async function persistBooking(req, booking) {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) return false;
+  const response = await fetch((url.endsWith('/') ? url.slice(0, -1) : url) + '/rest/v1/call_bookings', {
+    method:'POST',
+    headers:{ apikey:key, Authorization:'Bearer ' + req.customerAccessToken, 'Content-Type':'application/json', Prefer:'return=minimal' },
+    body:JSON.stringify({
+      user_id:req.user.id, name:booking.name, email:booking.email, company:booking.company,
+      project_type:booking.type, brief:booking.brief, preferred_date:booking.preferredDate,
+      preferred_time:booking.preferredTime, timezone:booking.timezone,
+      request_ip:req.ip || '', user_agent:String(req.headers['user-agent'] || '').slice(0,500),
+    }),
+    signal:AbortSignal.timeout(10000),
+  });
+  if (!response.ok) throw new Error('Supabase booking storage returned ' + response.status + ': ' + (await response.text()).slice(0,300));
+  return true;
+}
+
 const bookingController = {
   async create(req, res, next) {
     const { name, email, company, type, brief, preferredDate, preferredTime, timezone, website } = req.body;
@@ -32,12 +65,6 @@ const bookingController = {
       return res.status(202).json({ success: true, message: 'Request received.' });
     }
 
-    if (!isEmailConfigured()) {
-      return res.status(503).json({
-        success: false,
-        message: 'Call requests are temporarily unavailable. Please try again later.',
-      });
-    }
 
     const parsedDate = new Date(preferredDate + 'T00:00:00Z');
     const validDate = !Number.isNaN(parsedDate.getTime()) &&
@@ -84,6 +111,14 @@ const bookingController = {
         String(req.headers['user-agent'] || '').slice(0, 500)
       );
 
+      try {
+        await persistBooking(req, { name:name.trim(), email:normalizedEmail, company:company.trim(), type:type.trim(), brief:brief.trim(), preferredDate, preferredTime, timezone });
+      } catch (storageError) {
+        console.error('[BOOKING] Persistent storage failed:', storageError.message);
+        db.prepare("DELETE FROM call_bookings WHERE id = ?").run(bookingId);
+        return res.status(503).json({ success:false, message:'The booking service is temporarily unavailable. Please try again shortly.' });
+      }
+
       const recipient = process.env.BOOKING_NOTIFY_EMAIL || process.env.ADMIN_EMAIL || 'marcubrsv@gmail.com';
       const safeCompany = company.replace(/[\r\n]+/g, ' ').slice(0, 120);
       const subject = '[Veyrion] New call request — ' + safeCompany;
@@ -118,15 +153,21 @@ const bookingController = {
         '<a href="mailto:' + escapeHtml(normalizedEmail) + '" style="display:inline-block;margin-top:12px;color:#0b0d12;background:#c9a77b;padding:11px 16px;text-decoration:none">Reply to requester</a>' +
         '</div>';
 
+      let notificationDelivered = true;
       try {
         await sendEmail({ to: recipient, subject: subject, html: adminHtml, text: details, replyTo: normalizedEmail });
       } catch (mailError) {
-        db.prepare("UPDATE call_bookings SET notification_status = 'failed' WHERE id = ?").run(bookingId);
-        console.error('[BOOKING] Notification email failed:', mailError.message);
-        return res.status(503).json({
-          success: false,
-          message: 'We could not deliver the call request. Please try again in a moment.',
-        });
+        console.warn('[BOOKING] SMTP unavailable; trying HTTPS email delivery:', mailError.message);
+        try {
+          await sendViaFormSubmit({ to:recipient, subject, text:details, replyTo:normalizedEmail });
+        } catch (fallbackError) {
+          notificationDelivered = false;
+          console.error('[BOOKING] Email delivery failed:', fallbackError.message);
+        }
+      }
+      if (!notificationDelivered) {
+        db.prepare("UPDATE call_bookings SET notification_status = 'failed', status = 'pending_confirmation' WHERE id = ?").run(bookingId);
+        return res.status(202).json({ success:true, message:'Your request has been saved. Email delivery is temporarily unavailable, so please also write to contact@veyrionstudios.com.', requestId:bookingId, notification:'pending' });
       }
 
       db.prepare(
@@ -159,7 +200,7 @@ const bookingController = {
 
       return res.status(201).json({
         success: true,
-        message: 'Your call request was received. We will confirm the time by email.',
+        message: 'Your call request was received. We will review it and reply to your email address.',
         requestId: bookingId,
       });
     } catch (error) {

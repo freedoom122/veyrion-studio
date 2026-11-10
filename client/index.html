@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Veyrion — Software Built Without Compromise</title>
-  <meta name="description" content="Veyrion architects bespoke software systems for companies whose technical requirements have exceeded conventional tools.">
+  <title>Veyrion Studio — Software built around your work</title>
+  <meta name="description" content="Independent software studio building custom applications, backend platforms and automation around the way your business works.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -54,63 +55,50 @@
   <main id="main">
 
     <!-- ====== HERO ====== -->
-    <section class="hero" id="hero">
-      <div class="hero__grid" aria-hidden="true"></div><div class="hero__orb hero__orb--one" aria-hidden="true"></div><div class="hero__orb hero__orb--two" aria-hidden="true"></div>
-      <div class="hero__inner">
-        <div class="hero__left">
-          <p class="hero__eyebrow">INDEPENDENT SOFTWARE STUDIO <span>·</span> REMOTE-FIRST</p>
-          <h1 class="hero__title">
-            <span>Systems that</span>
-            <span>fit the work.</span>
-          </h1>
-          <p class="hero__body">We design and build custom applications, backend platforms and automation around the constraints your existing tools cannot handle. From data boundaries to operator interfaces, every part has a reason to exist.</p>
-          <div class="hero__actions">
-            <a href="#capabilities" class="btn btn--primary">Explore Capabilities</a>
-            <a href="#contact" class="btn">Schedule Briefing</a>
-          </div>
-        </div>
-        <div class="hero__right">
-          <ul class="hero__metrics">
-            <li><span class="metric__value">Design</span><span class="metric__label">Start with constraints</span></li>
-            <li><span class="metric__value">Build</span><span class="metric__label">Fit the domain</span></li>
-            <li><span class="metric__value">Operate</span><span class="metric__label">Make systems observable</span></li>
-            <li><span class="metric__value">Improve</span><span class="metric__label">Measure real workloads</span></li>
-          </ul>
-
-          <!-- TERMINAL -->
-          <div class="terminal" id="terminal" role="region" aria-label="Architecture console">
-            <div class="terminal__bar">
-              <div class="terminal__dots"><span></span><span></span><span></span></div>
-              <span class="terminal__title">VEYRION / ARCHITECTURE CONSOLE</span>
-            </div>
-            <div class="terminal__body">
-              <div class="terminal__log" id="terminal-log" aria-live="polite"></div>
-              <div class="terminal__chips" id="terminal-chips">
-                <button type="button" class="chip" data-cmd="--show-stack">--show-stack</button>
-                <button type="button" class="chip" data-cmd="--benchmarks">--benchmarks</button>
-                <button type="button" class="chip" data-cmd="--architecture">--architecture</button>
-                <button type="button" class="chip" data-cmd="--security">--security</button>
-                <button type="button" class="chip" data-cmd="--contact">--contact</button>
-              </div>
-              <form class="terminal__input-row" id="terminal-form">
-                <span class="terminal__prompt" aria-hidden="true">&gt;</span>
-                <input id="terminal-input" type="text" autocomplete="off" aria-label="Console command" placeholder="type a command or click a chip">
-              </form>
-            </div>
-          </div>
-        </div>
+    <section class="hero hero--editorial" id="hero">
+  <div class="hero__inner">
+    <div class="hero__left">
+      <p class="hero__eyebrow"><span class="eyebrow-mark"></span> Independent software studio <span class="eyebrow-sep">/</span> Remote-first</p>
+      <h1 class="hero__title"><span>Built around</span><em>your work.</em></h1>
+      <p class="hero__body">We design and engineer the software behind ambitious work: custom applications, dependable platforms and automation that fits the way your business actually runs.</p>
+      <div class="hero__actions">
+        <a href="contact.html" class="btn btn--primary">Tell us what you need <span aria-hidden="true">↗</span></a>
+        <a href="case-studies.html" class="btn btn--quiet">Explore our work <span aria-hidden="true">→</span></a>
       </div>
-    </section>
+      <div class="hero__meta"><span>01 / Understand</span><span>02 / Design</span><span>03 / Build</span></div>
+    </div>
+    <div class="hero__right">
+      <div class="hero-art" role="img" aria-label="Technical line drawing showing connected software layers">
+        <div class="hero-art__top"><span>VEYRION / SYSTEM STUDY</span><span>FIG. 001</span></div>
+        <svg class="hero-art__drawing" viewBox="0 0 620 540" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g stroke="currentColor" stroke-width="1.15" opacity=".76">
+            <path d="M104 164 307 57l205 108-205 111-203-112Z"/>
+            <path d="M104 164v174l203 113 205-113V165"/>
+            <path d="M307 276v175M104 338l203-109 205 110M104 251l203 111 205-111" opacity=".55"/>
+            <path d="m205 111 204 109M410 111 205 220M205 220v88l102 57 103-57v-88" opacity=".4"/>
+            <path d="M155 191v120l152 84 153-84V191M155 251l152 84 153-84" opacity=".35"/>
+            <path d="M307 57v55M512 165l42-23M104 164l-40-21M512 338l43 24M104 338l-41 24" stroke-dasharray="4 6"/>
+            <circle cx="307" cy="57" r="4" fill="currentColor"/><circle cx="512" cy="165" r="4" fill="currentColor"/><circle cx="104" cy="164" r="4" fill="currentColor"/><circle cx="307" cy="451" r="4" fill="currentColor"/>
+          </g>
+          <g stroke="#d95a3b" stroke-width="2">
+            <path d="M307 57 410 111 307 166 205 111 307 57Z"/>
+            <path d="M307 166v110" stroke-dasharray="3 7"/>
+            <circle cx="307" cy="166" r="6" fill="#d95a3b"/>
+          </g>
+          <g fill="currentColor" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="1.2">
+            <text x="26" y="150">INTERFACE</text><text x="475" y="126">API LAYER</text><text x="25" y="370">DATA</text><text x="474" y="390">AUTOMATION</text><text x="307" y="25" text-anchor="middle">01 / ARCHITECTURE</text>
+          </g>
+          <g stroke="#d95a3b" stroke-width="1"><path d="M90 154h-34M529 132h46M91 361H44M529 380h44"/></g>
+        </svg>
+        <div class="hero-art__bottom"><span>One system. Your rules.</span><span>EST. 2026</span></div>
+      </div>
+      <p class="hero__aside-note">Good software should feel like it was always meant to work this way.</p>
+    </div>
+  </div>
+</section>
 
     <!-- ====== TRUST STRIP ====== -->
-    <section class="strip" aria-hidden="true">
-      <div class="strip__inner">
-        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
-        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
-        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
-        <span>ENGINEERING-FIRST</span><span>SECURITY-FOCUSED</span><span>PERFORMANCE-DRIVEN</span><span>BUILT TO SCALE</span>
-      </div>
-    </section>
+    <section class="strip strip--editorial" aria-label="Studio disciplines"><div class="strip__inner"><span>Custom software</span><i>✳</i><span>Systems engineering</span><i>✳</i><span>Product design</span><i>✳</i><span>Automation</span><i>✳</i><span>Data infrastructure</span></div></section>
 
     <!-- ====== ENGINEERING POSTURE ====== -->
     <section class="section" style="padding:48px var(--gutter);">
@@ -591,7 +579,7 @@
               <span class="contact__clock-label">STUDIO TIME</span>
               <span class="contact__clock-value" id="studio-clock">Remote studio &middot; --:--:-- &middot; --</span>
             </div>
-            <button type="button" class="btn btn--copy-email" id="copy-email">Contact us</button>
+            <button type="button" class="btn btn--copy-email" id="copy-email">Email the studio</button>
             <div class="toast" id="toast" aria-live="polite"></div>
           </div>
           <div class="contact-right">
@@ -654,7 +642,7 @@
             </form>
             <div id="form-success" hidden>
               <h3>Call request received.</h3>
-              <p>Your preferred time has been sent to the studio. The call is not confirmed until you receive a confirmation email.</p>
+              <p>Your request has been saved. We will review it and reply to the email address on your account.</p>
               <button type="button" data-reset-form class="btn btn--sm">Send another brief</button>
             </div>
           </div>
@@ -698,6 +686,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js" defer></script>
 
   <div class="auth-modal" id="auth-modal" hidden><div class="auth-modal__backdrop" data-auth-close></div><section class="auth-modal__card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title"><button class="auth-modal__close" type="button" data-auth-close aria-label="Close">×</button><p class="section__label" id="auth-modal-mode">ACCOUNT ACCESS</p><h2 id="auth-modal-title">Welcome to Veyrion.</h2><p class="auth-modal__sub" id="auth-modal-sub">Sign in to send a project brief.</p><form id="auth-login-form" class="auth-form"><div class="field"><label>Email</label><input id="auth-email" type="email" autocomplete="email" required></div><div class="field"><label>Password</label><input id="auth-password" type="password" autocomplete="current-password" required></div><button class="btn btn--primary" type="submit">Sign in</button><p class="auth-error" id="auth-login-error"></p></form><form id="auth-signup-form" class="auth-form" hidden><div class="field"><label>Name</label><input id="auth-name" type="text" autocomplete="name" minlength="2" required></div><div class="field"><label>Work email</label><input id="auth-signup-email" type="email" autocomplete="email" required></div><div class="field"><label>Company</label><input id="auth-company" type="text" autocomplete="organization" minlength="2" required></div><div class="field"><label>Password</label><input id="auth-signup-password" type="password" autocomplete="new-password" minlength="14" required></div><button class="btn btn--primary" type="submit">Create account</button><p class="auth-error" id="auth-signup-error"></p></form><button class="auth-switch" id="auth-switch" type="button">Need an account? Create one</button><p class="auth-modal__note">Account required for enquiries. This helps prevent spam and keeps your project history attached to you.</p></section></div>

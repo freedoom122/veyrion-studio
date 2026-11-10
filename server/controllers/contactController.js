@@ -1,9 +1,35 @@
-const { sendEmail, isEmailConfigured } = require('../config/email');
+const { sendEmail } = require('../config/email');
 const { getDb } = require('../config/database');
 
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+
+async function persistContact(req, submission) {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error('Supabase contact storage is not configured.');
+  const base = url.endsWith('/') ? url.slice(0, -1) : url;
+  const response = await fetch(base + '/rest/v1/contact_submissions', {
+    method:'POST',
+    headers:{ apikey:key, Authorization:'Bearer ' + req.customerAccessToken, 'Content-Type':'application/json', Prefer:'return=minimal' },
+    body:JSON.stringify({ user_id:req.user.id, name:submission.name, email:submission.email, company:submission.company, project_type:submission.type || null, brief:submission.brief, request_ip:req.ip || '', user_agent:String(req.headers['user-agent'] || '').slice(0,500) }),
+    signal:AbortSignal.timeout(10000),
+  });
+  if (!response.ok) throw new Error('Supabase contact storage returned ' + response.status + ': ' + (await response.text()).slice(0,300));
+}
+
+async function sendViaFormSubmit({ to, subject, text, replyTo }) {
+  const response = await fetch('https://formsubmit.co/ajax/' + to, {
+    method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({_subject:subject,_template:'table',_replyto:replyTo,message:text}),
+    signal:AbortSignal.timeout(12000),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || result.success === false || result.success === 'false') throw new Error(result.message || 'HTTPS email provider rejected the request (' + response.status + ').');
+  return result;
 }
 
 const contactController = {
@@ -39,12 +65,13 @@ const contactController = {
         console.error('[CONTACT] DB insert error:', dbErr.message);
       }
 
-      if (!isEmailConfigured()) {
-        return res.status(503).json({
-          success: false,
-          error: { code: 'EMAIL_UNAVAILABLE', message: 'Contact delivery is temporarily unavailable. Please try again later.' },
-        });
+      try {
+        await persistContact(req, { name, email, company, type, brief });
+      } catch (storageError) {
+        console.error('[CONTACT] Persistent storage failed:', storageError.message);
+        return res.status(503).json({ success:false, error:{code:'STORAGE_UNAVAILABLE',message:'We could not save your enquiry right now. Please try again shortly.'} });
       }
+
 
       const adminEmail = process.env.ADMIN_EMAIL;
       if (!adminEmail) {
@@ -67,15 +94,17 @@ const contactController = {
         + '<p style="color:#71717A;font-size:12px;margin-top:24px;">Reply to respond directly to ' + escapeHtml(name) + ' at ' + escapeHtml(email) + '</p>'
         + '</div>';
 
-      await sendEmail({
-        to: adminEmail,
-        subject: '[Veyrion Brief] ' + company + ' - ' + (type || 'Project Inquiry'),
-        html: adminHtml,
-        text: 'New architecture brief from ' + name + ' at ' + company + ' (' + email + ').\\nProject type: ' + (type || 'Not specified') + '\\n\\nBrief:\\n' + brief,
-        replyTo: email,
-      });
-
-      return res.json({ success: true, message: 'Brief submitted successfully' });
+      const subject = '[Veyrion Enquiry] ' + company + ' - ' + (type || 'Project enquiry');
+      const text = 'New enquiry from ' + name + ' at ' + company + ' (' + email + ').\nProject type: ' + (type || 'Not specified') + '\n\nBrief:\n' + brief;
+      let delivered = true;
+      try {
+        await sendEmail({ to:adminEmail, subject, html:adminHtml, text, replyTo:email });
+      } catch (smtpError) {
+        console.warn('[CONTACT] SMTP unavailable; trying HTTPS email delivery:', smtpError.message);
+        try { await sendViaFormSubmit({ to:adminEmail, subject, text, replyTo:email }); }
+        catch (fallbackError) { delivered = false; console.error('[CONTACT] Email delivery failed:', fallbackError.message); }
+      }
+      return res.status(delivered ? 200 : 202).json({ success:true, message:delivered ? 'Your enquiry has been received.' : 'Your enquiry has been saved. Email notification is pending.', notification:delivered ? 'sent' : 'pending' });
     } catch (err) {
       console.error('[CONTACT] Error:', err);
       next(err);

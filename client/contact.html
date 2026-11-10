@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -69,7 +70,7 @@
                 <p class="field-error" aria-live="polite"></p>
               </div>
               <div class="field">
-                <label for="cf-email">Work Email</label>
+                <label for="cf-email">Email</label>
                 <input type="email" id="cf-email" name="email" required autocomplete="email">
                 <p class="field-error" aria-live="polite"></p>
               </div>
@@ -91,38 +92,23 @@
                 </select>
                 <p class="field-error" aria-live="polite"></p>
               </div>
-              <div class="booking-fields">
-                <div class="field field--booking">
-                  <label for="cf-date">Preferred date</label>
-                  <input type="date" id="cf-date" name="preferredDate" required>
-                  <p class="field-error" aria-live="polite"></p>
-                </div>
-                <div class="field field--booking">
-                  <label for="cf-time">Preferred time</label>
-                  <input type="time" id="cf-time" name="preferredTime" min="09:00" max="16:00" step="1800" required>
-                  <p class="field-help">45-minute call · 09:00–16:00 in your local time</p>
-                  <p class="field-error" aria-live="polite"></p>
-                </div>
-              </div>
-
-              <div class="field">
+<div class="field">
                 <label for="cf-brief">Project Brief</label>
                 <textarea id="cf-brief" name="brief" required rows="5" minlength="40" placeholder="Tell us what you're building and the constraints we should know about..."></textarea>
                 <p class="field-error" aria-live="polite"></p>
               </div>
-              <input type="hidden" id="cf-timezone" name="timezone">
               <div class="form-honeypot" aria-hidden="true">
                 <label for="cf-website">Leave this field empty</label>
                 <input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off">
               </div>
               <p class="form-error" id="form-error" role="alert" hidden></p>
-              <button type="submit" class="btn btn--primary">Request a 45-minute call</button>
-              <p class="contact__legal">Choose a preferred slot. We will confirm the call by email before it is booked.</p>
+              <button type="submit" class="btn btn--primary">Send enquiry</button>
+              <p class="contact__legal">We usually reply within two business days.</p>
             </form>
             <div id="form-success" hidden>
-              <h3>Call request received.</h3>
-              <p>Your preferred time has been sent to the studio. The call is not confirmed until you receive a confirmation email.</p>
-              <button type="button" data-reset-form class="btn btn--sm">Send another brief</button>
+              <h3>Enquiry received.</h3>
+              <p>Your enquiry has been saved. We will review it and reply to your email address.</p>
+              <button type="button" data-reset-form class="btn btn--sm">Send another enquiry</button>
             </div>
           </div>
 
@@ -130,7 +116,7 @@
             <div class="contact-page__block">
               <span class="contact-page__label">EMAIL</span>
               <a href="contact.html" class="contact-page__value">Contact us</a>
-              <button type="button" class="btn btn--sm" id="copy-email" style="margin-top:8px;">Contact us</button>
+              <button type="button" class="btn btn--sm" id="copy-email" style="margin-top:8px;">Email the studio</button>
               <div class="toast" id="toast" aria-live="polite"></div>
             </div>
             <div class="contact-page__block">
@@ -186,6 +172,7 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js" defer></script>
   <div class="auth-modal" id="auth-modal" hidden><div class="auth-modal__backdrop" data-auth-close></div><section class="auth-modal__card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title"><button class="auth-modal__close" type="button" data-auth-close aria-label="Close">×</button><p class="section__label" id="auth-modal-mode">ACCOUNT ACCESS</p><h2 id="auth-modal-title">Welcome to Veyrion.</h2><p class="auth-modal__sub" id="auth-modal-sub">Sign in to send a project brief.</p><form id="auth-login-form" class="auth-form"><div class="field"><label>Email</label><input id="auth-email" type="email" autocomplete="email" required></div><div class="field"><label>Password</label><input id="auth-password" type="password" autocomplete="current-password" required></div><button class="btn btn--primary" type="submit">Sign in</button><p class="auth-error" id="auth-login-error"></p></form><form id="auth-signup-form" class="auth-form" hidden><div class="field"><label>Name</label><input id="auth-name" type="text" autocomplete="name" minlength="2" required></div><div class="field"><label>Work email</label><input id="auth-signup-email" type="email" autocomplete="email" required></div><div class="field"><label>Company</label><input id="auth-company" type="text" autocomplete="organization" minlength="2" required></div><div class="field"><label>Password</label><input id="auth-signup-password" type="password" autocomplete="new-password" minlength="14" required></div><button class="btn btn--primary" type="submit">Create account</button><p class="auth-error" id="auth-signup-error"></p></form><button class="auth-switch" id="auth-switch" type="button">Need an account? Create one</button><p class="auth-modal__note">Account required for enquiries. This helps prevent spam and keeps your project history attached to you.</p></section></div>
 </body>

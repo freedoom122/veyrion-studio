@@ -22,9 +22,9 @@ function getTransporter() {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 5000,
-    socketTimeout: 10000,
+    connectionTimeout: 4000,
+    greetingTimeout: 3000,
+    socketTimeout: 5000,
   });
 
   return transporter;
@@ -34,6 +34,7 @@ async function sendEmail({ to, subject, html, text, replyTo }) {
   const transport = getTransporter();
 
   if (!transport) {
+    if (process.env.NODE_ENV === 'production') throw new Error('SMTP is not configured; no email was sent.');
     console.log(`[EMAIL LOG] To: ${to} | Subject: ${subject}`);
     console.log(`[EMAIL LOG] Body: ${text || html}`);
     return { messageId: 'console-log-' + Date.now() };

@@ -103,4 +103,27 @@ function optionalAuth(req, res, next) {
   next();
 }
 
-module.exports = { generateToken, generateRefreshToken, requireAuth, requireRole, optionalAuth };
+
+async function requireCustomerAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  if (!header.startsWith('Bearer ')) return res.status(401).json({ success:false, error:{code:'UNAUTHORIZED',message:'Sign in to continue.'} });
+  const token = header.slice(7).trim();
+  const projectUrl = process.env.SUPABASE_URL;
+  const publicKey = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
+  if (!projectUrl || !publicKey) return res.status(503).json({ success:false, error:{code:'AUTH_UNAVAILABLE',message:'Account service is not configured yet.'} });
+  try {
+    const response = await fetch((projectUrl.endsWith('/') ? projectUrl.slice(0, -1) : projectUrl) + '/auth/v1/user', { headers:{ apikey:publicKey, Authorization:'Bearer ' + token }, signal:AbortSignal.timeout(8000) });
+    if (!response.ok) return res.status(401).json({ success:false, error:{code:'INVALID_SESSION',message:'Your session expired. Please sign in again.'} });
+    const account = await response.json();
+    if (!account || !account.id || !account.email) return res.status(401).json({ success:false, error:{code:'INVALID_SESSION',message:'Please sign in again.'} });
+    const metadata = account.user_metadata || {};
+    req.user = { id:account.id, email:account.email, name:metadata.full_name || metadata.name || account.email.split('@')[0], company:metadata.company || '', role:'customer' };
+    req.customerAccessToken = token;
+    next();
+  } catch (error) {
+    console.error('[AUTH] Supabase verification failed:', error.message);
+    return res.status(503).json({ success:false, error:{code:'AUTH_UNAVAILABLE',message:'Account service is temporarily unavailable. Please try again.'} });
+  }
+}
+
+module.exports = { generateToken, generateRefreshToken, requireAuth, requireCustomerAuth, requireRole, optionalAuth };

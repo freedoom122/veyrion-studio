@@ -11,7 +11,7 @@ const adminRoutes = require('./admin');
 const contactController = require('../../controllers/contactController');
 const bookingController = require('../../controllers/bookingController');
 const { rateLimit } = require('express-rate-limit');
-const { requireAuth } = require('../../middleware/auth');
+const { requireAuth, requireCustomerAuth } = require('../../middleware/auth');
 const validate = require('../../middleware/validate');
 const { z } = require('zod');
 
@@ -33,10 +33,9 @@ const contactSchema = z.object({
 });
 const contactLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3, standardHeaders: true, legacyHeaders: false, message: { success: false, error: { code: 'RATE_LIMITED', message: 'Too many contact requests. Please try again later.' } } });
 
-router.post('/contact', contactLimiter, requireAuth, validate(contactSchema), (req, res, next) => {
+router.post('/contact', contactLimiter, requireCustomerAuth, validate(contactSchema), (req, res, next) => {
   const started = Number(req.get('x-form-started-at') || 0);
   if (String(req.body.website || '') || !started || Date.now() - started < 2500 || Date.now() - started > 86400000) return res.status(400).json({ success:false, error:{code:'BOT_CHECK_FAILED', message:'Please complete the form normally and try again.'} });
-  req.body.email = req.user.email; req.body.name = req.user.name || req.body.name;
   return contactController.submit(req,res,next);
 });
 
@@ -60,7 +59,7 @@ const bookingSchema = z.object({
   website: z.string().max(200).optional(),
 });
 
-router.post('/bookings', bookingLimiter, requireAuth, validate(bookingSchema), (req,res,next) => {
+router.post('/bookings', bookingLimiter, requireCustomerAuth, validate(bookingSchema), (req,res,next) => {
   const started = Number(req.get('x-form-started-at') || 0);
   if (String(req.body.website || '') || !started || Date.now() - started < 2500 || Date.now() - started > 86400000) return res.status(400).json({success:false,error:{code:'BOT_CHECK_FAILED',message:'Please complete the form normally and try again.'}});
   req.body.email=req.user.email; req.body.name=req.user.name || req.body.name;
