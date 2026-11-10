@@ -1077,6 +1077,58 @@
     }
   }
 
+
+
+  /* ============================================================
+     SPATIAL INTERACTIONS / motion layer 02
+     ============================================================ */
+  function initSpatialInteractions() {
+    if (reduceMotion) return;
+    var fine = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+    if (fine) {
+      $$('.bento-card, .build, .principle').forEach(function (card) {
+        card.addEventListener('pointermove', function (event) {
+          var r = card.getBoundingClientRect();
+          var x = (event.clientX - r.left) / r.width;
+          var y = (event.clientY - r.top) / r.height;
+          card.style.setProperty('--pointer-x', (x * 100) + '%');
+          card.style.setProperty('--pointer-y', (y * 100) + '%');
+          if (card.classList.contains('bento-card')) {
+            card.style.transform = 'perspective(900px) rotateX(' + ((.5-y)*5).toFixed(2) + 'deg) rotateY(' + ((x-.5)*6).toFixed(2) + 'deg) translateY(-4px)';
+          }
+        }, { passive:true });
+        card.addEventListener('pointerleave', function () { card.style.transform = ''; }, { passive:true });
+      });
+      $$('.btn, .footer__nav a').forEach(function (el) {
+        el.addEventListener('pointermove', function (event) {
+          var r = el.getBoundingClientRect();
+          var dx = (event.clientX - r.left - r.width/2) / r.width;
+          var dy = (event.clientY - r.top - r.height/2) / r.height;
+          el.style.transform = 'translate3d(' + (dx*7).toFixed(1) + 'px,' + (dy*5).toFixed(1) + 'px,0)';
+        }, { passive:true });
+        el.addEventListener('pointerleave', function () { el.style.transform = ''; }, { passive:true });
+      });
+    }
+    if (hasGSAP && hasST) {
+      gsap.utils.toArray('.section__label').forEach(function (label) {
+        gsap.fromTo(label, { opacity:0, x:-24, letterSpacing:'0.24em' }, {
+          opacity:1, x:0, letterSpacing:'0.08em', duration:.8, ease:'power3.out',
+          scrollTrigger:{ trigger:label, start:'top 88%', once:true }
+        });
+      });
+      gsap.utils.toArray('.service-item').forEach(function (item, index) {
+        gsap.from(item, { opacity:0, x:index%2 ? 22 : -22, duration:.7, ease:'power3.out',
+          scrollTrigger:{ trigger:item, start:'top 92%', once:true } });
+      });
+      gsap.utils.toArray('.timeline-step').forEach(function (step) {
+        gsap.fromTo(step, { x:-18, opacity:.35 }, { x:0, opacity:1, ease:'none',
+          scrollTrigger:{ trigger:step, start:'top 88%', end:'top 52%', scrub:.7 } });
+      });
+      var art = $('.hero-art');
+      if (art) gsap.to(art, { yPercent:10, ease:'none', scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:1.2 } });
+    }
+  }
+
   /* ============================================================
      INIT
      ============================================================ */
@@ -1106,6 +1158,7 @@
     safe(initReadingProgress);
     safe(initStatusDashboard);
     safe(initPremiumInteractions);
+    safe(initSpatialInteractions);
   });
 
 })();
