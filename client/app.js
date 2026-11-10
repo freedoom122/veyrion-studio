@@ -18,7 +18,10 @@
   var SUPABASE_URL = "https://dhqtzbagyvsoooyjqauh.supabase.co";
   var SUPABASE_PUBLIC_KEY = "sb_publishable_1zqs825S2m9GA1lIgTkzIA_IYdxO7p6";
   var AUTH_SESSION_KEY = "veyrion.auth.session.v1";
+  var AUTH_IDLE_LIMIT = 30 * 60 * 1000;
   var currentAccessToken = "";
+  var lastAuthActivity = Date.now();
+  var lastActivityWrite = 0;
 
   function authHeaders(headers) {
     headers = headers || {};
@@ -36,18 +39,21 @@
     if (!session || !session.access_token) return false;
     var stored = { access_token:session.access_token, refresh_token:session.refresh_token || "", expires_at:session.expires_at || (Math.floor(Date.now()/1000) + (session.expires_in || 3600)) };
     currentAccessToken = stored.access_token;
-    try { localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(stored)); } catch (_) {}
+    stored.last_activity = Date.now(); lastAuthActivity = stored.last_activity;
+    try { sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(stored)); } catch (_) {}
     updateAuthNav(); return true;
   }
   function clearCustomerSession() {
     currentAccessToken = "";
-    try { localStorage.removeItem(AUTH_SESSION_KEY); } catch (_) {}
+    try { sessionStorage.removeItem(AUTH_SESSION_KEY); } catch (_) {}
     updateAuthNav();
   }
   function restoreCustomerSession() {
     var stored;
-    try { stored = JSON.parse(localStorage.getItem(AUTH_SESSION_KEY) || "null"); } catch (_) { stored = null; }
+    try { stored = JSON.parse(sessionStorage.getItem(AUTH_SESSION_KEY) || "null"); } catch (_) { stored = null; }
     if (!stored || !stored.access_token) { updateAuthNav(); return; }
+    if (stored.last_activity && Date.now() - stored.last_activity > AUTH_IDLE_LIMIT) { clearCustomerSession(); return; }
+    lastAuthActivity = stored.last_activity || Date.now();
     if (stored.expires_at > Math.floor(Date.now()/1000) + 60) { currentAccessToken = stored.access_token; updateAuthNav(); return; }
     if (!stored.refresh_token) { clearCustomerSession(); return; }
     authRequest("/auth/v1/token?grant_type=refresh_token", {refresh_token:stored.refresh_token})
@@ -89,7 +95,7 @@
     $("#auth-modal-title").textContent = signup ? "A better way to work starts here." : "Welcome back.";
     $("#auth-modal-sub").textContent = signup ? "Create an account to send a project brief or request a call." : "Sign in to continue to your project workspace.";
     $("#auth-switch").textContent = signup ? "Already have an account? Sign in" : "New to Veyrion? Create an account";
-    $("#auth-login-error").textContent = ""; $("#auth-signup-error").textContent = "";
+    $("#auth-login-error").textContent = ""; $("#auth-login-error").classList.remove("is-success"); $("#auth-signup-error").textContent = "";
     modal.hidden = false; document.body.classList.add("auth-open");
     window.setTimeout(function(){ (signup ? $("#auth-name") : $("#auth-email")).focus(); },40);
   }
@@ -101,6 +107,27 @@
     ["#auth-logout","[data-auth-logout]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=!signedIn;}); });
   }
   function requireCustomerAuth() { if (currentAccessToken) return true; openAuth("login"); return false; }
+  function initAuthInactivity() {
+    var markActivity = function () {
+      if (!currentAccessToken) return;
+      lastAuthActivity = Date.now();
+      if (Date.now() - lastActivityWrite < 60000) return;
+      lastActivityWrite = Date.now();
+      try {
+        var stored = JSON.parse(sessionStorage.getItem(AUTH_SESSION_KEY) || "null");
+        if (stored) { stored.last_activity = lastAuthActivity; sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(stored)); }
+      } catch (_) {}
+    };
+    ["pointerdown", "keydown", "touchstart", "scroll"].forEach(function (name) {
+      document.addEventListener(name, markActivity, { passive:true });
+    });
+    window.setInterval(function () {
+      if (!currentAccessToken || Date.now() - lastAuthActivity < AUTH_IDLE_LIMIT) return;
+      var token = currentAccessToken;
+      authRequest("/auth/v1/logout", {}, token).catch(function () {}).finally(clearCustomerSession);
+    }, 30000);
+  }
+
   function initCustomerAuth() {
     ensureAuthUI(); restoreCustomerSession();
     $("#auth-open") && $("#auth-open").addEventListener("click",function(){openAuth("login");});
@@ -110,6 +137,19 @@
     ["#auth-logout","[data-auth-logout]"].forEach(function(sel){$$(sel).forEach(function(el){el.addEventListener("click",function(){authRequest("/auth/v1/logout",{},currentAccessToken).catch(function(){}).finally(function(){clearCustomerSession();closeAuth();});});});});
     $$("#auth-modal [data-auth-close]").forEach(function(el){el.addEventListener("click",closeAuth);});
     $("#auth-switch").addEventListener("click",function(){openAuth($("#auth-signup-form").hidden?"signup":"login");});
+    var forgotButton = $("#auth-forgot-password");
+    if (forgotButton) forgotButton.addEventListener("click",function(){
+      var email = $("#auth-email").value.trim();
+      var error = $("#auth-login-error");
+      if (!email) { error.textContent = "Enter your email address first."; $("#auth-email").focus(); return; }
+      error.textContent = ""; forgotButton.disabled = true; forgotButton.textContent = "Sending reset link…";
+      var redirect = location.origin + "/reset-password.html";
+      authRequest("/auth/v1/recover?redirect_to=" + encodeURIComponent(redirect), {email:email})
+        .then(function(){ error.textContent = "If an account exists for this email, a password reset link has been sent. Check your inbox."; error.classList.add("is-success"); })
+        .catch(function(err){ error.textContent = err.message || "We could not send a reset link. Please try again later."; })
+        .finally(function(){ forgotButton.disabled = false; forgotButton.textContent = "Forgot your password?"; });
+    });
+
     $("#auth-login-form").addEventListener("submit",function(event){
       event.preventDefault(); var button=$("button[type=submit]",event.currentTarget); var error=$("#auth-login-error"); error.textContent=""; if(button){button.disabled=true;button.textContent="Signing in…";}
       authRequest("/auth/v1/token?grant_type=password",{email:$("#auth-email").value.trim(),password:$("#auth-password").value})
@@ -1136,6 +1176,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     safe(initCustomerAuth);
+    safe(initAuthInactivity);
     safe(initLoader);
     safe(initScrollProgress);
     safe(initBackToTop);

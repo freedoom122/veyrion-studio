@@ -2137,3 +2137,10 @@ body { background-image: radial-gradient(ellipse at 72% 7%, rgba(111,144,119,.09
 @media (max-width:900px) { .hero-art__atmosphere span:nth-child(3){width:94%;left:3%;top:3%;} }
 @media (max-width:600px) { .hero::before{background-size:48px 48px;} .hero-art__atmosphere span{width:56%;left:22%;top:22%;} .hero-art__atmosphere span:nth-child(2){width:78%;left:11%;top:11%;} .hero-art__atmosphere span:nth-child(3){width:98%;left:1%;top:1%;} }
 @media (prefers-reduced-motion:reduce) { .hero-art::before,.hero-art__atmosphere span,.hero-art__atmosphere i{animation:none!important;} .btn,.bento-card,.build,.principle{transition:none!important;} }
+
+
+/* Account recovery and form status */
+.auth-forgot { display:block; margin:12px auto 0; padding:4px 0; border:0; background:transparent; color:var(--text-2); font-size:12px; cursor:pointer; }
+.auth-forgot:hover { color:var(--accent); }
+.auth-error.is-success { color:var(--accent); }
+.auth-forgot:disabled { opacity:.55; cursor:wait; }
