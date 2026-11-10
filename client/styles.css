@@ -1988,3 +1988,8 @@ body.auth-open { overflow: hidden; }
 pre,code { border-radius:0 !important; }
 pre { border:1px solid var(--border); background:#20231f !important; }
 blockquote { border-left:2px solid var(--accent); background:transparent; color:var(--text-2); }
+
+.contact-page__form-wrap form { background:var(--bg-2) !important; border:1px solid var(--border-2) !important; border-radius:0 !important; box-shadow:none !important; }
+.contact-page__form-wrap .field input,.contact-page__form-wrap .field select,.contact-page__form-wrap .field textarea { background:#f6f4ed !important; color:var(--text) !important; border:1px solid var(--border-2) !important; }
+.contact-page__form-wrap .field label { color:var(--text-2) !important; }
+.contact-page__form-wrap .contact__legal { color:var(--text-3) !important; }

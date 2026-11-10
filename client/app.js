@@ -461,7 +461,7 @@
         ].join("\n");
       },
       "--contact": function () {
-        return '<span class="t-str">Contact via form</span>  \u2014  2 business day response  \u2014  New York, remote-first';
+        return '<span class="t-str">Contact via form</span>  \u2014  2 business day response  \u2014  Bucharest, remote-first';
       },
       "help": function () {
         return "available commands:\n  --show-stack\n  --benchmarks\n  --architecture\n  --security\n  --contact\n  clear";
@@ -824,8 +824,8 @@
   function initClock() {
     var el = $("#studio-clock");
     if (!el) return;
-    var CITY = "New York";
-    var TZ = "America/New_York";
+    var CITY = "Bucharest";
+    var TZ = "Europe/Bucharest";
     var fmt = null;
     try {
       fmt = new Intl.DateTimeFormat("en-US", {
