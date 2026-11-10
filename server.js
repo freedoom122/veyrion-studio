@@ -48,7 +48,7 @@ async function main() {
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https:"],
+        connectSrc: ["'self'", "https:"],\n        frameSrc: ["https://translate.google.com", "https://www.google.com"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         frameAncestors: ["'none'"],
