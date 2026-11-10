@@ -1993,3 +1993,80 @@ blockquote { border-left:2px solid var(--accent); background:transparent; color:
 .contact-page__form-wrap .field input,.contact-page__form-wrap .field select,.contact-page__form-wrap .field textarea { background:#f6f4ed !important; color:var(--text) !important; border:1px solid var(--border-2) !important; }
 .contact-page__form-wrap .field label { color:var(--text-2) !important; }
 .contact-page__form-wrap .contact__legal { color:var(--text-3) !important; }
+/* ============================================================
+   VEYRION / CINEMATIC SYSTEM STUDY
+   ============================================================ */
+.hero { isolation:isolate; }
+.hero::before { content:""; position:absolute; inset:0; pointer-events:none; z-index:0; background:radial-gradient(ellipse at 74% 48%,rgba(217,90,59,.10),transparent 34%),radial-gradient(ellipse at 18% 78%,rgba(16,185,129,.055),transparent 36%); }
+.hero__inner { perspective:1400px; }
+.hero__left { position:relative; z-index:2; }
+.hero__right { position:relative; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; transform-style:preserve-3d; }
+.hero-art { position:relative; isolation:isolate; width:min(100%,620px); min-height:470px; border:1px solid rgba(255,255,255,.10); background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.008) 42%,rgba(217,90,59,.035)); box-shadow:0 30px 100px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.06); overflow:hidden; transform:rotateY(var(--scene-y,0deg)) rotateX(var(--scene-x,0deg)); transform-style:preserve-3d; transition:transform .18s ease-out,border-color .3s; }
+.hero-art::before { content:""; position:absolute; inset:0; z-index:-1; opacity:.55; background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size:32px 32px; mask-image:radial-gradient(ellipse at center,#000 18%,transparent 78%); }
+.hero-art__top,.hero-art__bottom { position:absolute; z-index:4; left:20px; right:20px; display:flex; justify-content:space-between; gap:12px; font:9px var(--font-mono); letter-spacing:.14em; color:var(--text-3); text-transform:uppercase; }
+.hero-art__top { top:18px; }
+.hero-art__bottom { bottom:18px; color:var(--text-2); letter-spacing:.08em; }
+.hero-art__drawing { position:absolute; width:100%; height:100%; inset:0; opacity:.16; transform:scale(.88); }
+.hero-orbit { position:absolute; width:min(78%,440px); aspect-ratio:1; left:50%; top:50%; transform:translate(-50%,-50%) translateZ(65px); transform-style:preserve-3d; filter:drop-shadow(0 20px 35px rgba(0,0,0,.35)); }
+.hero-orbit::before,.hero-orbit::after { content:""; position:absolute; inset:9%; border:1px solid rgba(255,255,255,.10); border-radius:50%; transform:rotateX(72deg) rotateZ(-22deg); }
+.hero-orbit::after { inset:19%; border-color:rgba(217,90,59,.24); transform:rotateX(72deg) rotateZ(54deg); }
+.hero-orbit__plane { position:absolute; inset:8%; border:1px solid rgba(255,255,255,.24); border-radius:50%; transform-style:preserve-3d; animation:orbit-spin 24s linear infinite; }
+.hero-orbit__plane::before { content:""; position:absolute; inset:15%; border:1px dashed rgba(255,255,255,.14); border-radius:50%; }
+.hero-orbit__plane i { position:absolute; top:7%; left:50%; width:9px; height:9px; border-radius:50%; background:#e16c4c; box-shadow:0 0 18px rgba(225,108,76,.9),0 0 42px rgba(225,108,76,.45); }
+.hero-orbit__plane--one { transform:rotateX(68deg) rotateZ(0deg); }
+.hero-orbit__plane--two { inset:15%; border-color:rgba(16,185,129,.36); transform:rotateX(68deg) rotateZ(70deg); animation-duration:31s; animation-direction:reverse; }
+.hero-orbit__plane--two i { background:#10b981; box-shadow:0 0 18px rgba(16,185,129,.8); top:3%; }
+.hero-orbit__plane--three { inset:2%; border-color:rgba(255,255,255,.12); transform:rotateY(66deg) rotateX(18deg); animation-duration:38s; }
+.hero-orbit__plane--three i { width:6px; height:6px; background:#f2e8d8; box-shadow:0 0 15px rgba(255,255,255,.7); }
+.hero-orbit__core { position:absolute; width:32%; aspect-ratio:1; left:34%; top:34%; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-direction:column; background:radial-gradient(circle at 34% 28%,#34302e 0,#151617 42%,#08090a 78%); border:1px solid rgba(255,255,255,.24); box-shadow:inset 0 0 28px rgba(255,255,255,.08),0 0 60px rgba(217,90,59,.16),0 0 0 12px rgba(255,255,255,.018); transform:translateZ(42px); }
+.hero-orbit__core::before { content:""; position:absolute; inset:-12px; border:1px solid rgba(217,90,59,.28); border-radius:50%; border-right-color:transparent; border-bottom-color:transparent; transform:rotate(-24deg); }
+.hero-orbit__core-mark { font:500 clamp(34px,5vw,54px)/1 var(--font-display); letter-spacing:-.1em; padding-right:.1em; color:#f3eee6; text-shadow:0 0 24px rgba(217,90,59,.3); }
+.hero-orbit__core-line { width:34px; height:1px; margin:10px 0 7px; background:#d95a3b; }
+.hero-orbit__core-label { font:8px/1.5 var(--font-mono); letter-spacing:.18em; color:var(--text-3); text-align:center; }
+.hero-orbit__satellite { position:absolute; z-index:3; padding:7px 10px; border:1px solid rgba(255,255,255,.16); background:rgba(8,9,10,.82); backdrop-filter:blur(12px); font:9px var(--font-mono); letter-spacing:.16em; color:var(--text-2); box-shadow:0 8px 24px rgba(0,0,0,.25); }
+.hero-orbit__satellite--a { top:13%; right:4%; color:#e78a70; }
+.hero-orbit__satellite--b { bottom:15%; left:0; color:#72d6b2; }
+.hero-orbit__satellite--c { bottom:7%; right:12%; }
+.hero-orbit__crosshair { position:absolute; width:18px; height:18px; opacity:.55; }
+.hero-orbit__crosshair::before,.hero-orbit__crosshair::after { content:""; position:absolute; background:#d95a3b; }
+.hero-orbit__crosshair::before { width:18px; height:1px; top:8px; }
+.hero-orbit__crosshair::after { height:18px; width:1px; left:8px; }
+.hero-orbit__crosshair--a { top:5%; left:18%; }
+.hero-orbit__crosshair--b { bottom:12%; right:3%; transform:scale(.65); }
+.hero-orbit__readout { position:absolute; left:50%; bottom:-5%; transform:translateX(-50%); display:flex; gap:12px; align-items:center; white-space:nowrap; font:8px var(--font-mono); letter-spacing:.14em; color:var(--text-4); }
+.hero-orbit__readout strong { color:#d95a3b; font-weight:500; }
+.hero__aside-note { max-width:440px; width:100%; padding:15px 2px 0; color:var(--text-3); font:10px/1.6 var(--font-mono); letter-spacing:.04em; }
+@keyframes orbit-spin { to { rotate:360deg; } }
+.hero__eyebrow { display:flex; align-items:center; gap:10px; }
+.eyebrow-mark { display:inline-block; width:7px; height:7px; background:#d95a3b; border-radius:50%; box-shadow:0 0 12px rgba(217,90,59,.75); }
+.hero__title em { display:block; font-style:normal; color:#d7a08f; }
+.hero__actions .btn { position:relative; overflow:hidden; }
+.hero__actions .btn::after { content:""; position:absolute; inset:0; transform:translateX(-120%); background:linear-gradient(100deg,transparent,rgba(255,255,255,.24),transparent); transition:transform .6s; }
+.hero__actions .btn:hover::after { transform:translateX(120%); }
+.section { position:relative; }
+.section__inner { position:relative; }
+.section__label { color:#b77a67; }
+.section__title { text-wrap:balance; }
+.status-card,.bento-card,.build-card,.arch-layer { transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,background .35s; }
+.status-card:hover { transform:translateY(-5px); background:#101012; }
+.build-card:hover,.bento-card:hover { transform:translateY(-6px); }
+@media (max-width:960px) {
+ .hero__right { width:100%; }
+ .hero-art { min-height:420px; }
+ .hero-orbit { width:min(72vw,390px); }
+}
+@media (max-width:600px) {
+ .hero-art { min-height:330px; }
+ .hero-art__top,.hero-art__bottom { left:12px; right:12px; font-size:7px; }
+ .hero-orbit { width:min(82vw,320px); }
+ .hero-orbit__satellite { padding:5px 7px; font-size:7px; }
+ .hero-orbit__readout { bottom:-3%; font-size:6px; gap:7px; }
+ .hero__aside-note { font-size:9px; }
+ .hero__actions { flex-wrap:wrap; }
+ .hero__actions .btn { min-height:46px; }
+}
+@media (prefers-reduced-motion:reduce) {
+ .hero-orbit__plane { animation:none !important; }
+ .hero-art { transform:none !important; transition:none !important; }
+ .hero__actions .btn::after { display:none; }
+}

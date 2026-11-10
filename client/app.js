@@ -1027,6 +1027,57 @@
   }
 
   /* ============================================================
+     CINEMATIC SYSTEM STUDY / INTERACTION
+     ============================================================ */
+  function initCinematicExperience() {
+    var art = $(".hero-art");
+    var orbit = $("[data-hero-orbit]");
+    if (!art || !orbit || reduceMotion) return;
+
+    var frame = 0;
+    var targetX = 0, targetY = 0;
+    var currentX = 0, currentY = 0;
+    var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    function renderTilt() {
+      frame = 0;
+      currentX += (targetX - currentX) * 0.085;
+      currentY += (targetY - currentY) * 0.085;
+      art.style.setProperty("--scene-y", (currentX * 5.5).toFixed(2) + "deg");
+      art.style.setProperty("--scene-x", (-currentY * 4.5).toFixed(2) + "deg");
+      if (Math.abs(targetX - currentX) > 0.002 || Math.abs(targetY - currentY) > 0.002) frame = requestAnimationFrame(renderTilt);
+    }
+
+    if (finePointer) {
+      art.addEventListener("pointermove", function (event) {
+        var rect = art.getBoundingClientRect();
+        targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+        targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+        if (!frame) frame = requestAnimationFrame(renderTilt);
+      }, { passive:true });
+      art.addEventListener("pointerleave", function () {
+        targetX = 0; targetY = 0;
+        if (!frame) frame = requestAnimationFrame(renderTilt);
+      }, { passive:true });
+    }
+
+    if (hasGSAP && hasST) {
+      gsap.to(orbit, {
+        rotateZ: 13,
+        scale: 0.94,
+        ease: "none",
+        scrollTrigger: { trigger: art, start: "top bottom", end: "bottom top", scrub: 1.2 }
+      });
+      gsap.to(".hero-art__drawing", {
+        yPercent: 8,
+        opacity: 0.24,
+        ease: "none",
+        scrollTrigger: { trigger: art, start: "top bottom", end: "bottom top", scrub: 1.5 }
+      });
+    }
+  }
+
+  /* ============================================================
      INIT
      ============================================================ */
   function safe(fn) { try { fn(); } catch (e) { /* silent */ } }
@@ -1049,6 +1100,7 @@
     safe(initClock);
     safe(initScrollReveals);
     safe(initHeroAnimation);
+    safe(initCinematicExperience);
     safe(initKeyboard);
     safe(initDocsSearch);
     safe(initReadingProgress);
