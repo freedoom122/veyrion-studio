@@ -786,7 +786,7 @@
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (data) {
           if (!res.ok || !data.success) {
-            if (res.status === 401) { currentAccessToken = ""; updateAuthNav(); if (supabaseClient) supabaseClient.auth.signOut(); openAuth("login"); }
+            if (res.status === 401) { clearCustomerSession(); openAuth("login"); }
             throw new Error((data.error && data.error.message) || data.message || "We could not send your request. Please try again.");
           }
           return data;
