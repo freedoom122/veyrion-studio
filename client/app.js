@@ -1101,20 +1101,7 @@
       }, { passive:true });
     }
 
-    if (hasGSAP && hasST) {
-      gsap.to(orbit, {
-        rotateZ: 13,
-        scale: 0.94,
-        ease: "none",
-        scrollTrigger: { trigger: art, start: "top bottom", end: "bottom top", scrub: 1.2 }
-      });
-      gsap.to(".hero-art__drawing", {
-        yPercent: 8,
-        opacity: 0.24,
-        ease: "none",
-        scrollTrigger: { trigger: art, start: "top bottom", end: "bottom top", scrub: 1.5 }
-      });
-    }
+    /* Hero rotation is owned by touch/pointer drag in experience.js. */
   }
 
 

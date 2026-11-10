@@ -161,7 +161,7 @@
     root = document.createElement('div');
     root.id = 'veyrion-language-control';
     root.className = 'v-language';
-    root.innerHTML = '<button class="v-language__trigger" type="button" aria-expanded="false" aria-controls="v-language-panel"><span class="v-language__flag" aria-hidden="true"></span><span class="v-language__label"></span><span class="v-language__chevron" aria-hidden="true">⌄</span></button><div class="v-language__panel" id="v-language-panel" hidden><div class="v-language__heading"><span>REGION & LANGUAGE</span><span>100+ LANGUAGES</span></div><label class="v-language__search-label" for="v-language-search">Find a country or language</label><input class="v-language__search" id="v-language-search" type="search" placeholder="Search languages…" autocomplete="off"><div class="v-language__options" role="listbox" aria-label="Available languages"></div><p class="v-language__note">Powered by Cloudflare Workers AI. Machine translations may not be perfect.</p></div>';
+    root.innerHTML = '<button class="v-language__trigger" type="button" aria-expanded="false" aria-controls="v-language-panel"><span class="v-language__flag" aria-hidden="true"></span><span class="v-language__label"></span><span class="v-language__chevron" aria-hidden="true">⌄</span></button><div class="v-language__panel" id="v-language-panel" hidden><div class="v-language__heading"><span>LANGUAGE & REGION</span><span>SELECT A LANGUAGE</span></div><label class="v-language__search-label" for="v-language-search">Find by country or language</label><input class="v-language__search" id="v-language-search" type="search" placeholder="Search…" autocomplete="off"><div class="v-language__options" role="listbox" aria-label="Available languages"></div><p class="v-language__note">Your preference is saved on this device.</p></div>';
 
     var inner = document.querySelector('.header__inner');
     var toggle = inner && inner.querySelector('.header__toggle');
@@ -191,6 +191,7 @@
         button.addEventListener('click', function () {
           choose(item);
           panel.hidden = true;
+          root.classList.remove('is-open');
           trigger.setAttribute('aria-expanded', 'false');
         });
         list.appendChild(button);
@@ -199,6 +200,7 @@
 
     trigger.addEventListener('click', function () {
       panel.hidden = !panel.hidden;
+      root.classList.toggle('is-open', !panel.hidden);
       trigger.setAttribute('aria-expanded', String(!panel.hidden));
       if (!panel.hidden) search.focus();
     });
@@ -206,12 +208,14 @@
     document.addEventListener('click', function (event) {
       if (!root.contains(event.target)) {
         panel.hidden = true;
+        root.classList.remove('is-open');
         trigger.setAttribute('aria-expanded', 'false');
       }
     });
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
         panel.hidden = true;
+        root.classList.remove('is-open');
         trigger.setAttribute('aria-expanded', 'false');
       }
     });
