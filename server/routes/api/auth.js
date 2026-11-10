@@ -1,10 +1,9 @@
-
 const express = require('express');
 const router = express.Router();
 const authController = require('../../controllers/authController');
 const { requireAuth } = require('../../middleware/auth');
 const validate = require('../../middleware/validate');
-const { authLimiter } = require('../../middleware/rateLimiter');
+const { authLimiter, refreshLimiter } = require('../../middleware/rateLimiter');
 const { z } = require('zod');
 
 const loginSchema = z.object({
@@ -21,7 +20,7 @@ const registerSchema = z.object({
 
 router.post('/register', authLimiter, validate(registerSchema), authController.register);
 router.post('/login', authLimiter, validate(loginSchema), authController.login);
-router.post('/refresh', authController.refreshToken);
+router.post('/refresh', refreshLimiter, authController.refreshToken);
 router.post('/logout', requireAuth, authController.logout);
 router.post('/forgot-password', (req, res) => {
   res.status(403).json({

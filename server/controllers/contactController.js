@@ -1,37 +1,9 @@
-const { sendEmail } = require('../config/email');
+const { sendEmail, isEmailConfigured } = require('../config/email');
 const { getDb } = require('../config/database');
 
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-async function sendViaFormSubmit({ name, email, company, type, brief }) {
-  try {
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@localhost';
-    const resp = await fetch('https://formsubmit.co/ajax/' + adminEmail, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        _subject: '[Veyrion Brief] ' + company + ' - ' + (type || 'Project Inquiry'),
-        _template: 'table',
-        name: name,
-        email: email,
-        company: company,
-        project_type: type || 'Not specified',
-        brief: brief,
-        _replyto: email,
-      }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (resp.ok) {
-      console.log('[CONTACT] Email sent via FormSubmit.co');
-    } else {
-      console.error('[CONTACT] FormSubmit.co returned', resp.status);
-    }
-  } catch (e) {
-    console.error('[CONTACT] FormSubmit.co failed:', e.message);
-  }
 }
 
 const contactController = {
@@ -40,7 +12,6 @@ const contactController = {
       const { name, email, company, type, brief } = req.body;
       const db = getDb();
 
-      // Store submission
       try {
         db.prepare(`
           CREATE TABLE IF NOT EXISTS contact_submissions (
@@ -68,14 +39,24 @@ const contactController = {
         console.error('[CONTACT] DB insert error:', dbErr.message);
       }
 
-      // Respond immediately — don't wait for email
-      res.json({ success: true, message: 'Brief submitted successfully' });
+      if (!isEmailConfigured()) {
+        return res.status(503).json({
+          success: false,
+          error: { code: 'EMAIL_UNAVAILABLE', message: 'Contact delivery is temporarily unavailable. Please try again later.' },
+        });
+      }
 
-      // Try SMTP first, fall back to FormSubmit.co
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@localhost';
+      const adminEmail = process.env.ADMIN_EMAIL;
+      if (!adminEmail) {
+        return res.status(503).json({
+          success: false,
+          error: { code: 'EMAIL_UNAVAILABLE', message: 'Contact delivery is not configured.' },
+        });
+      }
+
       const adminHtml = '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#0c0c0e;color:#fff;">'
         + '<h2 style="color:#10B981;margin-bottom:8px;font-size:18px;">New Architecture Brief</h2>'
-        + '<p style="color:#71717A;font-size:13px;margin-bottom:24px;">Submitted via veyrion.dev contact form</p>'
+        + '<p style="color:#71717A;font-size:13px;margin-bottom:24px;">Submitted via Veyrion Studio contact form</p>'
         + '<table style="width:100%;border-collapse:collapse;">'
         + '<tr><td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.08);color:#71717A;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;width:120px;">Name</td><td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.08);color:#fff;font-size:14px;">' + escapeHtml(name) + '</td></tr>'
         + '<tr><td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.08);color:#71717A;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;">Email</td><td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.08);color:#06B6D4;font-size:14px;">' + escapeHtml(email) + '</td></tr>'
@@ -86,17 +67,15 @@ const contactController = {
         + '<p style="color:#71717A;font-size:12px;margin-top:24px;">Reply to respond directly to ' + escapeHtml(name) + ' at ' + escapeHtml(email) + '</p>'
         + '</div>';
 
-      // Fire email in background (never blocks the response)
-      sendEmail({
+      await sendEmail({
         to: adminEmail,
         subject: '[Veyrion Brief] ' + company + ' - ' + (type || 'Project Inquiry'),
         html: adminHtml,
-        text: 'New architecture brief from ' + name + ' at ' + company + ' (' + email + ').\nProject type: ' + (type || 'Not specified') + '\n\nBrief:\n' + brief,
-      }).catch(function(e) {
-        console.error('[CONTACT] SMTP failed, trying FormSubmit.co:', e.message);
-        sendViaFormSubmit({ name, email, company, type, brief });
+        text: 'New architecture brief from ' + name + ' at ' + company + ' (' + email + ').\\nProject type: ' + (type || 'Not specified') + '\\n\\nBrief:\\n' + brief,
+        replyTo: email,
       });
 
+      return res.json({ success: true, message: 'Brief submitted successfully' });
     } catch (err) {
       console.error('[CONTACT] Error:', err);
       next(err);

@@ -10,11 +10,9 @@ const { createServer } = require('http');
 try { require('dotenv').config({ override: true }); } catch (_) {}
 
 async function main() {
-  // Initialize database first (async with sql.js)
   const { initDatabase, getDb } = require('./server/config/database');
   await initDatabase();
 
-  // Now require everything that depends on the database
   const User = require('./server/models/User');
   const Product = require('./server/models/Product');
   const Order = require('./server/models/Order');
@@ -25,9 +23,9 @@ async function main() {
   const webhookRoutes = require('./server/routes/webhooks/stripe');
   const errorHandler = require('./server/middleware/errorHandler');
   const logger = require('./server/utils/logger');
-  const { publicLimiter, apiLimiter } = require('./server/middleware/rateLimiter');
+  const { apiLimiter } = require('./server/middleware/rateLimiter');
+  const { securityMiddleware } = require('./server/middleware/security');
 
-  // Database setup
   const { migrate } = require('./server/database/migrate');
   const { seed } = require('./server/database/seed');
   const { migrateSecureAdmin } = require('./server/database/secureAdmin');
@@ -36,77 +34,88 @@ async function main() {
   migrateSecureAdmin();
 
   const app = express();
+  app.disable('x-powered-by');
   app.set('trust proxy', 1);
   const server = createServer(app);
 
-  // Security
+  app.use(securityMiddleware);
+
   app.use(helmet({
-    contentSecurityPolicy: { directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'", "https://cdn.jsdelivr.net"], styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"], fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"], imgSrc: ["'self'", "data:", "https:"], connectSrc: ["'self'", "https:"], objectSrc: ["'none'"], baseUri: ["'self'"], frameAncestors: ["'none'"], formAction: ["'self'"] } },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https:"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        frameAncestors: ["'none'"],
+        formAction: ["'self'"],
+      },
+    },
     crossOriginEmbedderPolicy: false,
   }));
 
-  // CORS
-  const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
+  const configuredOrigins = (process.env.CORS_ORIGIN || process.env.FRONTEND_URL || '')
     .split(',')
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter(Boolean);
+
+  if (process.env.NODE_ENV === 'production' && configuredOrigins.length === 0) {
+    throw new Error('CORS_ORIGIN or FRONTEND_URL must be configured in production.');
+  }
 
   app.use(cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      if (!origin) return callback(null, true);
+      if (configuredOrigins.includes(origin)) return callback(null, true);
       return callback(new Error('Origin is not allowed by CORS'));
     },
     credentials: true,
   }));
 
-  // Compression
   app.use(compression());
-
-  // Logging
   app.use(logger);
 
-  // Body parsing
-  app.use(express.json({ limit: '1mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+  app.use(express.json({ limit: '1mb', strict: true }));
+  app.use(express.urlencoded({ extended: false, limit: '100kb' }));
   app.use(cookieParser());
 
-  // Rate limiting
   app.use('/api/v1/', apiLimiter);
-
-  // API routes
-  // Google OAuth admin login is disabled until verified token handling is implemented.
   app.use('/api/v1', apiRoutes);
-
-  // Webhook routes (raw body for Stripe)
   app.use('/webhooks', webhookRoutes);
 
-  // Health check
   app.get('/health', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-  // Static files - serve frontend from /client
-  app.use(express.static(path.join(__dirname, 'client')));
+  app.use(express.static(path.join(__dirname, 'client'), {
+    dotfiles: 'deny',
+    index: 'index.html',
+    etag: true,
+    maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
+  }));
 
-  // Admin panel - serve from /server/admin
-  app.use('/admin', express.static(path.join(__dirname, 'server', 'admin')));
+  app.use('/admin', express.static(path.join(__dirname, 'server', 'admin'), {
+    dotfiles: 'deny',
+    index: 'index.html',
+  }));
 
-  // SPA fallback for admin
   app.get('/admin/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'server', 'admin', 'index.html'));
   });
 
-  // SPA fallback for frontend
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'index.html'));
   });
 
-  // Error handling
   app.use(errorHandler);
 
-  // Graceful shutdown
   function shutdown(signal) {
-    console.log(`\n[${signal}] Shutting down gracefully...`);
+    console.log(`\\n[${signal}] Shutting down gracefully...`);
     const { _save } = require('./server/config/database');
     _save();
     server.close(() => {
@@ -119,15 +128,14 @@ async function main() {
   process.on('SIGTERM', () => shutdown('SIGTERM'));
   process.on('SIGINT', () => shutdown('SIGINT'));
 
-  // Start server
   const PORT = process.env.PORT || 3000;
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`\n=== Veyrion Studio ===`);
+    console.log('\\n=== Veyrion Studio ===');
     console.log(`Server:  http://localhost:${PORT}`);
     console.log(`Admin:   http://localhost:${PORT}/admin`);
     console.log(`API:     http://localhost:${PORT}/api/v1`);
     console.log(`Health:  http://localhost:${PORT}/health`);
-    console.log(`======================\n`);
+    console.log('======================\\n');
   });
 }
 
