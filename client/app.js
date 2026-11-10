@@ -52,7 +52,7 @@
     var stored;
     try { stored = JSON.parse(sessionStorage.getItem(AUTH_SESSION_KEY) || "null"); } catch (_) { stored = null; }
     if (!stored || !stored.access_token) { updateAuthNav(); return; }
-    if (stored.last_activity && Date.now() - stored.last_activity > AUTH_IDLE_LIMIT) { clearCustomerSession(); return; }
+    if (stored.last_activity && Date.now() - stored.last_activity > AUTH_IDLE_LIMIT) { authRequest("/auth/v1/logout", {}, stored.access_token).catch(function () {}).finally(clearCustomerSession); return; }
     lastAuthActivity = stored.last_activity || Date.now();
     if (stored.expires_at > Math.floor(Date.now()/1000) + 60) { currentAccessToken = stored.access_token; updateAuthNav(); return; }
     if (!stored.refresh_token) { clearCustomerSession(); return; }
