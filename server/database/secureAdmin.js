@@ -1,5 +1,6 @@
 
-const { getDb } = require('../config/database');\nconst bcrypt = require('bcryptjs');
+const { getDb } = require('../config/database');
+const bcrypt = require('bcryptjs');
 
 function migrateSecureAdmin() {
   const db = getDb();
@@ -23,6 +24,17 @@ function migrateSecureAdmin() {
   db.exec('CREATE INDEX IF NOT EXISTS idx_admin_sessions_user ON admin_sessions(user_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_admin_resets_user ON admin_password_resets(user_id)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_admin_resets_expiry ON admin_password_resets(expires_at)');
-\n  const ownerEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();\n  const bootstrapPassword = String(process.env.ADMIN_PASSWORD || '');\n  if (ownerEmail && bootstrapPassword) {\n    const owner = db.prepare("SELECT id FROM users WHERE lower(email) = ? LIMIT 1").get(ownerEmail);\n    if (!owner) {\n      const hash = bcrypt.hashSync(bootstrapPassword, 12);\n      db.prepare("INSERT INTO users (email,password_hash,name,role,email_verified,is_banned,must_change_password) VALUES (?,?,?,'superadmin',1,0,1)").run(ownerEmail, hash, 'Veyrion Owner');\n      console.log('[DB] Owner account bootstrapped from the private Render environment.');\n    }\n  }\n  console.log('[DB] Secure owner authentication schema ready.');
+
+  const ownerEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+  const bootstrapPassword = String(process.env.ADMIN_PASSWORD || '');
+  if (ownerEmail && bootstrapPassword) {
+    const owner = db.prepare("SELECT id FROM users WHERE lower(email) = ? LIMIT 1").get(ownerEmail);
+    if (!owner) {
+      const hash = bcrypt.hashSync(bootstrapPassword, 12);
+      db.prepare("INSERT INTO users (email,password_hash,name,role,email_verified,is_banned,must_change_password) VALUES (?,?,?,'superadmin',1,0,1)").run(ownerEmail, hash, 'Veyrion Owner');
+      console.log('[DB] Owner account bootstrapped from the private Render environment.');
+    }
+  }
+  console.log('[DB] Secure owner authentication schema ready.');
 }
 module.exports = { migrateSecureAdmin };
