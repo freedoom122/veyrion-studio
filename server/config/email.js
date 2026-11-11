@@ -16,7 +16,7 @@ function getTransporter() {
   const port = Number(process.env.SMTP_PORT || 587);
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST, port, secure: port === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    auth: { user: process.env.SMTP_USER, pass: String(process.env.SMTP_PASS || '').replace(/\\s+/g, '') },
     connectionTimeout: 8000, greetingTimeout: 8000, socketTimeout: 12000,
   });
   return transporter;
