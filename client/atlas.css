@@ -13,3 +13,24 @@
 @media(max-width:900px){.atlas-stage{min-height:430px;padding:24px 16px 22px;margin-bottom:30px}.atlas-stage__model{height:340px;margin-top:18px}.atlas-stage__rings{width:94%;height:48%;top:59%}.atlas-stage__deck,.hero-stack--atlas{width:100%!important;height:74%!important;top:57%!important}.hero-atlas-layer{width:clamp(130px,38vw,190px)!important;height:43px!important;margin:-22px 0 0 -95px!important;padding:0 10px!important}.hero-atlas-layer b{font-size:10px!important}.atlas-checker{top:8px;right:8px;width:176px;padding:9px;gap:6px}.atlas-checker__target{min-height:46px;padding:6px;font-size:8px}.atlas-checker__match{min-height:40px}.atlas-checker__match strong{font-size:15px}.atlas-checker__open{padding:7px;font-size:8px}.atlas-count{top:14px;left:12px}.hero-art .atlas-checker{top:8%;right:0;width:164px}.hero-art .hero-atlas-layer{width:clamp(120px,34vw,180px)!important;margin-left:-90px!important;height:39px!important;margin-top:-20px!important}}
 @media(max-width:560px){.atlas-stage{min-height:390px;padding:20px 12px 18px}.atlas-stage__model{height:310px}.atlas-stage__top,.atlas-stage__bottom{font-size:7px}.atlas-stage__bottom{bottom:17px}.atlas-checker{width:148px;padding:7px;top:6px;right:5px}.atlas-checker__eyebrow{font-size:7px}.atlas-checker__target{min-height:40px;font-size:7px;gap:5px}.atlas-checker__match strong{font-size:13px}.atlas-checker__match small{font-size:7px}.atlas-checker__open{font-size:7px}.atlas-count{top:12px;left:8px;font-size:7px}.hero-art .atlas-checker{width:142px;top:7%;right:0}.hero-art .atlas-count{bottom:9%}.hero-art .hero-atlas-layer{width:126px!important;margin-left:-63px!important;height:36px!important;margin-top:-18px!important;padding:0 8px!important}.hero-art .hero-atlas-layer b{font-size:9px!important}}
 @media(prefers-reduced-motion:reduce){.hero-atlas-layer,.atlas-checker__target,.atlas-checker__open{transition:none!important}}
+/* Atlas layer geometry: real, separately reachable paper sheets */
+.hero-art .hero-stack--atlas{left:33.5%!important;top:55%!important;width:70%!important;height:78%!important}
+.hero-art .hero-atlas-layer{width:110px!important;height:36px!important;margin:-18px 0 0 -55px!important;padding:0 7px!important}
+.hero-art .hero-atlas-layer b{font-size:8px!important;white-space:nowrap}
+.atlas-stage__deck{left:39%!important;top:55%!important;width:80%!important;height:80%!important}
+.atlas-stage .hero-atlas-layer{width:180px!important;height:46px!important;margin:-23px 0 0 -90px!important}
+@media(max-width:900px){
+ .hero-art .hero-stack--atlas{left:30%!important;top:55%!important;width:72%!important;height:78%!important}
+ .hero-art .hero-atlas-layer{width:112px!important;height:32px!important;margin:-16px 0 0 -56px!important;padding:0 6px!important}
+ .hero-art .hero-atlas-layer b{font-size:7.5px!important}
+ .atlas-stage__model{height:390px!important}
+ .atlas-stage__deck{left:30%!important;top:55%!important;width:90%!important;height:86%!important}
+ .atlas-stage .hero-atlas-layer{width:112px!important;height:30px!important;margin:-15px 0 0 -56px!important;padding:0 6px!important}
+ .atlas-stage .hero-atlas-layer b{font-size:8px!important}
+ .atlas-stage{min-height:500px!important}
+}
+@media(max-width:560px){
+ .atlas-stage__model{height:390px!important}
+ .atlas-stage{min-height:500px!important}
+ .hero-art .hero-atlas-layer{width:112px!important;height:32px!important}
+}
