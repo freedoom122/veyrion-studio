@@ -97,7 +97,7 @@ async function main() {
 
   app.get('/.well-known/security.txt', (_req, res) => {
     res.type('text/plain').setHeader('Cache-Control', 'public, max-age=86400');
-    res.send('Contact: mailto:contact.veyrion@gmail.com\\nPreferred-Languages: en, ro\\nCanonical: https://veyrionstudios.com/.well-known/security.txt\\nPolicy: https://veyrionstudios.com/security.html\\nExpires: 2027-11-11T00:00:00.000Z\\n');
+    res.send('Contact: mailto:contact.veyrion@gmail.com\nPreferred-Languages: en, ro\nCanonical: https://veyrionstudios.com/.well-known/security.txt\nPolicy: https://veyrionstudios.com/security.html\nExpires: 2027-11-11T00:00:00.000Z\n');
   });
 
   const errorCatalog = require('./server/config/errorCatalog');
@@ -143,7 +143,7 @@ async function main() {
   app.use(errorHandler);
 
   function shutdown(signal) {
-    console.log(`\\n[${signal}] Shutting down gracefully...`);
+    console.log(`\n[${signal}] Shutting down gracefully...`);
     const { _save } = require('./server/config/database');
     _save();
     server.close(() => {
@@ -158,12 +158,12 @@ async function main() {
 
   const PORT = process.env.PORT || 3000;
   server.listen(PORT, '0.0.0.0', () => {
-    console.log('\\n=== Veyrion Studio ===');
+    console.log('\n=== Veyrion Studio ===');
     console.log(`Server:  http://localhost:${PORT}`);
     console.log(`Admin:   http://localhost:${PORT}/admin`);
     console.log(`API:     http://localhost:${PORT}/api/v1`);
     console.log(`Health:  http://localhost:${PORT}/health`);
-    console.log('======================\\n');
+    console.log('======================\n');
   });
 }
 
