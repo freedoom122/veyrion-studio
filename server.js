@@ -97,7 +97,10 @@ async function main() {
     dotfiles: 'deny',
     index: 'index.html',
     etag: true,
-    maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
+    maxAge: 0,
+    setHeaders(res, filePath) {
+      if (/\\.(?:html|js|css)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    },
   }));
 
   app.use('/admin', express.static(path.join(__dirname, 'server', 'admin'), {
