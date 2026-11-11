@@ -107,11 +107,7 @@ router.put('/bookings/:id/status', async (req, res, next) => {
         await sendEmail({
           to: booking.email,
           subject,
-          text: 'Hi ' + booking.name + ',
-
-' + detail + '
-
-Veyrion Studio',
+          text: 'Hi ' + booking.name + ',\n\n' + detail + '\n\nVeyrion Studio',
           html: '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:28px;color:#202630"><p>Hi ' +
             escapeHtml(booking.name) + ',</p><p>' + escapeHtml(detail) + '</p><p>Veyrion Studio</p></div>',
           replyTo: process.env.ADMIN_EMAIL,
