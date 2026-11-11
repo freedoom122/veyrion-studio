@@ -88,7 +88,7 @@ router.get('/session/:sessionId', requireAuth, async (req, res, next) => {
   try {
     const stripe = getStripe();
     if (!stripe) {
-      return res.json({ success: true, data: { status: 'simulated', paid: true } });
+      return res.status(503).json({ success: false, error: { code: 'STRIPE_NOT_CONFIGURED', message: 'Payment verification is unavailable until Stripe is configured.' } });
     }
 
     const session = await stripe.checkout.sessions.retrieve(req.params.sessionId);

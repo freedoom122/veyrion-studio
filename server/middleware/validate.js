@@ -12,7 +12,7 @@ function validate(schema) {
           error: {
             code: 'VALIDATION_ERROR',
             message: 'Invalid input',
-            details: err.errors.map(e => ({ field: e.path.join('.'), message: e.message }))
+            details: (err.issues || err.errors || []).map(e => ({ field: e.path.join('.'), message: e.message }))
           }
         });
       }

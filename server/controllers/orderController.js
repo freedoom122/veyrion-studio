@@ -147,7 +147,12 @@ const orderController = {
   // Stripe webhook
   async handleWebhook(req, res, next) {
     try {
-      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+      const stripeSecret = String(process.env.STRIPE_SECRET_KEY || '');
+      const webhookSecret = String(process.env.STRIPE_WEBHOOK_SECRET || '');
+      if (!/^sk_(?:test|live)_/.test(stripeSecret) || stripeSecret.toLowerCase().includes('placeholder') || !webhookSecret || webhookSecret.toLowerCase().includes('placeholder')) {
+        return res.status(503).json({ success: false, error: { code: 'STRIPE_NOT_CONFIGURED', message: 'Payment processing is not configured on this server.' } });
+      }
+      const stripe = require('stripe')(stripeSecret);
       const sig = req.headers['stripe-signature'];
       let event;
 
