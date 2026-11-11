@@ -2649,3 +2649,6 @@ body:has(.page-transition.is-out){overflow:hidden}
   .atlas__panel,.account-menu,.atlas__result{animation:none!important}.page-transition{transition:none!important}
   .atlas-layer,.hero-atlas-layer{transition:none!important}
 }
+
+@media(max-width:900px){.mobile-nav{position:relative!important;inset:auto!important;z-index:800!important;max-height:0;overflow:hidden;padding:0 24px!important;gap:14px!important;justify-content:flex-start!important;border-bottom:0;transition:max-height .34s cubic-bezier(.2,.8,.2,1),padding .34s ease}.mobile-nav:not([hidden]){max-height:390px;padding:18px 24px 24px!important;border-bottom:1px solid rgba(17,18,20,.12)}.mobile-nav a{font-size:22px!important;line-height:1.05!important;padding:3px 0}.mobile-nav__close{position:relative!important;top:auto!important;right:auto!important;align-self:flex-end;margin-bottom:2px}}
+.hero-atlas-layer.is-dragging{cursor:grabbing;transition:none!important;transform:translate3d(calc((var(--atlas-i) - 10) * 4px + var(--move-x,0px)),calc((var(--atlas-i) - 10) * 7px + var(--move-y,0px)),calc(var(--atlas-i) * 8px)) rotateX(58deg) rotateZ(calc(var(--atlas-i) * .8deg));filter:brightness(1.2)}
