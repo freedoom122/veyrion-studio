@@ -28,7 +28,7 @@ function isFutureLocalSlot(date, time, timezone) {
 async function persistBooking(req, booking) {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
-  if (!url || !key) return false;
+  if (!url || !key) throw new Error('Supabase booking storage is not configured. Refusing to save a booking only to ephemeral local storage.');
   const response = await fetch((url.endsWith('/') ? url.slice(0, -1) : url) + '/rest/v1/call_bookings', {
     method:'POST',
     headers:{ apikey:key, Authorization:'Bearer ' + req.customerAccessToken, 'Content-Type':'application/json', Prefer:'return=minimal' },

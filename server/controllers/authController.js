@@ -80,7 +80,7 @@ const authController = {
       db.prepare(`
         INSERT INTO sessions (user_id, token, expires_at, ip_address, user_agent)
         VALUES (?, ?, datetime('now', '+7 days'), ?, ?)
-      `).run(user.id, refreshToken, req.ip, req.get('user-agent'));
+      `).run(user.id, hashRefreshToken(refreshToken), req.ip, req.get('user-agent'));
 
       // Admin audit log
       if (user.role === 'admin' || user.role === 'superadmin') {
