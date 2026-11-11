@@ -111,13 +111,16 @@ async function main() {
     etag: true,
     maxAge: 0,
     setHeaders(res, filePath) {
-      if (/\\.(?:html|js|css)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      if (/\.(?:html|js|css)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     },
   }));
 
   app.use('/admin', express.static(path.join(__dirname, 'server', 'admin'), {
     dotfiles: 'deny',
     index: 'index.html',
+    setHeaders(res, filePath) {
+      if (/\.(?:html|js|css)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    },
   }));
 
   app.get('/admin/*', (req, res) => {
