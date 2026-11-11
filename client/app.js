@@ -1163,6 +1163,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     safe(initCustomerAuth);
+    safe(initVeyrionAtlas);
     safe(initAuthInactivity);
     safe(initLoader);
     safe(initScrollProgress);
