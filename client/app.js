@@ -1180,11 +1180,14 @@
     setPage(current);
   }
 
+  function loadSharedAtlasExperience(){var l=document.createElement('link');l.rel='stylesheet';l.href='atlas.css';document.head.appendChild(l);var s=document.createElement('script');s.src='atlas.js';s.async=false;document.body.appendChild(s);}
+
   function safe(fn) { try { fn(); } catch (e) { /* silent */ } }
 
   document.addEventListener("DOMContentLoaded", function () {
     safe(initCustomerAuth);
     safe(initVeyrionAtlas);
+    safe(loadSharedAtlasExperience);
     safe(initAuthInactivity);
     safe(initLoader);
     safe(initScrollProgress);
