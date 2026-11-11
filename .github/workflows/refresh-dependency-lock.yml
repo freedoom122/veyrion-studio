@@ -7,8 +7,8 @@ jobs:
   refresh-lockfile:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -19,7 +19,7 @@ jobs:
           npm audit --omit=dev --json > npm-audit.json || true
           node -e "const a=require('./npm-audit.json'); const v=a.metadata?.vulnerabilities||{}; console.log('AUDIT SUMMARY',JSON.stringify(v)); for(const [name,item] of Object.entries(a.vulnerabilities||{})) console.log(name,JSON.stringify({severity:item.severity,range:item.range,fixAvailable:item.fixAvailable,via:item.via.map(x=>typeof x==='string'?x:{title:x.title,url:x.url,range:x.range})}));"
       - name: Save audit report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: veyrion-npm-audit
           path: npm-audit.json
