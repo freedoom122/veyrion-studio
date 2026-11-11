@@ -1,0 +1,37 @@
+name: Refresh dependency lockfile
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  refresh-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Regenerate lockfile from pinned patched dependencies
+        run: npm install --package-lock-only --ignore-scripts --no-audit
+      - name: Run production dependency audit
+        run: |
+          npm audit --omit=dev --json > npm-audit.json || true
+          node -e "const a=require('./npm-audit.json'); const v=a.metadata?.vulnerabilities||{}; console.log('AUDIT SUMMARY',JSON.stringify(v)); for(const [name,item] of Object.entries(a.vulnerabilities||{})) console.log(name,JSON.stringify({severity:item.severity,range:item.range,fixAvailable:item.fixAvailable,via:item.via.map(x=>typeof x==='string'?x:{title:x.title,url:x.url,range:x.range})}));"
+      - name: Save audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyrion-npm-audit
+          path: npm-audit.json
+          retention-days: 14
+      - name: Commit the regenerated lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh patched dependency lockfile"
+            git push
+          else
+            echo "Lockfile already matches package.json."
+          fi
