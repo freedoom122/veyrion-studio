@@ -21,17 +21,6 @@ async function persistContact(req, submission) {
   if (!response.ok) throw new Error('Supabase contact storage returned ' + response.status + ': ' + (await response.text()).slice(0,300));
 }
 
-async function sendViaFormSubmit({ to, subject, text, replyTo }) {
-  const response = await fetch('https://formsubmit.co/ajax/' + to, {
-    method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({_subject:subject,_template:'table',_replyto:replyTo,message:text}),
-    signal:AbortSignal.timeout(12000),
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok || result.success === false || result.success === 'false') throw new Error(result.message || 'HTTPS email provider rejected the request (' + response.status + ').');
-  return result;
-}
-
 const contactController = {
   async submit(req, res, next) {
     try {
@@ -96,13 +85,21 @@ const contactController = {
 
       const subject = '[Veyrion Enquiry] ' + company + ' - ' + (type || 'Project enquiry');
       const text = 'New enquiry from ' + name + ' at ' + company + ' (' + email + ').\nProject type: ' + (type || 'Not specified') + '\n\nBrief:\n' + brief;
-      let delivered = true;
+      let delivered = false;
       try {
         await sendEmail({ to:adminEmail, subject, html:adminHtml, text, replyTo:email });
-      } catch (smtpError) {
-        console.warn('[CONTACT] SMTP unavailable; trying HTTPS email delivery:', smtpError.message);
-        try { await sendViaFormSubmit({ to:adminEmail, subject, text, replyTo:email }); }
-        catch (fallbackError) { delivered = false; console.error('[CONTACT] Email delivery failed:', fallbackError.message); }
+        delivered = true;
+      } catch (mailError) {
+        console.error('[CONTACT] Branded email delivery failed:', mailError.message);
+      }
+      if (delivered) {
+        const confirmationText = 'Hi ' + name + ',\n\nThank you for contacting Veyrion Studios. We have received your project enquiry and will review it. We will reply to this email address as soon as possible.\n\nVeyrion Studios';
+        const confirmationHtml = '<h1 style="font-size:22px;font-weight:500;color:#f1f0ec">Your enquiry is with us.</h1><p>Hi ' + escapeHtml(name) + ',</p><p>Thank you for reaching out to Veyrion Studios. We have received your project enquiry and will review the details.</p><p>We will reply to this email address as soon as possible.</p><p style="margin-top:28px">Veyrion Studios</p>';
+        try {
+          await sendEmail({ to:email, subject:'We received your Veyrion enquiry', html:confirmationHtml, text:confirmationText, replyTo:adminEmail });
+        } catch (confirmationError) {
+          console.error('[CONTACT] Requester confirmation failed:', confirmationError.message);
+        }
       }
       return res.status(delivered ? 200 : 202).json({ success:true, message:delivered ? 'Your enquiry has been received.' : 'Your enquiry has been saved. Email notification is pending.', notification:delivered ? 'sent' : 'pending' });
     } catch (err) {

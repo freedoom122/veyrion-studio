@@ -25,19 +25,6 @@ function isFutureLocalSlot(date, time, timezone) {
 }
 
 
-async function sendViaFormSubmit({ to, subject, text, replyTo }) {
-  const response = await fetch('https://formsubmit.co/ajax/' + to, {
-    method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({_subject:subject,_template:'table',_replyto:replyTo,message:text}),
-    signal:AbortSignal.timeout(12000),
-  });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok || result.success === false || result.success === 'false') {
-    throw new Error(result.message || 'Email provider rejected the request (' + response.status + ').');
-  }
-  return result;
-}
-
 async function persistBooking(req, booking) {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
@@ -155,15 +142,10 @@ const bookingController = {
 
       let notificationDelivered = true;
       try {
-        await sendEmail({ to: recipient, subject: subject, html: adminHtml, text: details, replyTo: normalizedEmail });
+        await sendEmail({ to: recipient, subject, html: adminHtml, text: details, replyTo: normalizedEmail });
       } catch (mailError) {
-        console.warn('[BOOKING] SMTP unavailable; trying HTTPS email delivery:', mailError.message);
-        try {
-          await sendViaFormSubmit({ to:recipient, subject, text:details, replyTo:normalizedEmail });
-        } catch (fallbackError) {
-          notificationDelivered = false;
-          console.error('[BOOKING] Email delivery failed:', fallbackError.message);
-        }
+        notificationDelivered = false;
+        console.error('[BOOKING] Branded email delivery failed:', mailError.message);
       }
       if (!notificationDelivered) {
         db.prepare("UPDATE call_bookings SET notification_status = 'failed', status = 'pending_confirmation' WHERE id = ?").run(bookingId);
