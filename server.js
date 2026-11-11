@@ -80,17 +80,29 @@ async function main() {
   app.use(compression());
   app.use(logger);
 
+  // Stripe must receive the untouched request bytes for signature verification.
+  app.use('/webhooks', webhookRoutes);
+
   app.use(express.json({ limit: '1mb', strict: true }));
   app.use(express.urlencoded({ extended: false, limit: '100kb' }));
   app.use(cookieParser());
 
   app.use('/api/v1/', apiLimiter);
   app.use('/api/v1', apiRoutes);
-  app.use('/webhooks', webhookRoutes);
 
   app.get('/health', (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  const errorCatalog = require('./server/config/errorCatalog');
+  const errorPage = path.join(__dirname, 'client', 'errors', 'index.html');
+  app.get('/errors', (_req, res) => res.redirect(302, '/errors/404'));
+  app.get('/errors/:code', (req, res) => {
+    const code = String(req.params.code);
+    const entry = errorCatalog[code] || errorCatalog['404'];
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(entry.httpStatus || Number(code) || 404).sendFile(errorPage);
   });
 
   app.use(express.static(path.join(__dirname, 'client'), {
@@ -112,8 +124,12 @@ async function main() {
     res.sendFile(path.join(__dirname, 'server', 'admin', 'index.html'));
   });
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'index.html'));
+  // Never turn an unknown URL or missing asset into a successful homepage response.
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/webhooks/')) {
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'The requested API route does not exist.' }, requestId: req.id });
+    }
+    return res.redirect(302, '/errors/404?from=' + encodeURIComponent(req.originalUrl));
   });
 
   app.use(errorHandler);
