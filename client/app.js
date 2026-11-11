@@ -99,6 +99,7 @@
     modal.hidden = false; document.body.classList.add("auth-open");
     window.setTimeout(function(){ (signup ? $("#auth-name") : $("#auth-email")).focus(); },40);
   }
+  window.veyrionOpenAuth = openAuth;
   function closeAuth() { var modal=$("#auth-modal"); if(modal) modal.hidden=true; document.body.classList.remove("auth-open"); }
   function updateAuthNav() {
     var signedIn = Boolean(currentAccessToken);
@@ -1186,7 +1187,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     safe(initCustomerAuth);
-    safe(initVeyrionAtlas);
+    /* Shared Atlas replaces the legacy floating-panel initializer. */
     safe(loadSharedAtlasExperience);
     safe(initAuthInactivity);
     safe(initLoader);
