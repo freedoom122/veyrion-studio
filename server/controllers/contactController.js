@@ -62,7 +62,7 @@ const contactController = {
       }
 
 
-      const adminEmail = process.env.ADMIN_EMAIL;
+      const adminEmail = process.env.CONTACT_NOTIFY_EMAIL || process.env.ADMIN_EMAIL;
       if (!adminEmail) {
         return res.status(503).json({
           success: false,
