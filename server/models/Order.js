@@ -25,12 +25,16 @@ const Order = {
     return db.prepare('SELECT * FROM orders WHERE payment_intent_id = ?').get(paymentIntentId);
   },
 
-  create({ user_id, total_amount, currency, coupon_code, tax_amount, discount_amount, ip_address, user_agent, payment_provider, payment_intent_id }) {
+  findByStripeSession(sessionId) {
+    return db.prepare('SELECT * FROM orders WHERE stripe_session_id = ?').get(sessionId);
+  },
+
+  create({ user_id, total_amount, currency, coupon_code, tax_amount, discount_amount, ip_address, user_agent, payment_provider, payment_intent_id, stripe_session_id }) {
     const orderNumber = generateOrderNumber();
     const result = db.prepare(`
-      INSERT INTO orders (order_number, user_id, total_amount, currency, coupon_code, tax_amount, discount_amount, ip_address, user_agent, payment_provider, payment_intent_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(orderNumber, user_id, total_amount, currency || 'USD', coupon_code || null, tax_amount || 0, discount_amount || 0, ip_address || null, user_agent || null, payment_provider || 'stripe', payment_intent_id || null);
+      INSERT INTO orders (order_number, user_id, total_amount, currency, coupon_code, tax_amount, discount_amount, ip_address, user_agent, payment_provider, payment_intent_id, stripe_session_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(orderNumber, user_id, total_amount, currency || 'USD', coupon_code || null, tax_amount || 0, discount_amount || 0, ip_address || null, user_agent || null, payment_provider || 'stripe', payment_intent_id || null, stripe_session_id || null);
     return this.findById(result.lastInsertRowid);
   },
 

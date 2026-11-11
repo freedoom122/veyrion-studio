@@ -81,12 +81,14 @@ class DatabaseWrapper {
 
 function saveToDisk() {
   if (!wrapper) return;
+  const tempPath = dbPath + '.' + process.pid + '.tmp';
   try {
     const data = wrapper._db.export();
-    const buffer = Buffer.from(data);
-    fs.writeFileSync(dbPath, buffer);
+    fs.writeFileSync(tempPath, Buffer.from(data), { mode: 0o600 });
+    fs.renameSync(tempPath, dbPath);
   } catch (e) {
-    console.error('[DB] Save error:', e.message);
+    try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch (_) {}
+    console.error('[DB] Atomic save failed:', e.message);
   }
 }
 
@@ -102,7 +104,8 @@ async function initDatabase() {
   wrapper.pragma('foreign_keys = ON');
 
   // Auto-save every 5 seconds
-  setInterval(() => saveToDisk(), 5000);
+  const saveTimer = setInterval(() => saveToDisk(), 5000);
+  if (typeof saveTimer.unref === 'function') saveTimer.unref();
 
   // Save on exit
   process.on('SIGTERM', saveToDisk);
@@ -110,6 +113,7 @@ async function initDatabase() {
 
   if (process.env.NODE_ENV === 'production') {
     console.log(`[DB] Database: ${dbPath}`);
+    if (dbPath.startsWith('/tmp/')) console.warn('[DB] WARNING: DATABASE_PATH is on ephemeral storage; records may be lost after restart or deploy.');
   }
   return wrapper;
 }

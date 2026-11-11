@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { getDb } = require('../../config/database');
-const { requireAuth } = require('../../middleware/auth');
+const { requireStoreAuth } = require('../../middleware/auth');
 
 function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key || key === 'sk_test_...' || key === 'sk_test_placeholder' || !key.startsWith('sk_')) return null;
+  const key = String(process.env.STRIPE_SECRET_KEY || '').trim();
+  const webhookSecret = String(process.env.STRIPE_WEBHOOK_SECRET || '').trim();
+  if (!/^sk_(?:test|live)_/.test(key) || key.toLowerCase().includes('placeholder') || !/^whsec_/.test(webhookSecret) || webhookSecret.toLowerCase().includes('placeholder')) return null;
   try { return require('stripe')(key); } catch (_) { return null; }
 }
 
@@ -14,11 +15,12 @@ function isStripeReady() {
 }
 
 // Create a Stripe Checkout Session
-router.post('/create-session', requireAuth, async (req, res, next) => {
+router.post('/create-session', requireStoreAuth, async (req, res, next) => {
   try {
-    const { product_id } = req.body;
-    if (!product_id) {
-      return res.status(400).json({ success: false, error: { code: 'MISSING_PRODUCT', message: 'product_id is required' } });
+    const { product_id } = req.body || {};
+    const productId = Number(product_id);
+    if (!Number.isSafeInteger(productId) || productId <= 0) {
+      return res.status(400).json({ success: false, error: { code: 'INVALID_PRODUCT', message: 'A valid product_id is required.' } });
     }
 
     const db = getDb();
@@ -27,10 +29,13 @@ router.post('/create-session', requireAuth, async (req, res, next) => {
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       WHERE p.id = ? AND p.status = 'active'
-    `).get(parseInt(product_id));
+    `).get(productId);
 
-    if (!product) {
+    if (!product || product.status !== 'active') {
       return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Product not found' } });
+    }
+    if (!Number.isFinite(Number(product.price)) || Number(product.price) <= 0) {
+      return res.status(400).json({ success: false, error: { code: 'INVALID_PRICE', message: 'This product is not available for paid checkout.' } });
     }
 
     const stripe = getStripe();
@@ -84,7 +89,7 @@ router.post('/create-session', requireAuth, async (req, res, next) => {
 });
 
 // Get checkout session status (for success page polling)
-router.get('/session/:sessionId', requireAuth, async (req, res, next) => {
+router.get('/session/:sessionId', requireStoreAuth, async (req, res, next) => {
   try {
     const stripe = getStripe();
     if (!stripe) {

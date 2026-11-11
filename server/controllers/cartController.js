@@ -1,4 +1,5 @@
 const Cart = require('../models/Cart');
+const Product = require('../models/Product');
 
 const cartController = {
   get(req, res, next) {
@@ -18,9 +19,21 @@ const cartController = {
   addItem(req, res, next) {
     try {
       const { product_id, quantity = 1 } = req.body;
+      const amount = Number(quantity);
+      if (!Number.isInteger(amount) || amount < 1 || amount > 99) {
+        return res.status(400).json({ success: false, error: { code: 'INVALID_QUANTITY', message: 'Choose a quantity between 1 and 99.' } });
+      }
+      const product = Product.findById(product_id);
+      if (!product || product.status !== 'active') {
+        return res.status(404).json({ success: false, error: { code: 'PRODUCT_UNAVAILABLE', message: 'This product is not available.' } });
+      }
       const sessionId = req.cookies?.cart_session || `guest-${req.ip}-${Date.now()}`;
       const cart = Cart.findOrCreate({ user_id: req.user?.id, session_id: sessionId });
-      Cart.addItem(cart.id, product_id, parseInt(quantity));
+      const existing = Cart.getItems(cart.id).find((entry) => Number(entry.product_id) === Number(product_id));
+      if (existing && Number(existing.quantity) + amount > 99) {
+        return res.status(400).json({ success: false, error: { code: 'QUANTITY_LIMIT', message: 'A cart item cannot exceed 99 units.' } });
+      }
+      Cart.addItem(cart.id, product_id, amount);
 
       const items = Cart.getItems(cart.id);
       const total = Cart.getTotal(cart.id);

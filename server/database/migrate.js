@@ -10,6 +10,7 @@ function migrate() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
+      supabase_user_id TEXT UNIQUE,
       name TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'customer' CHECK(role IN ('customer','admin','superadmin')),
       email_verified INTEGER NOT NULL DEFAULT 0,
@@ -313,6 +314,14 @@ function migrate() {
     CREATE INDEX IF NOT EXISTS idx_subscribers_email ON subscribers(email);
     CREATE INDEX IF NOT EXISTS idx_downloads_token ON downloads(download_token);
   `);
+
+  const userColumns = db.prepare('PRAGMA table_info(users)').all().map((column) => column.name);
+  if (!userColumns.includes('supabase_user_id')) db.exec('ALTER TABLE users ADD COLUMN supabase_user_id TEXT');
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_supabase_id ON users(supabase_user_id) WHERE supabase_user_id IS NOT NULL');
+
+  const orderColumns = db.prepare('PRAGMA table_info(orders)').all().map((column) => column.name);
+  if (!orderColumns.includes('stripe_session_id')) db.exec('ALTER TABLE orders ADD COLUMN stripe_session_id TEXT');
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_stripe_session ON orders(stripe_session_id) WHERE stripe_session_id IS NOT NULL');
 
   console.log('[DB] Migrations complete.');
 }

@@ -30,6 +30,7 @@ const contactSchema = z.object({
   company: z.string().min(2).max(200),
   type: z.string().optional(),
   brief: z.string().min(40).max(5000),
+  website: z.string().max(200).optional(),
 });
 const contactLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 3, standardHeaders: true, legacyHeaders: false, message: { success: false, error: { code: 'RATE_LIMITED', message: 'Too many contact requests. Please try again later.' } } });
 
@@ -53,7 +54,7 @@ const bookingSchema = z.object({
   company: z.string().trim().min(2).max(120),
   type: z.string().trim().min(2).max(80),
   brief: z.string().trim().min(40).max(5000),
-  preferredDate: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
+  preferredDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   preferredTime: z.string().regex(/^(?:(09|10|11|12|13|14|15):(00|30)|16:00)$/),
   timezone: z.string().min(1).max(80),
   website: z.string().max(200).optional(),
@@ -67,9 +68,9 @@ router.post('/bookings', bookingLimiter, requireCustomerAuth, validate(bookingSc
 });
 
 // Public settings endpoint
-const db = require('../../config/database');
+const { getDb } = require('../../config/database');
 router.get('/settings/public', (req, res) => {
-  const settings = db.prepare("SELECT key, value FROM settings WHERE is_public = 1").all();
+  const settings = getDb().prepare("SELECT key, value FROM settings WHERE is_public = 1").all();
   const obj = {};
   settings.forEach(s => { obj[s.key] = s.value; });
   res.json({ success: true, data: obj });

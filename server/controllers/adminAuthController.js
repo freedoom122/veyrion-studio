@@ -48,7 +48,6 @@ function setupStatus(req, res) {
       available,
       required: setupRequired,
       configured: Boolean(bootstrapPassword),
-      email: configuredOwnerEmail(),
       message: available ? 'One-time owner setup is available.' : 'Owner setup is already closed or not configured.',
     },
   });

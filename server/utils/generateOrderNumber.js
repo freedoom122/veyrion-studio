@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const db = require('../config/database');
 
 function generateOrderNumber() {
   const date = new Date();

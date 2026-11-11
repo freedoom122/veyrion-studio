@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../../controllers/orderController');
-const { requireAuth } = require('../../middleware/auth');
+const { requireStoreAuth } = require('../../middleware/auth');
 const validate = require('../../middleware/validate');
 const { z } = require('zod');
 
@@ -14,10 +14,10 @@ const checkoutSchema = z.object({
   }).optional(),
 });
 
-router.post('/checkout', requireAuth, validate(checkoutSchema), orderController.checkout);
-router.get('/', requireAuth, orderController.myOrders);
-router.get('/licenses', requireAuth, orderController.myLicenses);
+router.post('/checkout', requireStoreAuth, validate(checkoutSchema), orderController.checkout);
+router.get('/', requireStoreAuth, orderController.myOrders);
+router.get('/licenses', requireStoreAuth, orderController.myLicenses);
 router.get('/download/:token', orderController.downloadFile);
-router.get('/:id', requireAuth, orderController.orderDetail);
+router.get('/:id', requireStoreAuth, orderController.orderDetail);
 
 module.exports = router;

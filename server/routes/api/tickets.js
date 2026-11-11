@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ticketController = require('../../controllers/ticketController');
-const { requireAuth, requireRole } = require('../../middleware/auth');
+const { requireAuth, requireStoreAuth, requireRole } = require('../../middleware/auth');
 const validate = require('../../middleware/validate');
 const { z } = require('zod');
 
@@ -16,10 +16,10 @@ const replySchema = z.object({
   message: z.string().min(1),
 });
 
-router.post('/', requireAuth, validate(createTicketSchema), ticketController.create);
-router.get('/', requireAuth, ticketController.myTickets);
-router.get('/:id', requireAuth, ticketController.ticketDetail);
-router.post('/:id/reply', requireAuth, validate(replySchema), ticketController.reply);
+router.post('/', requireStoreAuth, validate(createTicketSchema), ticketController.create);
+router.get('/', requireStoreAuth, ticketController.myTickets);
+router.get('/:id', requireStoreAuth, ticketController.ticketDetail);
+router.post('/:id/reply', requireStoreAuth, validate(replySchema), ticketController.reply);
 
 // Admin
 router.get('/admin/all', requireAuth, requireRole('admin', 'superadmin'), ticketController.adminList);
