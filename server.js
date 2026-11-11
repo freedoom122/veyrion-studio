@@ -98,8 +98,8 @@ async function main() {
   const errorCatalog = require('./server/config/errorCatalog');
   const errorPage = path.join(__dirname, 'client', 'errors', 'index.html');
   app.get('/errors', (_req, res) => res.redirect(302, '/errors/404'));
-  app.get('/errors/:code', (req, res) => {
-    const code = String(req.params.code);
+  app.get(/^\/errors\/(\d{3})\/?$/, (req, res) => {
+    const code = String(req.params[0]);
     const entry = errorCatalog[code] || errorCatalog['404'];
     res.setHeader('Cache-Control', 'no-store');
     res.status(entry.httpStatus || Number(code) || 404).sendFile(errorPage);
