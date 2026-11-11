@@ -67,6 +67,9 @@ async function sendWithResend({ to, subject, html, text, replyTo }) {
 
 async function sendEmail({ to, subject, html, text, replyTo }) {
   if (process.env.RESEND_API_KEY) return sendWithResend({ to, subject, html, text, replyTo });
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Resend is not configured. Add RESEND_API_KEY in the Render environment.');
+  }
   const transport = getTransporter();
   if (transport) {
     return transport.sendMail({
