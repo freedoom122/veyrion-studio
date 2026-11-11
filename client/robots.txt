@@ -1,1 +1,9 @@
-User-agent: *\nAllow: /\nSitemap: https://veyrionstudios.com/sitemap.xml\n
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /errors/
+Disallow: /reset-password.html
+Disallow: /checkout-success.html
+Disallow: /checkout-cancel.html
+Sitemap: https://veyrionstudios.com/sitemap.xml
