@@ -3,7 +3,7 @@
   'use strict';
   const API = '/api/v1/admin';
   let currentUser = null;
-  let currentPage = 'overview';
+  let currentPage = 'overview';\n  let siteConfig = { version: 1, patches: {} };\n  let selectedStudioSelector = '';\n  let studioFrame = null;
   let resetToken = new URLSearchParams(window.location.hash.replace(/^#/, '')).get('token') || '';
   const $ = (selector) => document.querySelector(selector);
   const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -206,7 +206,7 @@
       if (page === 'bookings') return await loadBookings(content);
       if (page === 'customers') return await loadCustomers(content);
       if (page === 'activity') return await loadActivity(content);
-      if (page === 'security') return loadSecurity(content);
+      if (page === 'security') return loadSecurity(content);\n      if (page === 'site-studio') return await loadSiteStudio(content);
     } catch (error) {
       content.innerHTML = '<div class="panel empty-state">' + escapeHtml(error.message) + '</div>';
       if (error.status === 401) await logout();

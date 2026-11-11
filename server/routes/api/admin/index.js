@@ -19,7 +19,7 @@ function escapeHtml(value) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   })[character]);
 }
-function ensureBookingsTable(db) {
+function defaultSiteLiveConfig(){return {version:1,updatedAt:new Date().toISOString(),patches:{}};}\nfunction ensureSiteStudioSetting(db){const row=db.prepare("SELECT id FROM settings WHERE key = 'site_live_config' LIMIT 1").get();if(!row)db.prepare("INSERT INTO settings (key,value,setting_group,is_public) VALUES (?,?,?,1)").run('site_live_config',JSON.stringify(defaultSiteLiveConfig()),'site_studio');}\nfunction ensureBookingsTable(db) {
   db.exec(
     "CREATE TABLE IF NOT EXISTS call_bookings (" +
     "id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, company TEXT NOT NULL, " +
@@ -43,6 +43,8 @@ router.post('/change-password', requireAdminSession, adminAuth.changePassword);
 
 router.use(requireAdminSession, requirePasswordChanged);
 
+router.get('/site/config',(req,res,next)=>{try{const db=getDb();ensureSiteStudioSetting(db);const row=db.prepare("SELECT value FROM settings WHERE key = 'site_live_config' LIMIT 1").get();let config=defaultSiteLiveConfig();try{config=row&&row.value?JSON.parse(row.value):config;}catch(_){}res.json({success:true,data:{config}});}catch(error){next(error);}});
+router.put('/site/config',(req,res,next)=>{try{const payload=req.body&&req.body.config;if(!payload||typeof payload!=='object')return res.status(400).json({success:false,error:{code:'INVALID_CONFIG',message:'A valid site configuration is required.'}});const raw=JSON.stringify(payload);if(raw.length>100000)return res.status(413).json({success:false,error:{code:'CONFIG_TOO_LARGE',message:'The live site configuration is too large.'}});const patchCount=Object.keys(payload.patches||{}).length;if(patchCount>300)return res.status(400).json({success:false,error:{code:'TOO_MANY_PATCHES',message:'Limit the live editor to 300 element overrides.'}});const db=getDb();ensureSiteStudioSetting(db);const config=Object.assign({version:1},payload,{updatedAt:new Date().toISOString()});db.prepare("UPDATE settings SET value=?,setting_group='site_studio',is_public=1,updated_at=datetime('now') WHERE key='site_live_config'").run(JSON.stringify(config));db.prepare("INSERT INTO admin_logs (admin_id,action,entity_type,new_values,ip_address,user_agent) VALUES (?,?,?,?,?,?)").run(req.user.id,'publish_site_changes','site',JSON.stringify({patchCount}),req.ip||'',String(req.get('user-agent')||'').slice(0,500));res.json({success:true,data:{config,message:'Site changes are live.'}});}catch(error){next(error);}});
 router.get('/dashboard', (req, res, next) => {
   try {
     const db = getDb();
