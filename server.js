@@ -93,7 +93,7 @@ async function main() {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-\n  app.use((req,res,next)=>{\n    if(req.method!=='GET'||(!req.path.endsWith('.html')&&req.path!=='/'))return next();\n    const fs=require('fs');\n    const target=req.path==='/'?path.join(__dirname,'client','index.html'):path.join(__dirname,'client',req.path.replace(/^\\//,''));\n    if(!target.startsWith(path.join(__dirname,'client')))return next();\n    fs.readFile(target,'utf8',(err,html)=>{if(err)return next();if(!html.includes('/live-site.js'))html=html.replace('</body>','  <script src="/live-site.js" defer></script>\\n</body>');res.type('html').send(html);});\n  });\n\n  app.use(express.static(path.join(__dirname, 'client'), {
+  app.use(express.static(path.join(__dirname, 'client'), {
     dotfiles: 'deny',
     index: 'index.html',
     etag: true,
