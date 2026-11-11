@@ -95,6 +95,11 @@ async function main() {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
+  app.get('/.well-known/security.txt', (_req, res) => {
+    res.type('text/plain').setHeader('Cache-Control', 'public, max-age=86400');
+    res.send('Contact: mailto:contact.veyrion@gmail.com\\nPreferred-Languages: en, ro\\nCanonical: https://veyrionstudios.com/.well-known/security.txt\\nPolicy: https://veyrionstudios.com/security.html\\nExpires: 2027-11-11T00:00:00.000Z\\n');
+  });
+
   const errorCatalog = require('./server/config/errorCatalog');
   const errorPage = path.join(__dirname, 'client', 'errors', 'index.html');
   app.get('/errors', (_req, res) => res.redirect(302, '/errors/404'));
