@@ -31,15 +31,14 @@ function migrateSecureAdmin() {
     const owner = db.prepare("SELECT id FROM users WHERE lower(email) = ? LIMIT 1").get(ownerEmail);
     if (!owner) {
       const hash = bcrypt.hashSync(bootstrapPassword, 12);
-      db.prepare("INSERT INTO users (email,password_hash,name,role,email_verified,is_banned,must_change_password) VALUES (?,?,?,'superadmin',1,0,0)").run(ownerEmail, hash, 'Veyrion Owner');
-      console.log('[DB] Owner account bootstrapped from the private Render environment.');
+      db.prepare("INSERT INTO users (email,password_hash,name,role,email_verified,is_banned,must_change_password) VALUES (?,?,?,'superadmin',1,0,1)").run(ownerEmail, hash, 'Veyrion Owner');
+      console.log('[DB] Owner account bootstrapped; a password change is required before admin access.');
     } else {
-      const state = db.prepare("SELECT id, must_change_password FROM users WHERE id = ?").get(owner.id);
-      if (state && Number(state.must_change_password) === 1) {
-        const hash = bcrypt.hashSync(bootstrapPassword, 12);
-        db.prepare("UPDATE users SET password_hash = ?, role = 'superadmin', email_verified = 1, is_banned = 0, must_change_password = 0, updated_at = datetime('now') WHERE id = ?").run(hash, owner.id);
+      const state = db.prepare("SELECT id, must_change_password, password_hash FROM users WHERE id = ?").get(owner.id);
+      if (state && Number(state.must_change_password) !== 1 && bcrypt.compareSync(bootstrapPassword, state.password_hash)) {
+        db.prepare("UPDATE users SET must_change_password = 1, updated_at = datetime('now') WHERE id = ?").run(owner.id);
         db.prepare("DELETE FROM admin_sessions WHERE user_id = ?").run(owner.id);
-        console.log('[DB] Owner bootstrap credentials synchronized and activated.');
+        console.warn('[DB] The owner is still using the bootstrap password; a password change is now required.');
       }
     }
   }
