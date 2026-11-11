@@ -19,7 +19,9 @@ function escapeHtml(value) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   })[character]);
 }
-function defaultSiteLiveConfig(){return {version:1,updatedAt:new Date().toISOString(),patches:{}};}\nfunction ensureSiteStudioSetting(db){const row=db.prepare("SELECT id FROM settings WHERE key = 'site_live_config' LIMIT 1").get();if(!row)db.prepare("INSERT INTO settings (key,value,setting_group,is_public) VALUES (?,?,?,1)").run('site_live_config',JSON.stringify(defaultSiteLiveConfig()),'site_studio');}\nfunction ensureBookingsTable(db) {
+function defaultSiteLiveConfig(){return {version:1,updatedAt:new Date().toISOString(),patches:{}};}
+function ensureSiteStudioSetting(db){const row=db.prepare("SELECT id FROM settings WHERE key = 'site_live_config' LIMIT 1").get();if(!row)db.prepare("INSERT INTO settings (key,value,setting_group,is_public) VALUES (?,?,?,1)").run('site_live_config',JSON.stringify(defaultSiteLiveConfig()),'site_studio');}
+function ensureBookingsTable(db) {
   db.exec(
     "CREATE TABLE IF NOT EXISTS call_bookings (" +
     "id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, company TEXT NOT NULL, " +
@@ -105,7 +107,11 @@ router.put('/bookings/:id/status', async (req, res, next) => {
         await sendEmail({
           to: booking.email,
           subject,
-          text: 'Hi ' + booking.name + ',\n\n' + detail + '\n\nVeyrion Studio',
+          text: 'Hi ' + booking.name + ',
+
+' + detail + '
+
+Veyrion Studio',
           html: '<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:28px;color:#202630"><p>Hi ' +
             escapeHtml(booking.name) + ',</p><p>' + escapeHtml(detail) + '</p><p>Veyrion Studio</p></div>',
           replyTo: process.env.ADMIN_EMAIL,
