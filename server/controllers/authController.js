@@ -6,6 +6,10 @@ const { sendEmail } = require('../config/email');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
+function hashRefreshToken(token) {
+  return crypto.createHash('sha256').update(String(token)).digest('hex');
+}
+
 const authController = {
   async register(req, res, next) {
     try {
@@ -28,7 +32,7 @@ const authController = {
       db.prepare(`
         INSERT INTO sessions (user_id, token, expires_at, ip_address, user_agent)
         VALUES (?, ?, datetime('now', '+7 days'), ?, ?)
-      `).run(user.id, refreshToken, req.ip, req.get('user-agent'));
+      `).run(user.id, hashRefreshToken(refreshToken), req.ip, req.get('user-agent'));
 
       // Send verification email (non-blocking)
       sendEmail({
@@ -104,7 +108,7 @@ const authController = {
         return res.status(400).json({ success: false, error: { code: 'MISSING_TOKEN', message: 'Refresh token required' } });
       }
 
-      const session = db.prepare('SELECT * FROM sessions WHERE token = ? AND expires_at > datetime(\'now\')').get(refreshToken);
+      const session = db.prepare('SELECT * FROM sessions WHERE token = ? AND expires_at > datetime(\'now\')').get(hashRefreshToken(refreshToken));
       if (!session) {
         return res.status(401).json({ success: false, error: { code: 'INVALID_REFRESH', message: 'Invalid refresh token' } });
       }
@@ -120,7 +124,7 @@ const authController = {
       db.prepare(`
         INSERT INTO sessions (user_id, token, expires_at, ip_address, user_agent)
         VALUES (?, ?, datetime('now', '+7 days'), ?, ?)
-      `).run(user.id, newRefreshToken, req.ip, req.get('user-agent'));
+      `).run(user.id, hashRefreshToken(newRefreshToken), req.ip, req.get('user-agent'));
 
       const token = generateToken(user);
 

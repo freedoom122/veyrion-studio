@@ -41,7 +41,7 @@ router.post('/create-session', requireAuth, async (req, res, next) => {
       });
     }
 
-    const origin = req.headers.origin || (req.headers.referer ? req.headers.referer.replace(/\/[^/]*$/, '') : '') || process.env.FRONTEND_URL || 'https://veyrion-studio.onrender.com';
+    const origin = String(process.env.FRONTEND_URL || 'https://veyrionstudios.com').replace(/\/$/, '');
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -92,6 +92,10 @@ router.get('/session/:sessionId', requireAuth, async (req, res, next) => {
     }
 
     const session = await stripe.checkout.sessions.retrieve(req.params.sessionId);
+    const sessionUserId = String(session.metadata?.user_id || '');
+    if (!sessionUserId || sessionUserId !== String(req.user.id)) {
+      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'This checkout session does not belong to your account.' } });
+    }
     res.json({
       success: true,
       data: {

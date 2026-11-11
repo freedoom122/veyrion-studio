@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { getDb } = require('../config/database');
 const db = getDb();
 
@@ -7,14 +8,14 @@ const Cart = {
     if (user_id) {
       cart = db.prepare('SELECT * FROM carts WHERE user_id = ? AND status = ?').get(user_id, 'active');
     }
-    if (!cart && session_id) {
-      cart = db.prepare('SELECT * FROM carts WHERE session_id = ? AND status = ?').get(session_id, 'active');
+    if (!cart && !user_id && session_id) {
+      cart = db.prepare('SELECT * FROM carts WHERE session_id = ? AND user_id IS NULL AND status = ?').get(session_id, 'active');
     }
     if (!cart) {
       const result = db.prepare(`
         INSERT INTO carts (user_id, session_id, expires_at)
         VALUES (?, ?, datetime('now', '+30 days'))
-      `).run(user_id || null, session_id || `guest-${Date.now()}`);
+      `).run(user_id || null, session_id || crypto.randomUUID());
       cart = db.prepare('SELECT * FROM carts WHERE id = ?').get(result.lastInsertRowid);
     }
     return cart;
@@ -38,15 +39,13 @@ const Cart = {
     }
   },
 
-  updateItemQuantity(itemId, quantity) {
-    if (quantity <= 0) {
-      return db.prepare('DELETE FROM cart_items WHERE id = ?').run(itemId);
-    }
-    db.prepare('UPDATE cart_items SET quantity = ? WHERE id = ?').run(quantity, itemId);
+  updateItemQuantity(cartId, itemId, quantity) {
+    if (quantity <= 0) return db.prepare('DELETE FROM cart_items WHERE id = ? AND cart_id = ?').run(itemId, cartId);
+    return db.prepare('UPDATE cart_items SET quantity = ? WHERE id = ? AND cart_id = ?').run(quantity, itemId, cartId);
   },
 
-  removeItem(itemId) {
-    return db.prepare('DELETE FROM cart_items WHERE id = ?').run(itemId);
+  removeItem(cartId, itemId) {
+    return db.prepare('DELETE FROM cart_items WHERE id = ? AND cart_id = ?').run(itemId, cartId);
   },
 
   clearCart(cartId) {
