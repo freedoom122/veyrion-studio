@@ -55,7 +55,8 @@ async function main() {
         formAction: ["'self'"],
       },
     },
-    crossOriginEmbedderPolicy: false,\n    xFrameOptions: { action: 'sameorigin' },
+    crossOriginEmbedderPolicy: false,
+    xFrameOptions: { action: 'sameorigin' },
   }));
 
   const configuredOrigins = (process.env.CORS_ORIGIN || process.env.FRONTEND_URL || '')
@@ -96,7 +97,7 @@ async function main() {
     dotfiles: 'deny',
     index: 'index.html',
     etag: true,
-    maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
+    maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
   }));
 
   app.use('/admin', express.static(path.join(__dirname, 'server', 'admin'), {

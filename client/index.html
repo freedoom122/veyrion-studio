@@ -3,8 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Veyrion Studio — Software built around your work</title>
-  <meta name="description" content="Independent software studio building custom applications, backend platforms and automation around the way your business works.">
+  <title>Veyrion Studios | Software, SaaS, Security & Digital Systems</title>
+  <link rel="canonical" href="https://veyrionstudios.com/">
+  <meta name="description" content="Veyrion Studios builds custom backend, frontend and SaaS products, games, automation and security systems. We also handle hands-on phone repair and technical work."> 
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta property="og:title" content="Veyrion Studios | Software, SaaS, Security & Digital Systems">
+  <meta property="og:description" content="Custom software, SaaS, games, security, automation and hands-on technical work.">
+  <meta property="og:url" content="https://veyrionstudios.com/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -21,20 +26,22 @@
     <div class="header__inner">
       <a href="index.html" class="header__brand">VEYRION</a>
       <nav class="header__nav" aria-label="Main">
-        <a href="#capabilities">Capabilities</a>
+        <a href="index.html#capabilities">Capabilities</a>
         <a href="case-studies.html">Case Studies</a>
         <a href="services.html">Services</a>
+        <a href="backend.html">Backend</a>
+        <a href="frontend.html">Frontend</a>
+        <a href="saas.html">SaaS</a>
+        <a href="games.html">Games</a>
+        <a href="security.html">Security</a>
         <a href="blog.html">Blog</a>
         <a href="about.html">About</a>
-        <a href="#contact">Contact</a>
+        <a href="contact.html">Contact</a>
       </nav>
       <div class="header__right">
-        <div class="auth-nav" id="auth-nav"><button class="header__auth" id="auth-open" type="button">Sign in</button><button class="header__auth header__auth--primary" id="signup-open" type="button">Create account</button><button class="header__auth" id="auth-logout" type="button" hidden>Sign out</button></div>
-        <span class="header__status">
-          <span class="header__dot"></span>
-          Studio / engineering
-        </span>
-        <a href="#contact" class="header__cta">Discuss a project</a>
+        <span class="header__status"><span class="header__dot"></span>Studio / 2026</span>
+        <a class="header__account" href="account.html">Your account <span>↗</span></a>
+        <a href="contact.html" class="header__cta">Start a conversation</a>
       </div>
       <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span><span></span>
@@ -59,13 +66,13 @@
   <div class="hero__inner">
     <div class="hero__left">
       <p class="hero__eyebrow"><span class="eyebrow-mark"></span> Independent software studio <span class="eyebrow-sep">/</span> Remote-first</p>
-      <h1 class="hero__title"><span>Built around</span><em>your work.</em></h1>
-      <p class="hero__body">We make complex work feel simple: custom software, connected systems and automation shaped around the way your business actually runs.</p>
+      <h1 class="hero__title"><span>We build the</span><em>things behind the screen.</em></h1>
+      <p class="hero__body">Veyrion is a hands-on studio for software, SaaS, games, security and the technical problems that do not fit inside a template. We build from scratch, fix what is broken and stay close to the details.</p>
       <div class="hero__actions">
         <a href="contact.html" class="btn btn--primary">Tell us what you need <span aria-hidden="true">↗</span></a>
         <a href="case-studies.html" class="btn btn--quiet">Explore our work <span aria-hidden="true">→</span></a>
       </div>
-      <div class="hero__meta"><span>01 / Understand</span><span>02 / Design</span><span>03 / Build</span></div>
+      <div class="hero__meta"><span>01 / Listen</span><span>02 / Make</span><span>03 / Ship</span><span>04 / Stay involved</span></div>
     </div>
     <div class="hero__right">
       <div class="hero-art" role="group" aria-label="Interactive three-dimensional model of a connected software system">
@@ -100,7 +107,7 @@
 </section>
 
     <!-- ====== TRUST STRIP ====== -->
-    <section class="strip strip--editorial" aria-label="Studio disciplines"><div class="strip__inner"><span>Custom software</span><i>✳</i><span>Systems engineering</span><i>✳</i><span>Product design</span><i>✳</i><span>Automation</span><i>✳</i><span>Data infrastructure</span></div></section>
+    <section class="strip strip--editorial" aria-label="Studio disciplines"><div class="strip__inner"><span>Backend</span><i>✳</i><span>Frontend</span><i>✳</i><span>SaaS</span><i>✳</i><span>Games</span><i>✳</i><span>Security</span><i>✳</i><span>Automation</span><i>✳</i><span>Phone repair</span></div></section>
 
     <!-- ====== ENGINEERING POSTURE ====== -->
     <section class="section" style="padding:48px var(--gutter);">
@@ -118,41 +125,41 @@
     <section class="section" id="capabilities">
       <div class="section__inner">
         <p class="section__label">01 / Capabilities</p>
-        <h2 class="section__title">What we actually build</h2>
+        <h2 class="section__title">Software is only part of the job.</h2>
         <div class="bento">
           <article class="bento-card bento-card--wide">
             <span class="bento-card__num">01</span>
-            <h3 class="bento-card__title">High-Throughput Engines</h3>
+            <h3 class="bento-card__title">Backend systems</h3>
             <p class="bento-card__body">Event-driven runtimes that sustain tens of thousands of operations per second without collapsing under backpressure.</p>
             <div class="bento-card__tags"><span>Rust</span><span>Queues</span><span>Fan-out</span></div>
           </article>
           <article class="bento-card">
             <span class="bento-card__num">02</span>
-            <h3 class="bento-card__title">Automation Pipelines</h3>
+            <h3 class="bento-card__title">Automation that earns its place</h3>
             <p class="bento-card__body">Deterministic workflows that replace fragile Zapier-style glue with observable, retry-safe orchestration.</p>
             <div class="bento-card__tags"><span>Workers</span><span>Idempotency</span><span>DAGs</span></div>
           </article>
           <article class="bento-card">
             <span class="bento-card__num">03</span>
-            <h3 class="bento-card__title">Custom Applications</h3>
+            <h3 class="bento-card__title">Frontend people actually want to use</h3>
             <p class="bento-card__body">Internal and customer-facing products designed around your domain, not a generic CRUD template.</p>
             <div class="bento-card__tags"><span>TypeScript</span><span>Domain Models</span><span>UX</span></div>
           </article>
           <article class="bento-card">
             <span class="bento-card__num">04</span>
-            <h3 class="bento-card__title">Secure Infrastructure</h3>
+            <h3 class="bento-card__title">Security & cybersecurity</h3>
             <p class="bento-card__body">Hardened environments with least-privilege access, audit trails, and secrets that never touch application logs.</p>
             <div class="bento-card__tags"><span>IAM</span><span>Zero-trust</span><span>Audit</span></div>
           </article>
           <article class="bento-card bento-card--wide">
             <span class="bento-card__num">05</span>
-            <h3 class="bento-card__title">AI + Data Systems</h3>
+            <h3 class="bento-card__title">SaaS & product systems</h3>
             <p class="bento-card__body">Retrieval, inference, and evaluation pipelines wired into production systems &mdash; not a chatbot bolted onto a landing page.</p>
             <div class="bento-card__tags"><span>RAG</span><span>Evals</span><span>Streaming</span></div>
           </article>
           <article class="bento-card">
             <span class="bento-card__num">06</span>
-            <h3 class="bento-card__title">Legacy Modernization</h3>
+            <h3 class="bento-card__title">Games, tools & experiments</h3>
             <p class="bento-card__body">Strangler-fig replacements for systems that still make money but can no longer be safely changed.</p>
             <div class="bento-card__tags"><span>Strangler</span><span>CDC</span><span>Parity</span></div>
           </article>
