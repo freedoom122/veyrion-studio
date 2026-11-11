@@ -138,19 +138,21 @@ html:focus-within { scroll-behavior: smooth; }
 
 /* mobile nav */
 .mobile-nav {
-  position: fixed; inset: 0; z-index: 100;
+  position: relative; z-index: 49; width: 100%;
   background: var(--bg); display: flex; flex-direction: column;
-  justify-content: center; padding: 48px 32px; gap: 24px;
+  justify-content: flex-start; padding: 18px var(--gutter) 24px; gap: 12px;
+  border-bottom: 1px solid var(--border); max-height: min(72vh, 560px); overflow-y: auto;
 }
 .mobile-nav[hidden] { display: none; }
 .mobile-nav a {
-  font-family: var(--font-display); font-size: 36px; font-weight: 600;
+  font-family: var(--font-display); font-size: clamp(21px, 5vw, 27px); font-weight: 600;
   letter-spacing: -0.02em; color: var(--text-3); transition: color .15s;
+  padding: 4px 0;
 }
 .mobile-nav a:hover { color: var(--text); }
 .mobile-nav__close {
-  position: absolute; top: 12px; right: 16px;
-  width: 44px; height: 44px; display: flex; align-items: center;
+  position: relative; align-self: flex-end; top: auto; right: auto;
+  width: 40px; height: 40px; display: flex; align-items: center;
   justify-content: center; font-family: var(--font-mono); font-size: 24px;
   color: var(--text-3); transition: color .15s;
 }

@@ -245,7 +245,6 @@
       menu.hidden = false;
       toggle.setAttribute("aria-expanded", "true");
       toggle.setAttribute("aria-label", "Close menu");
-      document.body.style.overflow = "hidden";
       var first = $("a", menu);
       if (first) first.focus();
     }
@@ -254,7 +253,6 @@
       menu.hidden = true;
       toggle.setAttribute("aria-expanded", "false");
       toggle.setAttribute("aria-label", "Open menu");
-      document.body.style.overflow = "";
       toggle.focus();
     }
 
