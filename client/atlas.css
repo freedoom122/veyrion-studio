@@ -91,3 +91,46 @@
   .hero-atlas-layer { animation:none!important; }
   .hero-atlas-layer::after { transition:none!important; }
 }
+
+
+/* Temporary paper drop target: visible only during an active paper drag. */
+.hero-stack--atlas { position: relative; }
+.atlas-drop-zone {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 220px;
+  height: 78px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px dashed rgba(235,231,218,.5);
+  border-radius: 3px;
+  background: rgba(8,10,9,.48);
+  color: rgba(245,241,230,.82);
+  font: 600 8px/1 var(--font-mono,monospace);
+  letter-spacing: .16em;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 998;
+  transition: opacity .14s ease, visibility .14s ease;
+}
+.atlas-drop-zone.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+.atlas-drop-zone::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(235,231,218,.16);
+}
+@media (max-width: 900px) {
+  .atlas-drop-zone { width: 190px; height: 66px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atlas-drop-zone { transition: none; }
+}
