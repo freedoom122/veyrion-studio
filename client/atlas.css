@@ -135,3 +135,11 @@
 .hero-art .hero-atlas-layer.is-dragging{z-index:1300!important}
 @media(max-width:900px){.hero-art .hero-stack--atlas{left:64%!important;top:55%!important;width:58%!important;height:74%!important}.hero-art .hero-atlas-layer{width:112px!important;height:32px!important;margin:-16px 0 0 -56px!important}.hero-art .atlas-drop-panel{left:3%!important;top:14%!important;width:43%!important;height:68%!important}.hero-art .atlas-drop-panel__target{min-height:64px!important}}
 @media(max-width:560px){.hero-art .hero-stack--atlas{left:65%!important;width:60%!important}.hero-art .atlas-drop-panel{left:2%!important;top:12%!important;width:44%!important;height:70%!important}.hero-art .atlas-drop-panel__target{min-height:54px!important}}
+
+/* Correct the original hero-orbit sizing: Atlas must sit inside the real welcome model, not replace its geometry. */
+.hero-art .hero-orbit{position:absolute!important;inset:7% -8% 5%!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;width:auto!important;height:auto!important;overflow:visible!important}
+.hero-art .hero-stack--atlas{position:absolute!important;left:64%!important;top:54%!important;width:58%!important;height:76%!important;transform:translate(-50%,-50%)!important;z-index:8!important}
+.hero-art .hero-atlas-layer{width:clamp(108px,12vw,150px)!important;height:38px!important;margin:-19px 0 0 -75px!important}
+.hero-art .atlas-drop-panel{position:absolute!important;left:4%!important;right:auto!important;top:17%!important;width:42%!important;height:66%!important;z-index:20!important}
+@media(max-width:900px){.hero-art .hero-orbit{inset:7% -8% 5%!important}.hero-art .hero-stack--atlas{left:64%!important;top:55%!important;width:58%!important;height:74%!important}.hero-art .hero-atlas-layer{width:112px!important;height:32px!important;margin:-16px 0 0 -56px!important}.hero-art .atlas-drop-panel{left:3%!important;top:14%!important;width:43%!important;height:68%!important}}
+@media(max-width:560px){.hero-art .hero-orbit{inset:7% -8% 5%!important}.hero-art .hero-stack--atlas{left:65%!important;width:60%!important}.hero-art .atlas-drop-panel{left:2%!important;top:12%!important;width:44%!important;height:70%!important}}
