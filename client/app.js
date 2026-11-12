@@ -1159,7 +1159,7 @@
      INIT
      ============================================================ */
 
-  function loadSharedAtlasExperience(){document.querySelectorAll('[data-veyrion-atlas],.atlas-checker').forEach(function(el){el.remove();});var l=document.createElement('link');l.rel='stylesheet';l.href='/atlas.css?v=20261111-3';document.head.appendChild(l);var s=document.createElement('script');s.src='/atlas.js?v=20261111-3';s.async=false;s.onerror=function(){console.error('[VEYRION] Atlas module failed to load.');};document.body.appendChild(s);}
+  function loadSharedAtlasExperience(){document.querySelectorAll('[data-veyrion-atlas],.atlas-checker').forEach(function(el){el.remove();});var l=document.createElement('link');l.rel='stylesheet';l.href='/atlas.css?v=20261112-4';document.head.appendChild(l);var s=document.createElement('script');s.src='/atlas.js?v=20261112-4';s.async=false;s.onerror=function(){console.error('[VEYRION] Atlas module failed to load.');};document.body.appendChild(s);}
 
   function safe(fn) { try { fn(); } catch (e) { /* silent */ } }
 
