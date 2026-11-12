@@ -73,26 +73,33 @@ html:focus-within { scroll-behavior: smooth; }
 }
 .header__inner {
   width: 100%; max-width: 1400px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
 }
 .header__brand {
   font-family: var(--font-display); font-size: 13px; font-weight: 600;
   letter-spacing: 0.28em; color: var(--text);
+  flex: 0 0 auto;
 }
-.header__nav { display: flex; gap: 24px; }
+.header__nav {
+  display: grid; grid-template-columns: repeat(7, max-content);
+  align-content: center; justify-content: center; gap: 2px 12px;
+  min-width: 0;
+}
 .header__nav a {
-  font-family: var(--font-body); font-size: 11px; color: var(--text-3);
-  letter-spacing: 0.06em; text-transform: uppercase;
-  transition: color .15s; padding: 4px 0;
+  font-family: var(--font-body); font-size: 9px; color: var(--text-2);
+  letter-spacing: 0.045em; text-transform: uppercase;
+  transition: color .15s; padding: 3px 0;
   position: relative; white-space: nowrap;
 }
 .header__nav a::after {
-  content: ""; position: absolute; bottom: -2px; left: 0;
-  width: 0; height: 1px; background: var(--accent);
+  content: ""; position: absolute; bottom: -1px; left: 0;
+  width: 0; height: 1px; background: var(--text-2);
   transition: width .2s;
 }
-.header__nav a:hover { color: var(--text); }
-.header__nav a:hover::after { width: 100%; }
+.header__nav a:hover,
+.header__nav a.is-active { color: var(--text); }
+.header__nav a:hover::after,
+.header__nav a.is-active::after { width: 100%; }
 .header__right { display: flex; align-items: center; gap: 20px; }
 .header__status {
   font-family: var(--font-mono); font-size: 9px; font-weight: 500;
@@ -128,7 +135,7 @@ html:focus-within { scroll-behavior: smooth; }
 .header__toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .header__toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-3px) rotate(-45deg); }
 
-@media (max-width: 1024px) {
+@media (max-width: 1180px) {
   .header__nav, .header__status { display: none; }
   .header__toggle { display: flex; }
 }

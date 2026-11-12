@@ -78,14 +78,52 @@
       account.innerHTML = '<button type="button" data-auth-open>Sign in</button><button type="button" data-auth-signup>Create account</button><button type="button" data-auth-logout hidden>Sign out</button>';
       mobile.appendChild(account);
     }
+    var navItems = [
+      ["Home", "index.html"],
+      ["About", "about.html"],
+      ["Backend", "backend.html"],
+      ["Frontend", "frontend.html"],
+      ["SaaS", "saas.html"],
+      ["Games", "games.html"],
+      ["Security", "security.html"],
+      ["Services", "services.html"],
+      ["Case Studies", "case-studies.html"],
+      ["Process", "process.html"],
+      ["Blog", "blog.html"],
+      ["Contact", "contact.html"],
+      ["Account", "account.html"]
+    ];
     var currentPage = location.pathname.split('/').pop() || 'index.html';
-    $$(".header__nav a, .mobile-nav a").forEach(function(link){
-      var href = link.getAttribute("href") || "";
-      if (href === "#contact" && currentPage !== "index.html") link.setAttribute("href", "contact.html");
-      else if (href.charAt(0) === "#" && currentPage !== "index.html") link.setAttribute("href", "index.html" + href);
-      var target = link.getAttribute("href") || "";
-      if (target === currentPage) link.classList.add("is-active");
-    });
+    var headerNav = $(".header__nav");
+    if (headerNav) {
+      headerNav.textContent = "";
+      navItems.forEach(function(item) {
+        var link = document.createElement("a");
+        link.href = item[1];
+        link.textContent = item[0];
+        if (item[1] === currentPage) {
+          link.classList.add("is-active");
+          link.setAttribute("aria-current", "page");
+        }
+        headerNav.appendChild(link);
+      });
+    }
+    if (mobile) {
+      var mobileAccount = $(".mobile-nav__account", mobile);
+      $(".mobile-nav a", mobile).forEach(function(link) {
+        link.parentNode.removeChild(link);
+      });
+      navItems.forEach(function(item) {
+        var link = document.createElement("a");
+        link.href = item[1];
+        link.textContent = item[0];
+        if (item[1] === currentPage) {
+          link.classList.add("is-active");
+          link.setAttribute("aria-current", "page");
+        }
+        mobile.insertBefore(link, mobileAccount || null);
+      });
+    }
   }
   function openAuth(mode) {
     var modal = $("#auth-modal"); if (!modal) return;
