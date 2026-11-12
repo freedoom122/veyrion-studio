@@ -10,7 +10,7 @@ const { createServer } = require('http');
 try { require('dotenv').config({ override: true }); } catch (_) {}
 
 async function main() {
-  const { initDatabase, getDb } = require('./server/config/database');
+  const { initDatabase, getDb, flushRemoteSnapshot, isRemoteSnapshotEnabled } = require('./server/config/database');
   await initDatabase();
 
   const User = require('./server/models/User');
@@ -32,6 +32,7 @@ async function main() {
   migrate();
   seed();
   migrateSecureAdmin();
+  await flushRemoteSnapshot();
 
   const app = express();
   app.disable('x-powered-by');
@@ -86,6 +87,28 @@ async function main() {
   app.use(express.json({ limit: '1mb', strict: true }));
   app.use(express.urlencoded({ extended: false, limit: '100kb' }));
   app.use(cookieParser());
+
+  // Do not report a successful API write until its persistent snapshot is stored.
+  app.use((req, res, next) => {
+    const sendJson = res.json.bind(res);
+    res.json = (payload) => {
+      if (!isRemoteSnapshotEnabled()) return sendJson(payload);
+      return flushRemoteSnapshot().then(() => sendJson(payload)).catch((error) => {
+        console.error('[DB] Refusing to confirm an API response before persistence:', error.message);
+        if (res.headersSent) return res;
+        res.statusCode = 503;
+        return sendJson({
+          success: false,
+          error: {
+            code: 'PERSISTENCE_UNAVAILABLE',
+            message: 'We could not confirm that your changes were safely saved. Please retry shortly.',
+          },
+          requestId: req.id,
+        });
+      });
+    };
+    next();
+  });
 
   app.use('/api/v1/', apiLimiter);
   app.use('/api/v1', apiRoutes);
@@ -142,15 +165,22 @@ async function main() {
 
   app.use(errorHandler);
 
-  function shutdown(signal) {
+  async function shutdown(signal) {
     console.log(`\n[${signal}] Shutting down gracefully...`);
+    const forceExit = setTimeout(() => process.exit(1), 18000);
+    if (forceExit.unref) forceExit.unref();
     const { _save } = require('./server/config/database');
     _save();
+    try {
+      await flushRemoteSnapshot();
+    } catch (error) {
+      console.error('[DB] Final persistent snapshot failed:', error.message);
+    }
     server.close(() => {
+      clearTimeout(forceExit);
       console.log('[SERVER] Closed.');
       process.exit(0);
     });
-    setTimeout(() => process.exit(1), 10000);
   }
 
   process.on('SIGTERM', () => shutdown('SIGTERM'));
