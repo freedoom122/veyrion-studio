@@ -146,3 +146,8 @@
 
 /* Final geometry correction: let inset define the orbit box so the original model keeps its size. */
 .hero-art .hero-orbit{position:absolute!important;inset:7% -8% 5%!important;width:auto!important;height:auto!important;overflow:visible!important}
+
+/* Keep the paper bank clearly separated from the fixed drop box inside the original hero. */
+.hero-art .hero-stack--atlas{left:75%!important;top:54%!important;width:42%!important;height:76%!important}
+@media(max-width:900px){.hero-art .hero-stack--atlas{left:75%!important;top:55%!important;width:42%!important;height:74%!important}}
+@media(max-width:560px){.hero-art .hero-stack--atlas{left:76%!important;width:43%!important}}
