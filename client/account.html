@@ -5,7 +5,8 @@
 <title>Your Veyrion account | Veyrion Studios</title>
 <meta name="description" content="Sign in to manage your account, projects and access. No noisy dashboard, just the things that belong to you.">
 <link rel="canonical" href="https://veyrionstudios.com/account.html">
-<link rel="stylesheet" href="styles.css?v=20261111-3">
+<link rel="stylesheet" href="styles.css?v=20261113-1">
+<link rel="stylesheet" href="refinements.css?v=20261113-1">
   <meta name="robots" content="noindex,nofollow">
 </head>
 <body>
@@ -27,7 +28,7 @@
     </nav>
     <div class="header__right">
       <span class="header__status"><span class="header__dot"></span>Studio / 2026</span>
-      <a class="header__account" href="account.html">Your account <span>↗</span></a>
+      <a class="header__account" href="account.html" aria-label="Your account" title="Your account"><svg class="account-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.8" r="3.25"></circle><path d="M4.7 20c.7-3.7 3.55-5.85 7.3-5.85s6.6 2.15 7.3 5.85"></path></svg><span class="account-label">Your account</span></a>
       <a href="contact.html" class="header__cta">Start a conversation</a>
     </div>
     <button class="header__toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
@@ -37,12 +38,21 @@
   <button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>
   <a href="index.html">Home</a><a href="backend.html">Backend</a><a href="frontend.html">Frontend</a><a href="saas.html">SaaS</a><a href="games.html">Games</a><a href="security.html">Security</a><a href="services.html">Services</a><a href="case-studies.html">Work</a><a href="about.html">About</a><a href="contact.html">Contact</a>
 </div>
-<main id="main">
-<section class="page-hero"><div class="page-hero__inner"><p class="page-hero__eyebrow">07 / ACCOUNT</p><h1 class="page-hero__title">Your Veyrion account</h1><p class="page-hero__sub">Sign in to manage your account, projects and access. No noisy dashboard, just the things that belong to you.</p></div></section>
-
-<section class="section"><div class="section__inner"><div class="service-showcase"><div class="service-showcase__lead"><p class="section__label">Account</p><h2>Welcome<br><em>back.</em></h2><p>Use your Veyrion account for customer access. The actual sign-in flow opens without turning the site into a generic dashboard.</p></div><div class="service-list"><a href="#" data-auth-open><span><small>01</small><br><strong>Sign in</strong></span><span>↗</span></a><a href="#" data-auth-signup><span><small>02</small><br><strong>Create an account</strong></span><span>→</span></a><a href="contact.html"><span><small>03</small><br><strong>Talk to the studio</strong></span><span>→</span></a></div></div></div></section>
-<section class="section section--alt"><div class="section__inner"><div class="service-showcase"><div class="service-showcase__lead"><p class="section__label">The Veyrion way</p><h2>Less theatre.<br><em>More finished work.</em></h2><p>We keep the work close, explain what we are doing and build things we would actually want to use ourselves.</p></div><div class="service-list"><a href="contact.html"><span><small>01</small><br><strong>Tell us what is broken</strong></span><span>↗</span></a><a href="case-studies.html"><span><small>02</small><br><strong>See how we think</strong></span><span>→</span></a><a href="about.html"><span><small>03</small><br><strong>Meet the studio</strong></span><span>→</span></a></div></div></div></section>
+<main id="main" class="account-page">
+<section class="page-hero page-hero--account"><div class="page-hero__inner"><p class="page-hero__eyebrow">07 / ACCOUNT</p><h1 class="page-hero__title">Your Veyrion account</h1><p class="page-hero__sub">A quieter place for your enquiries, call requests and account details. Sign in to pick up where you left off.</p></div></section>
+<section class="section account-section"><div class="section__inner">
+<div class="account-panel account-panel--guest" id="account-guest">
+  <div class="account-panel__intro"><p class="section__label">ACCOUNT ACCESS</p><h2>Your work.<br><em>Kept together.</em></h2><p>Use one account for project enquiries and call requests. Your details stay attached to your profile, so you do not have to start from scratch every time.</p><div class="account-actions"><button class="btn btn--primary" type="button" data-auth-open>Sign in</button><button class="btn btn--quiet" type="button" data-auth-signup>Create account</button></div></div>
+  <div class="account-benefits"><article class="account-benefit"><span class="account-benefit__number">01</span><div><strong>Project enquiries</strong><p>Keep conversations connected to your account.</p></div></article><article class="account-benefit"><span class="account-benefit__number">02</span><div><strong>Call requests</strong><p>Send a request with your details already attached.</p></div></article><article class="account-benefit"><span class="account-benefit__number">03</span><div><strong>Private access</strong><p>Protected sign-in with secure password recovery.</p></div></article></div>
+</div>
+<div class="account-panel account-panel--member" id="account-member" hidden aria-live="polite">
+  <div class="account-profile"><div class="account-profile__top"><div class="account-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="7.8" r="3.25"></circle><path d="M4.7 20c.7-3.7 3.55-5.85 7.3-5.85s6.6 2.15 7.3 5.85"></path></svg></div><div class="account-profile__heading"><p class="account-profile__eyebrow">YOUR WORKSPACE</p><h2 class="account-profile__name" id="account-user-name">Your account</h2><p class="account-profile__email" id="account-user-email">Loading account details…</p></div><span class="account-status">Signed in</span></div>
+  <div class="account-profile__details"><div class="account-profile__detail"><span>Company</span><strong id="account-user-company">—</strong></div><div class="account-profile__detail"><span>Member since</span><strong id="account-created-at">—</strong></div></div><p class="account-profile__message" id="account-profile-message" role="status"></p>
+  <div class="account-panel__actions"><a class="btn btn--primary" href="contact.html">Contact the studio</a><button class="btn btn--quiet" type="button" data-auth-logout>Sign out</button></div></div>
+</div>
+</div></section>
+<section class="section section--alt"><div class="section__inner"><div class="service-showcase"><div class="service-showcase__lead"><p class="section__label">Need a hand?</p><h2>Talk to a real<br><em>person.</em></h2><p>Have a question about a project, an existing request or something on the site? The studio is one message away.</p></div><div class="service-list"><a href="contact.html"><span><small>01</small><br><strong>Contact the studio</strong></span><span>↗</span></a><a href="case-studies.html"><span><small>02</small><br><strong>Explore our work</strong></span><span>→</span></a><a href="about.html"><span><small>03</small><br><strong>Meet Veyrion</strong></span><span>→</span></a></div></div></div></section>
 </main>
 <footer class="footer"><div class="footer__inner"><div class="footer__left"><span class="footer__brand">VEYRION</span><span class="footer__tagline">Software, systems and technical work made by people who care about the details.</span></div><nav class="footer__nav"><a href="index.html">Home</a><a href="services.html">Services</a><a href="case-studies.html">Case Studies</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav><span class="footer__copy">&copy; 2026 Veyrion Studios</span></div></footer>
-<script src="app.js?v=20261111-3" defer></script><script src="language.js" defer></script>
+<script src="app.js?v=20261113-1" defer></script><script src="language.js" defer></script>
 </body></html>

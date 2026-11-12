@@ -20,6 +20,7 @@
   var AUTH_SESSION_KEY = "veyrion.auth.session.v1";
   var AUTH_IDLE_LIMIT = 30 * 60 * 1000;
   var currentAccessToken = "";
+  var accountProfileToken = "";
   var lastAuthActivity = Date.now();
   var lastActivityWrite = 0;
 
@@ -67,6 +68,15 @@
       document.body.appendChild(modal);
     }
     var headerRight = $(".header__right");
+    if (headerRight && !$(".header__account", headerRight)) {
+      var accountLink = document.createElement("a");
+      accountLink.className = "header__account";
+      accountLink.href = "account.html";
+      accountLink.setAttribute("aria-label", "Your account");
+      accountLink.title = "Your account";
+      accountLink.innerHTML = '<svg class="account-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.8" r="3.25"></circle><path d="M4.7 20c.7-3.7 3.55-5.85 7.3-5.85s6.6 2.15 7.3 5.85"></path></svg><span class="account-label">Your account</span>';
+      headerRight.appendChild(accountLink);
+    }
     if (headerRight && !$("#auth-nav")) {
       var nav = document.createElement("div"); nav.className = "auth-nav"; nav.id = "auth-nav";
       nav.innerHTML = '<button class="header__auth" id="auth-open" type="button">Sign in</button><button class="header__auth header__auth--primary" id="signup-open" type="button">Create account</button><button class="header__auth" id="auth-logout" type="button" hidden>Sign out</button>';
@@ -139,11 +149,68 @@
   }
   window.veyrionOpenAuth = openAuth;
   function closeAuth() { var modal=$("#auth-modal"); if(modal) modal.hidden=true; document.body.classList.remove("auth-open"); }
+  function loadAccountProfile() {
+    var panel = $("#account-member");
+    if (!panel || !currentAccessToken || accountProfileToken === currentAccessToken) return;
+    var requestToken = currentAccessToken;
+    accountProfileToken = requestToken;
+    var nameNode = $("#account-user-name");
+    var emailNode = $("#account-user-email");
+    var companyNode = $("#account-user-company");
+    var createdNode = $("#account-created-at");
+    var messageNode = $("#account-profile-message");
+    if (messageNode) messageNode.textContent = "Loading your account details…";
+    fetch(SUPABASE_URL + "/auth/v1/user", {
+      method: "GET",
+      headers: { apikey: SUPABASE_PUBLIC_KEY, Authorization: "Bearer " + requestToken },
+      cache: "no-store"
+    }).then(function(response) {
+      return response.json().catch(function(){ return {}; }).then(function(data) {
+        if (!response.ok) {
+          var error = new Error(data.msg || data.message || "Your account details could not be loaded.");
+          error.status = response.status;
+          throw error;
+        }
+        return data;
+      });
+    }).then(function(user) {
+      if (requestToken !== currentAccessToken || !user || !user.id) return;
+      var metadata = user.user_metadata || {};
+      if (nameNode) nameNode.textContent = metadata.full_name || metadata.name || (user.email || "Veyrion member").split("@")[0];
+      if (emailNode) emailNode.textContent = user.email || "Email unavailable";
+      if (companyNode) companyNode.textContent = metadata.company || "Not added";
+      if (createdNode) {
+        var created = user.created_at ? new Date(user.created_at) : null;
+        createdNode.textContent = created && !Number.isNaN(created.getTime()) ? created.toLocaleDateString(undefined, {year:"numeric",month:"long",day:"numeric"}) : "—";
+      }
+      if (messageNode) messageNode.textContent = "Your account is active. Your enquiries and call requests stay connected to this profile.";
+    }).catch(function(error) {
+      if (requestToken !== currentAccessToken) return;
+      accountProfileToken = "";
+      if (error.status === 401) {
+        clearCustomerSession();
+        return;
+      }
+      if (messageNode) messageNode.textContent = "We could not load your details just now. Refresh the page to try again.";
+    });
+  }
   function updateAuthNav() {
     var signedIn = Boolean(currentAccessToken);
     ["#auth-open","[data-auth-open]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=signedIn;}); });
     ["#signup-open","[data-auth-signup]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=signedIn;}); });
     ["#auth-logout","[data-auth-logout]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=!signedIn;}); });
+    $$(".header__account").forEach(function(el) {
+      el.classList.toggle("is-authenticated", signedIn);
+      el.setAttribute("aria-label", signedIn ? "Your account, signed in" : "Your account");
+    });
+    var guestPanel = $("#account-guest");
+    var memberPanel = $("#account-member");
+    if (guestPanel) guestPanel.hidden = signedIn;
+    if (memberPanel) {
+      memberPanel.hidden = !signedIn;
+      if (signedIn) loadAccountProfile();
+    }
+    if (!signedIn) accountProfileToken = "";
   }
   function requireCustomerAuth() { if (currentAccessToken) return true; openAuth("login"); return false; }
   function initAuthInactivity() {
