@@ -53,7 +53,7 @@ const bookingSchema = z.object({
   company: z.string().trim().min(2).max(120),
   type: z.string().trim().min(2).max(80),
   brief: z.string().trim().min(40).max(5000),
-  preferredDate: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
+  preferredDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   preferredTime: z.string().regex(/^(?:(09|10|11|12|13|14|15):(00|30)|16:00)$/),
   timezone: z.string().min(1).max(80),
   website: z.string().max(200).optional(),
