@@ -3195,3 +3195,17 @@ html, body {
 .section--alt * {
   border-color: rgba(238,236,229,.12);
 }
+
+/* 2026-11-13: final dark-theme contrast cleanup. */
+.status-card__value,
+.bento-card__title,
+.bento-card__body,
+.section h2,
+.section h3,
+.section p {
+  color: #eeece5 !important;
+}
+.status-card__body,
+.bento-card__body {
+  color: #a8aaa3 !important;
+}
