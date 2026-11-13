@@ -1,1 +1,218 @@
-/* PATCH PLACEHOLDER */
+:root{--bg:#090a09;--bg-2:#0d0e0d;--surface:#111311;--elevated:#171a17;--text:#e9e7df;--text-2:#b4b2a9;--text-3:#85867f;--accent:#a47d68;--accent-2:#718b82}html,body{background:#090a09!important;color:#e9e7df}
+.header{background:rgba(9,10,9,.9)!important;border-bottom:1px solid rgba(226,224,213,.08)!important;backdrop-filter:blur(18px)}.header__nav,.header__status,.header__cta,#auth-nav{display:none!important}.header__inner{justify-content:space-between!important}.header__brand{color:#e9e7df!important}.header__right{margin-left:auto!important;gap:0!important}
+.header__account{position:relative!important;width:40px;height:40px;display:grid!important;place-items:center;margin-left:auto!important;border:1px solid rgba(226,224,213,.16)!important;border-radius:50%!important;background:rgba(255,255,255,.025)!important;color:#e9e7df!important}.account-sketch{position:relative;width:19px;height:19px;display:block}.account-sketch:before{content:"";position:absolute;left:6px;top:1px;width:7px;height:7px;border:1.4px solid currentColor;border-radius:50%}.account-sketch i{position:absolute;left:2px;bottom:1px;width:15px;height:9px;border:1.4px solid currentColor;border-bottom:0;border-radius:11px 11px 0 0}.account-sketch b{position:absolute;left:1px;top:8px;width:17px;height:1px;background:currentColor;transform:rotate(-18deg);opacity:.35}
+.account-menu{position:absolute;right:0;top:48px;z-index:1200;min-width:154px;padding:6px;border:1px solid rgba(226,224,213,.14);background:rgba(17,19,17,.98)!important;color:#e9e7df!important;box-shadow:0 20px 60px rgba(0,0,0,.45);border-radius:10px}.account-menu button{width:100%;padding:11px 12px;text-align:left;color:#e9e7df!important;display:flex;justify-content:space-between;border-radius:6px}
+.atlas-stage{position:relative;isolation:isolate;width:100%;min-height:clamp(430px,68vh,720px);margin:0 auto 42px;padding:34px clamp(20px,5vw,76px) 26px;background:radial-gradient(ellipse at 50% 57%,rgba(128,130,113,.11),transparent 43%),linear-gradient(180deg,#0c0d0c,#090a09 82%);overflow:hidden;border-bottom:1px solid rgba(226,224,213,.07)}
+.atlas-stage__top,.atlas-stage__bottom{position:relative;z-index:4;display:flex;justify-content:space-between;align-items:center;color:rgba(220,218,206,.58);font:500 9px/1.4 var(--font-mono);letter-spacing:.13em;text-transform:uppercase}.atlas-stage__model{position:relative;height:clamp(300px,49vh,500px);max-width:1120px;margin:12px auto 0;perspective:1300px}
+.atlas-stage__rings{position:absolute;left:50%;top:56%;width:min(76%,780px);height:55%;transform:translate(-50%,-50%) rotateX(68deg);border:1px solid rgba(205,199,178,.15);border-radius:50%;box-shadow:0 0 90px rgba(205,199,178,.035)}.atlas-stage__rings:before,.atlas-stage__rings:after{content:"";position:absolute;inset:11%;border:1px solid rgba(205,199,178,.10);border-radius:50%}.atlas-stage__rings:after{inset:25%;border-color:rgba(205,199,178,.08)}.atlas-stage__rings i{position:absolute;left:50%;top:50%;width:5px;height:5px;transform:translate(-50%,-50%);border-radius:50%;background:#b18b72;box-shadow:0 0 18px 4px rgba(177,139,114,.38)}
+.atlas-stage__deck,.hero-stack--atlas{position:absolute!important;left:50%!important;top:55%!important;width:min(78%,760px)!important;height:78%!important;transform:translate(-50%,-50%)!important;transform-style:preserve-3d}.hero-art .hero-stack--atlas{left:50%!important;top:53%!important;width:78%!important;height:82%!important}
+.hero-atlas-layer{position:absolute!important;left:50%!important;top:50%!important;width:clamp(150px,22vw,250px)!important;height:52px!important;margin:-26px 0 0 -125px!important;padding:0 16px!important;display:flex!important;align-items:center!important;gap:12px!important;text-align:left!important;clip-path:polygon(0 0,96% 0,100% 13%,100% 100%,4% 100%,0 88%)!important;border:1px solid color-mix(in srgb,var(--paper-color) 64%,#d8d4c7 12%)!important;border-radius:2px!important;background:linear-gradient(160deg,color-mix(in srgb,var(--paper-color) 30%,#292d29),#151815 76%)!important;color:#e6e3d9!important;box-shadow:inset 0 1px rgba(255,255,255,.12),0 12px 22px rgba(0,0,0,.42),4px 5px 0 color-mix(in srgb,var(--paper-color) 20%,#101210)!important;transform:translate3d(calc(var(--paper-x) + var(--move-x,0px)),calc(var(--paper-y) + var(--move-y,0px)),calc(var(--atlas-depth)*7px)) rotateX(48deg) rotateZ(calc((var(--atlas-i) - 9)*.65deg))!important;cursor:grab!important;touch-action:none!important;transition:transform .32s cubic-bezier(.2,.8,.2,1),filter .25s,box-shadow .25s!important}
+.hero-atlas-layer i{width:100%;height:100%;display:block;border-radius:inherit;background:var(--paper-color);opacity:.92}.hero-atlas-layer.is-dragging{cursor:grabbing!important;transition:none!important}
+
+.atlas-content-leave .hero__left,.atlas-content-leave .hero__aside-note,.atlas-content-leave main>section:not(.atlas-stage):not(.hero){opacity:0;transform:translateY(12px);transition:opacity .28s ease,transform .32s ease}.atlas-content-enter .hero__left,.atlas-content-enter .hero__aside-note,.atlas-content-enter main>section:not(.atlas-stage):not(.hero){animation:atlasContentIn .42s ease both}@keyframes atlasContentIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:900px){.atlas-stage{min-height:430px;padding:24px 16px 22px;margin-bottom:30px}.atlas-stage__model{height:340px;margin-top:18px}.atlas-stage__rings{width:94%;height:48%;top:59%}.atlas-stage__deck,.hero-stack--atlas{width:100%!important;height:74%!important;top:57%!important}.hero-atlas-layer{width:clamp(130px,38vw,190px)!important;height:43px!important;margin:-22px 0 0 -95px!important;padding:0 10px!important}.hero-atlas-layer b{font-size:10px!important}.atlas-checker{top:8px;right:8px;width:176px;padding:9px;gap:6px}.atlas-checker__target{min-height:46px;padding:6px;font-size:8px}.atlas-checker__match{min-height:40px}.atlas-checker__match strong{font-size:15px}.atlas-checker__open{padding:7px;font-size:8px}.atlas-count{top:14px;left:12px}.hero-art .atlas-checker{top:8%;right:0;width:164px}.hero-art .hero-atlas-layer{width:clamp(120px,34vw,180px)!important;margin-left:-90px!important;height:39px!important;margin-top:-20px!important}}
+@media(max-width:560px){.atlas-stage{min-height:390px;padding:20px 12px 18px}.atlas-stage__model{height:310px}.atlas-stage__top,.atlas-stage__bottom{font-size:7px}.atlas-stage__bottom{bottom:17px}.atlas-checker{width:148px;padding:7px;top:6px;right:5px}.atlas-checker__eyebrow{font-size:7px}.atlas-checker__target{min-height:40px;font-size:7px;gap:5px}.atlas-checker__match strong{font-size:13px}.atlas-checker__match small{font-size:7px}.atlas-checker__open{font-size:7px}.atlas-count{top:12px;left:8px;font-size:7px}.hero-art .atlas-checker{width:142px;top:7%;right:0}.hero-art .atlas-count{bottom:9%}.hero-art .hero-atlas-layer{width:126px!important;margin-left:-63px!important;height:36px!important;margin-top:-18px!important;padding:0 8px!important}}
+@media(prefers-reduced-motion:reduce){.hero-atlas-layer,.atlas-checker__target,.atlas-checker__open{transition:none!important}}
+/* Atlas layer geometry: real, separately reachable paper sheets */
+.hero-art .hero-stack--atlas{left:33.5%!important;top:55%!important;width:70%!important;height:78%!important}
+.hero-art .hero-atlas-layer{width:110px!important;height:36px!important;margin:-18px 0 0 -55px!important;padding:0 7px!important}
+
+.atlas-stage__deck{left:39%!important;top:55%!important;width:80%!important;height:80%!important}
+.atlas-stage .hero-atlas-layer{width:180px!important;height:46px!important;margin:-23px 0 0 -90px!important}
+@media(max-width:900px){
+ .hero-art .hero-stack--atlas{left:30%!important;top:55%!important;width:72%!important;height:78%!important}
+ .hero-art .hero-atlas-layer{width:112px!important;height:32px!important;margin:-16px 0 0 -56px!important;padding:0 6px!important}
+ 
+ .atlas-stage__model{height:390px!important}
+ .atlas-stage__deck{left:30%!important;top:55%!important;width:90%!important;height:86%!important}
+ .atlas-stage .hero-atlas-layer{width:112px!important;height:30px!important;margin:-15px 0 0 -56px!important;padding:0 6px!important}
+ .atlas-stage .hero-atlas-layer b{font-size:8px!important}
+ .atlas-stage{min-height:500px!important}
+}
+@media(max-width:560px){
+ .atlas-stage__model{height:390px!important}
+ .atlas-stage{min-height:500px!important}
+ .hero-art .hero-atlas-layer{width:112px!important;height:32px!important}
+}
+/* Direct-manipulation feedback for the Atlas paper layers. */
+.hero-atlas-layer{pointer-events:auto!important;user-select:none!important;-webkit-user-select:none!important;-webkit-user-drag:none!important;touch-action:none!important;will-change:transform;cursor:grab!important}
+.hero-atlas-layer:hover:not(.is-dragging){filter:brightness(1.13);box-shadow:inset 0 1px rgba(255,255,255,.16),0 18px 28px rgba(0,0,0,.48),4px 5px 0 color-mix(in srgb,var(--paper-color) 20%,#101210)!important}
+.hero-atlas-layer.is-dragging{cursor:grabbing!important;filter:brightness(1.14);transition:none!important;box-shadow:inset 0 1px rgba(255,255,255,.2),0 28px 44px rgba(0,0,0,.58),5px 7px 0 color-mix(in srgb,var(--paper-color) 24%,#101210)!important;transform:translate3d(calc(var(--paper-x) + var(--move-x,0px)),calc(var(--paper-y) + var(--move-y,0px)),calc(var(--atlas-depth)*7px + var(--drag-z,44px))) rotateX(48deg) rotateZ(calc((var(--atlas-i) - 9)*.65deg + var(--drag-rotate,0deg))) scale(1.035)!important}
+@media(prefers-reduced-motion:reduce){.hero-atlas-layer:hover:not(.is-dragging){filter:none}}
+
+
+/* Subtle Atlas drift + persistent drag affordance. */
+@keyframes atlasPaperDrift {
+  0%,100% { translate: 0 0; }
+  25% { translate: 1px -0.7px; }
+  50% { translate: -1.1px 0.8px; }
+  75% { translate: 0.7px 0.6px; }
+}
+.hero-atlas-layer {
+  animation: atlasPaperDrift 16s ease-in-out infinite;
+  animation-delay: calc((var(--atlas-i) % 5) * -2.4s);
+  animation-play-state: running;
+}
+.hero-atlas-layer:hover,
+.hero-atlas-layer:focus-visible,
+.hero-atlas-layer.is-dragging {
+  animation-play-state: paused;
+}
+.hero-atlas-layer::after {
+  content: "DRAG TO MOVE";
+  position: absolute;
+  right: 7px;
+  bottom: 4px;
+  z-index: 5;
+  padding: 3px 5px;
+  border: 1px solid rgba(235,231,218,.25);
+  border-radius: 2px;
+  background: rgba(8,10,9,.78);
+  color: rgba(245,241,230,.92);
+  font: 600 7px/1 var(--font-mono,monospace);
+  letter-spacing: .12em;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(2px);
+  transition: opacity .16s ease,transform .16s ease;
+}
+.hero-atlas-layer:hover::after,
+.hero-atlas-layer:focus-visible::after,
+.hero-atlas-layer.is-dragging::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero-atlas-layer.is-dragging::after { content: "MOVING"; }
+.hero-atlas-layer.is-dragging {
+  cursor: grabbing!important;
+  z-index: 999!important;
+}
+@media(prefers-reduced-motion:reduce) {
+  .hero-atlas-layer { animation:none!important; }
+  .hero-atlas-layer::after { transition:none!important; }
+}
+
+
+/* One shared Atlas drop target, anchored to the visible paper stage. */
+.hero-art,.atlas-stage__model{position:relative!important}
+.atlas-drop-panel{position:absolute;top:8%;right:clamp(8px,2vw,24px);z-index:1200;width:clamp(142px,16vw,190px);box-sizing:border-box;padding:10px;display:grid;gap:8px;border:1px solid rgba(235,231,218,.22);border-radius:3px;background:rgba(8,10,9,.94);color:rgba(245,241,230,.88);box-shadow:0 16px 36px rgba(0,0,0,.32);font:600 8px/1.3 var(--font-mono,monospace);letter-spacing:.13em;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(5px) scale(.985);transition:opacity .16s ease,transform .16s ease,visibility .16s ease}
+.atlas-drop-panel.is-visible{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.atlas-drop-panel__label{color:rgba(220,218,206,.55);font-size:7px}
+.atlas-drop-panel__target{min-height:58px;display:grid;place-items:center;box-sizing:border-box;border:1px dashed rgba(235,231,218,.5);background:rgba(164,125,104,.12);color:#eee8dc;text-align:center;padding:8px;letter-spacing:.1em}
+.atlas-drop-panel__target:before{content:"";position:absolute;inset:29px 18px 18px;border:1px solid rgba(235,231,218,.12);pointer-events:none}
+.hero-atlas-layer.is-dragging{z-index:1300!important}
+@media(max-width:900px){.atlas-drop-panel{top:8px;right:8px;width:clamp(136px,24vw,176px);padding:8px;gap:6px}.atlas-drop-panel__target{min-height:46px}}
+@media(max-width:560px){.atlas-drop-panel{top:6px;right:5px;width:142px;padding:7px}.atlas-drop-panel__target{min-height:40px;font-size:7px}}
+@media(prefers-reduced-motion:reduce){.atlas-drop-panel{transition:none}}
+
+/* Focused Atlas interaction: preserve the original left-side paper layout. */
+.hero-art .hero-stack--atlas{left:33.5%!important;top:55%!important;width:70%!important;height:78%!important}
+.hero-art .hero-atlas-layer{width:110px!important;height:36px!important;margin:-18px 0 0 -55px!important;padding:0 7px!important}
+.atlas-drop-panel{position:absolute!important;left:4%!important;right:auto!important;top:16%!important;width:clamp(190px,34vw,300px)!important;height:68%!important;box-sizing:border-box;padding:12px!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;gap:10px!important;border:1px dashed rgba(235,231,218,.34)!important;border-radius:4px!important;background:rgba(8,10,9,.22)!important;color:rgba(245,241,230,.88)!important;box-shadow:inset 0 0 0 1px rgba(235,231,218,.05)!important;font:600 8px/1.3 var(--font-mono,monospace)!important;letter-spacing:.13em!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(5px)!important;transition:opacity .16s ease,transform .16s ease,visibility .16s ease!important;z-index:1400!important}
+.atlas-drop-panel.is-visible{opacity:1!important;visibility:visible!important;transform:none!important}
+.atlas-drop-panel__label{align-self:flex-start!important;color:rgba(220,218,206,.55)!important;font-size:7px!important}
+.atlas-drop-panel__target{position:relative!important;min-height:74px!important;display:grid!important;place-items:center!important;box-sizing:border-box!important;border:1px dashed rgba(235,231,218,.5)!important;background:rgba(164,125,104,.10)!important;color:#eee8dc!important;text-align:center!important;padding:8px!important;letter-spacing:.1em!important;flex:1!important}
+.atlas-drop-panel__target:before{content:""!important;position:absolute!important;inset:12px!important;border:1px solid rgba(235,231,218,.09)!important;pointer-events:none!important}
+.atlas-drop-panel__open{width:100%!important;padding:10px 12px!important;border:1px solid rgba(235,231,218,.28)!important;background:rgba(164,125,104,.18)!important;color:#eee8dc!important;font:600 8px/1 var(--font-mono,monospace)!important;letter-spacing:.12em!important;cursor:pointer!important;pointer-events:auto!important}
+.atlas-drop-panel__open:hover{background:rgba(164,125,104,.30)!important}
+.atlas-drop-panel.is-placed{opacity:1!important;visibility:visible!important}
+.atlas-drop-panel.is-over .atlas-drop-panel__target{border-color:rgba(235,231,218,.9)!important;background:rgba(164,125,104,.22)!important}
+.hero-atlas-layer.is-returning{transition:transform .26s cubic-bezier(.2,.8,.2,1)!important}
+@media(max-width:900px){.hero-art .hero-stack--atlas{left:30%!important;top:55%!important;width:72%!important;height:78%!important}.hero-art .hero-atlas-layer{width:112px!important;height:32px!important;margin:-16px 0 0 -56px!important;padding:0 6px!important}.atlas-drop-panel{left:3%!important;top:10%!important;width:clamp(150px,44vw,220px)!important;height:72%!important;padding:9px!important}.atlas-drop-panel__target{min-height:56px!important}.atlas-drop-panel__open{padding:8px!important;font-size:7px!important}}
+@media(max-width:560px){.hero-art .hero-atlas-layer{width:112px!important;height:32px!important}.atlas-drop-panel{left:3%!important;top:8%!important;width:146px!important;height:76%!important;padding:7px!important}.atlas-drop-panel__target{min-height:48px!important;font-size:7px!important}.atlas-drop-panel__open{font-size:7px!important}}
+
+/* Final drag geometry: keep the original 3D paper look, but move sheets with real left/top coordinates. */
+.hero-atlas-layer{left:calc(50% + var(--paper-x) + var(--move-x,0px))!important;top:calc(50% + var(--paper-y) + var(--move-y,0px))!important;transform:translate3d(0,0,calc(var(--atlas-depth)*7px)) rotateX(48deg) rotateZ(calc((var(--atlas-i) - 6)*.65deg))!important;will-change:left,top,transform!important}
+.hero-atlas-layer.is-dragging{left:calc(50% + var(--paper-x) + var(--move-x,0px))!important;top:calc(50% + var(--paper-y) + var(--move-y,0px))!important;transform:translate3d(0,0,calc(var(--atlas-depth)*7px + var(--drag-z,44px))) rotateX(48deg) rotateZ(calc((var(--atlas-i) - 6)*.65deg + var(--drag-rotate,0deg))) scale(1.035)!important}
+
+/* Atlas restored to the original welcome hero model. The interaction lives inside the existing right-side hero-orbit. */
+.hero-art .hero-orbit{position:relative!important;overflow:visible!important}
+.hero-art .hero-stack--atlas{left:64%!important;top:54%!important;width:58%!important;height:76%!important;transform:translate(-50%,-50%)!important;z-index:8!important}
+.hero-art .hero-atlas-layer{width:clamp(108px,12vw,150px)!important;height:38px!important;margin:-19px 0 0 -75px!important}
+.hero-art .atlas-drop-panel{left:4%!important;right:auto!important;top:17%!important;width:42%!important;height:66%!important;z-index:20!important}
+.hero-art .atlas-drop-panel__target{min-height:86px!important}
+.hero-art .atlas-drop-panel__open{position:relative!important;z-index:3!important}
+.hero-art .hero-atlas-layer.is-dragging{z-index:1300!important}
+@media(max-width:900px){.hero-art .hero-stack--atlas{left:64%!important;top:55%!important;width:58%!important;height:74%!important}.hero-art .hero-atlas-layer{width:112px!important;height:32px!important;margin:-16px 0 0 -56px!important}.hero-art .atlas-drop-panel{left:3%!important;top:14%!important;width:43%!important;height:68%!important}.hero-art .atlas-drop-panel__target{min-height:64px!important}}
+@media(max-width:560px){.hero-art .hero-stack--atlas{left:65%!important;width:60%!important}.hero-art .atlas-drop-panel{left:2%!important;top:12%!important;width:44%!important;height:70%!important}.hero-art .atlas-drop-panel__target{min-height:54px!important}}
+
+/* Correct the original hero-orbit sizing: Atlas must sit inside the real welcome model, not replace its geometry. */
+.hero-art .hero-orbit{position:absolute!important;inset:7% -8% 5%!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;width:auto!important;height:auto!important;overflow:visible!important}
+.hero-art .hero-stack--atlas{position:absolute!important;left:64%!important;top:54%!important;width:58%!important;height:76%!important;transform:translate(-50%,-50%)!important;z-index:8!important}
+.hero-art .hero-atlas-layer{width:clamp(108px,12vw,150px)!important;height:38px!important;margin:-19px 0 0 -75px!important}
+.hero-art .atlas-drop-panel{position:absolute!important;left:4%!important;right:auto!important;top:17%!important;width:42%!important;height:66%!important;z-index:20!important}
+@media(max-width:900px){.hero-art .hero-orbit{inset:7% -8% 5%!important}.hero-art .hero-stack--atlas{left:64%!important;top:55%!important;width:58%!important;height:74%!important}.hero-art .hero-atlas-layer{width:112px!important;height:32px!important;margin:-16px 0 0 -56px!important}.hero-art .atlas-drop-panel{left:3%!important;top:14%!important;width:43%!important;height:68%!important}}
+@media(max-width:560px){.hero-art .hero-orbit{inset:7% -8% 5%!important}.hero-art .hero-stack--atlas{left:65%!important;width:60%!important}.hero-art .atlas-drop-panel{left:2%!important;top:12%!important;width:44%!important;height:70%!important}}
+
+/* Final geometry correction: let inset define the orbit box so the original model keeps its size. */
+.hero-art .hero-orbit{position:absolute!important;inset:7% -8% 5%!important;width:auto!important;height:auto!important;overflow:visible!important}
+
+/* Keep the paper bank clearly separated from the fixed drop box inside the original hero. */
+.hero-art .hero-stack--atlas{left:75%!important;top:54%!important;width:42%!important;height:76%!important}
+@media(max-width:900px){.hero-art .hero-stack--atlas{left:75%!important;top:55%!important;width:42%!important;height:74%!important}}
+@media(max-width:560px){.hero-art .hero-stack--atlas{left:76%!important;width:43%!important}}
+
+/* Clean Atlas hero: keep the screenshot-inspired dark texture, remove the old orbit UI, and leave the paper stack interactive. */
+.hero-art{
+  background:
+    radial-gradient(ellipse at 62% 46%,rgba(111,132,100,.13) 0%,rgba(26,35,27,.07) 32%,transparent 64%),
+    radial-gradient(ellipse at 42% 72%,rgba(105,125,94,.08) 0%,transparent 48%),
+    linear-gradient(135deg,#0b100d 0%,#121814 48%,#090d0b 100%)!important;
+  overflow:visible!important;
+}
+.hero-art::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none!important;
+  opacity:.34!important;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 4px),
+    radial-gradient(circle at 18% 30%,rgba(255,255,255,.035) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 76% 58%,rgba(255,255,255,.025) 0 1px,transparent 1.5px)!important;
+  mix-blend-mode:screen!important;
+}
+.hero-art .hero-orbit{
+  position:absolute!important;
+  inset:7% -8% 5%!important;
+  width:auto!important;
+  height:auto!important;
+  overflow:visible!important;
+  transform:none!important;
+  filter:none!important;
+  background:transparent!important;
+}
+.hero-art .hero-orbit::before,
+.hero-art .hero-orbit::after,
+.hero-art .hero-orbit__plane,
+.hero-art .hero-orbit__core,
+.hero-art .hero-orbit__satellite,
+.hero-art .hero-orbit__crosshair,
+.hero-art .hero-orbit__readout,
+.hero-art .hero-orbit__hint{
+  display:none!important;
+}
+.hero-art .hero-stack--atlas{
+  left:75%!important;
+  top:54%!important;
+  width:42%!important;
+  height:76%!important;
+  transform:none!important;
+  z-index:8!important;
+}
+.hero-art .hero-atlas-layer{
+  pointer-events:auto!important;
+  touch-action:none!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+  cursor:grab!important;
+}
+.hero-art .hero-atlas-layer.is-dragging{cursor:grabbing!important}
+.hero-art .atlas-drop-panel{z-index:1400!important}
+
+
+/* 2026-11-13: Atlas must not override the site's global editorial paper theme. */
+html, body { background: var(--paper) !important; color: var(--ink) !important; }
+.header { background: rgba(233,230,223,.86) !important; color: var(--ink) !important; border-bottom-color: rgba(17,18,20,.12) !important; }
+.header__brand { color: var(--ink) !important; }
+.header__account { color: var(--ink) !important; border-color: rgba(17,18,20,.18) !important; background: transparent !important; }
