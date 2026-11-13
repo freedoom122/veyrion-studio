@@ -84,7 +84,7 @@ function seed() {
   const settings = [
     { key: 'site_name', value: 'Veyrion', setting_group: 'general', is_public: 1 },
     { key: 'site_description', value: 'Bespoke systems for companies that have outgrown the catalogue', setting_group: 'general', is_public: 1 },
-    { key: 'site_email', value: 'admin@example.com', setting_group: 'general', is_public: 1 },
+    { key: 'site_email', value: 'contact@veyrionstudios.com', setting_group: 'general', is_public: 1 },
     { key: 'currency', value: 'USD', setting_group: 'commerce', is_public: 1 },
     { key: 'tax_rate', value: '0', setting_group: 'commerce', is_public: 0 },
     { key: 'maintenance_mode', value: 'false', setting_group: 'system', is_public: 0 },
@@ -96,6 +96,9 @@ function seed() {
   for (const s of settings) {
     insertSetting.run(s.key, s.value, s.setting_group, s.is_public);
   }
+
+  // Replace only the original placeholder; preserve any address set by the owner.
+  db.prepare("UPDATE settings SET value = ? WHERE key = 'site_email' AND value = 'admin@example.com'").run('contact@veyrionstudios.com');
 
   console.log('[DB] Seed complete.');
 }
