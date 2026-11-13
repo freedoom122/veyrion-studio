@@ -209,10 +209,3 @@
 }
 .hero-art .hero-atlas-layer.is-dragging{cursor:grabbing!important}
 .hero-art .atlas-drop-panel{z-index:1400!important}
-
-
-/* 2026-11-13: Atlas must not override the site's global editorial paper theme. */
-html, body { background: var(--paper) !important; color: var(--ink) !important; }
-.header { background: rgba(233,230,223,.86) !important; color: var(--ink) !important; border-bottom-color: rgba(17,18,20,.12) !important; }
-.header__brand { color: var(--ink) !important; }
-.header__account { color: var(--ink) !important; border-color: rgba(17,18,20,.18) !important; background: transparent !important; }
