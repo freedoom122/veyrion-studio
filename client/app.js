@@ -1224,6 +1224,8 @@
           var y = (event.clientY - r.top) / r.height;
           card.style.setProperty('--pointer-x', (x * 100) + '%');
           card.style.setProperty('--pointer-y', (y * 100) + '%');
+          card.style.setProperty('--mouse-x', (x * 100) + '%');
+          card.style.setProperty('--mouse-y', (y * 100) + '%');
           if (card.classList.contains('bento-card')) {
             card.style.transform = 'perspective(900px) rotateX(' + ((.5-y)*5).toFixed(2) + 'deg) rotateY(' + ((x-.5)*6).toFixed(2) + 'deg) translateY(-4px)';
           }

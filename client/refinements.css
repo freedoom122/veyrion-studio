@@ -323,3 +323,207 @@ a, button, .bento-card, .service-item, .faq-item { -webkit-tap-highlight-color: 
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+/* ============================================================
+   VEYRION / FINAL POLISH LAYER
+   Premium visual depth, stronger hierarchy, tactile interaction.
+   No Atlas assets or layout contracts are changed.
+   ============================================================ */
+:root {
+  --shadow-soft: 0 18px 60px rgba(25, 29, 24, .055);
+  --shadow-lift: 0 24px 70px rgba(25, 29, 24, .10);
+}
+
+body {
+  background:
+    radial-gradient(900px 520px at 12% -8%, rgba(185,110,84,.075), transparent 62%),
+    radial-gradient(760px 520px at 92% 12%, rgba(112,133,120,.065), transparent 62%),
+    var(--bg);
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .22;
+  background-image:
+    linear-gradient(rgba(32,35,31,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32,35,31,.028) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent 82%);
+}
+
+.section__title {
+  max-width: 14ch;
+  font-family: "Instrument Serif", Georgia, serif !important;
+  font-size: clamp(38px, 5vw, 64px) !important;
+  line-height: .96 !important;
+  letter-spacing: -.028em !important;
+}
+.section__label {
+  font-size: 9px !important;
+  font-weight: 600 !important;
+}
+
+.hero--editorial {
+  min-height: min(900px, calc(100svh - var(--nav-h)));
+  background:
+    radial-gradient(700px 520px at 72% 48%, rgba(209,120,91,.11), transparent 62%),
+    radial-gradient(520px 460px at 96% 8%, rgba(141,163,148,.09), transparent 60%),
+    #1d211d !important;
+}
+.hero--editorial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .45;
+  background:
+    linear-gradient(90deg, transparent 0 49.9%, rgba(241,238,230,.055) 50%, transparent 50.1%),
+    linear-gradient(rgba(241,238,230,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(241,238,230,.03) 1px, transparent 1px);
+  background-size: 100% 100%, 72px 72px, 72px 72px;
+  mask-image: linear-gradient(90deg, transparent, black 16%, black 84%, transparent);
+}
+.hero--editorial .hero__inner { min-height: inherit; }
+.hero--editorial .hero__title {
+  font-size: clamp(58px, 8.8vw, 118px) !important;
+  max-width: 9.5ch;
+  line-height: .82 !important;
+}
+.hero--editorial .hero__title em {
+  display: block;
+  margin-top: .08em;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -.025em;
+}
+.hero--editorial .hero__body { font-size: 15px; }
+.hero--editorial .hero__actions { flex-wrap: wrap; }
+.hero--editorial .hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 30px;
+  color: rgba(241,238,230,.43);
+  font: 9px/1.2 var(--font-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.hero--editorial .hero__meta span { position: relative; }
+.hero--editorial .hero__meta span:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: rgba(209,120,91,.7);
+  right: -13px; top: 50%;
+}
+
+.hero-art {
+  min-height: clamp(430px, 54vw, 650px) !important;
+  border: 1px solid rgba(241,238,230,.14) !important;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(209,120,91,.10), transparent 28%),
+    linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012) 48%, rgba(0,0,0,.12)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.025),
+    0 28px 90px rgba(0,0,0,.25);
+}
+.hero-art::after {
+  content: "DRAG / EXPLORE";
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  z-index: 4;
+  color: rgba(241,238,230,.32);
+  font: 8px var(--font-mono);
+  letter-spacing: .15em;
+}
+.hero-art__top,
+.hero-art__bottom { opacity: .75; }
+
+.bento-card,
+.build,
+.principle,
+.cs-deep,
+.faq-item,
+.changelog-entry,
+.account-panel,
+.service-showcase > * {
+  box-shadow: var(--shadow-soft);
+}
+.bento-card,
+.build,
+.principle {
+  position: relative;
+  isolation: isolate;
+}
+.bento-card::after,
+.build::after,
+.principle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(500px circle at var(--pointer-x,50%) var(--pointer-y,50%), rgba(185,110,84,.09), transparent 48%);
+  transition: opacity .25s ease;
+  z-index: -1;
+}
+.bento-card:hover::after,
+.build:hover::after,
+.principle:hover::after { opacity: 1; }
+
+.cs-deep {
+  position: relative;
+  overflow: hidden;
+  transition: background .3s ease;
+}
+.cs-deep::before {
+  content: "";
+  position: absolute;
+  width: 360px; height: 360px;
+  right: -180px; top: -180px;
+  border: 1px solid rgba(185,110,84,.09);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.cs-deep:hover { background: color-mix(in srgb, var(--bg) 96%, var(--accent) 4%); }
+
+.btn,
+.header__auth,
+.header__cta,
+.header__account {
+  will-change: transform;
+}
+.btn--primary { box-shadow: 0 8px 26px rgba(185,110,84,.08); }
+.btn--primary:hover { box-shadow: 0 14px 34px rgba(185,110,84,.18); }
+
+@media (max-width: 760px) {
+  body::before { background-size: 34px 34px; opacity: .14; }
+  .section__title { font-size: clamp(37px, 11vw, 56px) !important; }
+  .hero--editorial {
+    min-height: auto;
+    background:
+      radial-gradient(460px 360px at 74% 36%, rgba(209,120,91,.10), transparent 64%),
+      #1d211d !important;
+  }
+  .hero--editorial .hero__title {
+    font-size: clamp(54px, 15vw, 82px) !important;
+    max-width: 8.8ch;
+  }
+  .hero--editorial .hero__meta { margin-top: 24px; }
+  .hero-art { min-height: 330px !important; max-height: none !important; }
+  .hero-art::after { content: "TOUCH / EXPLORE"; }
+}
+@media (max-width: 420px) {
+  .hero--editorial .hero__title { font-size: 50px !important; }
+  .hero--editorial .hero__actions .btn { width: 100%; }
+  .hero-art { min-height: 300px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-art, .bento-card, .build, .principle, .btn { will-change: auto; }
+}
