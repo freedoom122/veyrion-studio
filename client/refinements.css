@@ -3160,3 +3160,38 @@ button{font-family:inherit}
   .bento-card__title{font-size:34px!important}
 }
 
+
+/* 2026-11-13: remove paper surfaces and restore the dark navigation treatment. */
+html, body {
+  background: #171816 !important;
+  color: #eeece5 !important;
+}
+.header {
+  background: rgba(9,10,9,.94) !important;
+  color: #eeece5 !important;
+  border-bottom: 1px solid rgba(238,236,229,.12) !important;
+  backdrop-filter: blur(14px) !important;
+}
+.header__brand,
+.header__account,
+.header__auth,
+.header__nav,
+.header__status,
+.header__cta {
+  color: #eeece5 !important;
+}
+.header__account {
+  background: transparent !important;
+  border-color: rgba(238,236,229,.18) !important;
+}
+.section--alt {
+  --ink: #eeece5;
+  --paper: #171816;
+  --muted: #a8aaa3;
+  background: #171816 !important;
+  color: #eeece5 !important;
+  border-color: rgba(238,236,229,.12) !important;
+}
+.section--alt * {
+  border-color: rgba(238,236,229,.12);
+}
