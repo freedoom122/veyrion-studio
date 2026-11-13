@@ -67,8 +67,9 @@ router.post('/bookings', bookingLimiter, requireCustomerAuth, validate(bookingSc
 });
 
 // Public settings endpoint
-const db = require('../../config/database');
+const { getDb } = require('../../config/database');
 router.get('/settings/public', (req, res) => {
+  const db = getDb();
   const settings = db.prepare("SELECT key, value FROM settings WHERE is_public = 1").all();
   const obj = {};
   settings.forEach(s => { obj[s.key] = s.value; });
