@@ -634,7 +634,7 @@
             <div class="toast" id="toast" aria-live="polite"></div>
           </div>
           <div class="contact-right">
-            <form id="contact-form" novalidate>
+            <form id="contact-form" method="post" action="/api/v1/bookings" novalidate>
               <div class="field">
                 <label for="cf-name">Name</label>
                 <input type="text" id="cf-name" name="name" required minlength="2" autocomplete="name">

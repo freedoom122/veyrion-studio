@@ -60,7 +60,7 @@
         <div class="contact-page">
 
           <div class="contact-page__form-wrap">
-            <form id="contact-form" novalidate>
+            <form id="contact-form" method="post" action="/api/v1/contact" novalidate>
               <div class="field">
                 <label for="cf-name">Name</label>
                 <input type="text" id="cf-name" name="name" required minlength="2" autocomplete="name">
