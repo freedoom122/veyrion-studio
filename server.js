@@ -153,9 +153,7 @@ async function main() {
     },
   }));
 
-  app.get('/admin/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'server', 'admin', 'index.html'));
-  });
+  // Only the admin root and real static assets are served; unknown paths reach the 404 handler.
 
   // Never turn an unknown URL or missing asset into a successful homepage response.
   app.use((req, res, next) => {
