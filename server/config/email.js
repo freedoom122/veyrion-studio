@@ -50,7 +50,8 @@ async function sendWithResend({ to, subject, html, text, replyTo }) {
     html: buildEmailHtml(html, text),
     text: text || (html ? html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : ''),
   };
-  if (replyTo) payload.reply_to = replyTo;
+  const effectiveReplyTo = replyTo || process.env.EMAIL_REPLY_TO;
+  if (effectiveReplyTo) payload.reply_to = effectiveReplyTo;
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + process.env.RESEND_API_KEY, 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -74,7 +75,7 @@ async function sendEmail({ to, subject, html, text, replyTo }) {
         ' <' + (process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER) + '>',
       to, subject, html: buildEmailHtml(html, text),
       text: text || (html ? html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : ''),
-      ...(replyTo ? { replyTo } : {}),
+      ...((replyTo || process.env.EMAIL_REPLY_TO) ? { replyTo: replyTo || process.env.EMAIL_REPLY_TO } : {}),
     });
   }
   if (process.env.NODE_ENV === 'production') {
