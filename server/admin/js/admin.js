@@ -328,130 +328,95 @@
   async function loadSiteStudio(el) {
     setPageTitle('Site Studio');
     const items = await api('/content');
-    const pageLabels = {home:'Home',about:'About',backend:'Backend',frontend:'Frontend',saas:'SaaS',games:'Games',security:'Security',services:'Services','case-studies':'Work',process:'Process',blog:'Blog',contact:'Contact',faq:'FAQ',careers:'Careers',changelog:'Changelog',opensource:'Open source',store:'Store',docs:'Docs'};
-    function renderItems() {
-      const rows = (items || []).map(item => '<article class="cms-item"><div class="cms-item__main"><div class="cms-item__meta"><span class="status-tag">' + escapeHtml(item.content_type) + '</span>' + statusTag(item.status) + '<span class="secondary-cell">' + escapeHtml(pageLabels[item.page_key] || item.page_key) + '</span></div><strong>' + escapeHtml(item.title) + '</strong><small>/' + escapeHtml(item.slug) + '</small></div><div class="cms-item__actions"><button class="small-btn" type="button" data-edit="' + item.id + '">Edit</button><button class="small-btn cms-delete" type="button" data-delete="' + item.id + '">Delete</button></div></article>').join('');
-      $('#cms-items').innerHTML = rows || '<div class="empty-state">No custom content yet. Create your first section, article or project.</div>';
-      $('[data-edit]').forEach(button => button.addEventListener('click', () => {
-        const item = items.find(row => String(row.id) === button.dataset.edit);
-        if (!item) return;
-        $('#cms-id').value = item.id;
-        $('#cms-type').value = item.content_type;
-        $('#cms-page').value = item.page_key;
-        $('#cms-slug').value = item.slug;
-        $('#cms-eyebrow').value = item.eyebrow || '';
-        $('#cms-title').value = item.title;
-        $('#cms-body').value = item.body || '';
-        $('#cms-image').value = item.image_url || '';
-        $('#cms-cta-label').value = item.cta_label || '';
-        $('#cms-cta-url').value = item.cta_url || '';
-        $('#cms-order').value = item.sort_order || 0;
-        $('#cms-status').value = item.status;
-        $('#cms-form-title').textContent = 'Edit content';
-        $('#cms-save').textContent = 'Save changes';
-        syncPageField();
-        $('#cms-title').focus();
-      }));
-      $('[data-delete]').forEach(button => button.addEventListener('click', async () => {
-        const item = items.find(row => String(row.id) === button.dataset.delete);
-        if (!item || !window.confirm('Delete "' + item.title + '"? This cannot be undone.')) return;
-        try { await api('/content/' + item.id, {method:'DELETE'}); notify('Content deleted.'); await loadSiteStudio(el); }
-        catch (error) { notify(error.message, true); }
-      }));
-    }
-    el.innerHTML = '<div class="section-head"><div><h2>Manage website content</h2><p>Create sections for any page, plus blog articles and project entries. Drafts stay private until published.</p></div><span class="secure-pill">OWNER ONLY</span></div>' +
+    const configResult = await api('/site/config');
+    let liveConfig = configResult.config || { version: 1, patches: {} };
+    if (!liveConfig.patches || typeof liveConfig.patches !== 'object') liveConfig.patches = {};
+    const pageLabels = { 'index.html':'Home', 'about.html':'About', 'backend.html':'Backend', 'frontend.html':'Frontend', 'saas.html':'SaaS', 'games.html':'Games', 'security.html':'Security', 'services.html':'Services', 'case-studies.html':'Work', 'process.html':'Process', 'blog.html':'Blog', 'contact.html':'Contact', 'faq.html':'FAQ' };
+    let selectedSelector = '';
+    const oldHandler = window.__veyrionStudioMessageHandler;
+    if (oldHandler) window.removeEventListener('message', oldHandler);
+    el.innerHTML =
+      '<div class="section-head"><div><h2>Manage the live website</h2><p>Edit existing text visually, or add new sections, articles and projects.</p></div><span class="secure-pill">OWNER ONLY</span></div>' +
+      '<section class="panel cms-visual"><div class="cms-panel-head"><div><h3>Visual page editor</h3><p>Choose a page, then click a heading or paragraph in the preview to edit it.</p></div><div class="cms-visual-toolbar"><select id="studio-page" aria-label="Preview page">' + Object.keys(pageLabels).map(key => '<option value="' + key + '">' + escapeHtml(pageLabels[key]) + '</option>').join('') + '</select><button id="studio-refresh" class="ghost-btn" type="button">Refresh preview ↻</button></div></div>' +
+      '<div class="cms-visual-grid"><div class="cms-preview-wrap"><iframe id="studio-frame" title="Live website preview" src="/index.html?studio=1"></iframe></div><div class="cms-inspector"><p class="eyebrow">SELECTED ELEMENT</p><p id="studio-selection" class="cms-selection">Click a heading or paragraph in the preview.</p>' +
+      '<label>Text<input id="studio-text" type="text" maxlength="500" placeholder="Select an element first"></label><div class="cms-two"><label>Text colour<input id="studio-color" type="text" placeholder="#ffffff"></label><label>Background<input id="studio-bg" type="text" placeholder="#101216"></label></div>' +
+      '<div class="cms-two"><label>Font size<input id="studio-size" type="text" placeholder="e.g. 18px"></label><label>Border radius<input id="studio-radius" type="text" placeholder="e.g. 8px"></label></div>' +
+      '<div class="cms-form-actions"><button id="studio-save" class="primary-btn" type="button" disabled>Save visual change</button><button id="studio-clear" class="ghost-btn" type="button" disabled>Remove override</button></div><p class="form-hint">Changes are stored as safe text and style overrides. Select text elements rather than large containers to preserve the page layout.</p></div></div></section>' +
       '<div class="cms-layout"><section class="panel cms-library"><div class="cms-panel-head"><div><h3>Your content</h3><p>Published items appear on the live website.</p></div><button id="cms-new" class="ghost-btn" type="button">＋ New item</button></div><div id="cms-items" class="cms-items"></div></section>' +
-      '<section class="panel cms-editor"><div class="cms-panel-head"><div><h3 id="cms-form-title">Create content</h3><p>Plain text content is escaped safely. Raw HTML is not accepted.</p></div></div>' +
+      '<section class="panel cms-editor"><div class="cms-panel-head"><div><h3 id="cms-form-title">Create content</h3><p>Add a page section, blog article or project. Drafts remain private.</p></div></div>' +
       '<form id="cms-form" class="cms-form"><input id="cms-id" type="hidden">' +
       '<label>Content type<select id="cms-type"><option value="section">Page section</option><option value="article">Blog article</option><option value="project">Project / work item</option></select></label>' +
-      '<label>Page<select id="cms-page">' + Object.keys(pageLabels).map(key => '<option value="' + key + '">' + escapeHtml(pageLabels[key]) + '</option>').join('') + '</select></label>' +
+      '<label>Page<select id="cms-page">' + Object.entries(pageLabels).map(([key,label]) => '<option value="' + key.replace('.html','') + '">' + escapeHtml(label) + '</option>').join('') + '</select></label>' +
       '<label>URL slug<input id="cms-slug" maxlength="80" placeholder="generated-from-title"></label>' +
       '<label>Small label<input id="cms-eyebrow" maxlength="80" placeholder="OPTIONAL LABEL"></label>' +
       '<label>Title<input id="cms-title" maxlength="140" required></label>' +
-      '<label>Body<textarea id="cms-body" rows="7" maxlength="8000" placeholder="Write plain text. Separate paragraphs with a blank line."></textarea></label>' +
+      '<label>Body<textarea id="cms-body" rows="7" maxlength="8000" placeholder="Plain text. Separate paragraphs with a blank line."></textarea></label>' +
       '<label>Image URL (optional)<input id="cms-image" type="url" placeholder="https://..."></label>' +
       '<div class="cms-two"><label>Button label<input id="cms-cta-label" maxlength="60" placeholder="Learn more"></label><label>Button link<input id="cms-cta-url" maxlength="500" placeholder="/contact.html"></label></div>' +
       '<div class="cms-two"><label>Sort order<input id="cms-order" type="number" value="0" min="-10000" max="10000"></label><label>Visibility<select id="cms-status"><option value="draft">Draft</option><option value="published">Published</option></select></label></div>' +
-      '<div class="cms-form-actions"><button id="cms-save" class="primary-btn" type="submit">Publish / save</button><button id="cms-cancel" class="ghost-btn" type="button">Clear form</button></div><p class="form-hint">Articles appear on Blog. Projects appear on Work. Page sections are added near the bottom of the selected page. Use HTTPS image links only.</p><div id="cms-message" class="form-message" aria-live="polite"></div></form></section></div>';
-    function syncPageField() {
-      const type = $('#cms-type').value;
-      if (type === 'article') { $('#cms-page').value = 'blog'; $('#cms-page').disabled = true; }
-      else if (type === 'project') { $('#cms-page').value = 'case-studies'; $('#cms-page').disabled = true; }
-      else $('#cms-page').disabled = false;
+      '<div class="cms-form-actions"><button id="cms-save" class="primary-btn" type="submit">Save content</button><button id="cms-cancel" class="ghost-btn" type="button">Clear form</button></div><p class="form-hint">Articles appear on Blog. Projects appear on Work. Sections are added near the bottom of the selected page. Use HTTPS image links. Raw HTML is not accepted.</p><div id="cms-message" class="form-message" aria-live="polite"></div></form></section></div>';
+
+    const frame = $('#studio-frame');
+    const textInput = $('#studio-text');
+    const styleInputs = { color: $('#studio-color'), backgroundColor: $('#studio-bg'), fontSize: $('#studio-size'), borderRadius: $('#studio-radius') };
+    function sendPreview() {
+      if (!selectedSelector || !frame.contentWindow) return;
+      const patch = { text: textInput.value, styles: {} };
+      Object.entries(styleInputs).forEach(([key,input]) => { if (input.value.trim()) patch.styles[key] = input.value.trim(); });
+      liveConfig.patches[selectedSelector] = patch;
+      frame.contentWindow.postMessage({ type: 'veyrion:live-config', config: liveConfig }, location.origin);
     }
-    function clearForm() {
-      $('#cms-form').reset(); $('#cms-id').value = ''; $('#cms-page').disabled = false; $('#cms-order').value = '0';
-      $('#cms-form-title').textContent = 'Create content'; $('#cms-save').textContent = 'Publish / save';
-      $('#cms-message').textContent = '';
-    }
-    $('#cms-type').addEventListener('change', syncPageField);
-    $('#cms-new').addEventListener('click', () => { clearForm(); $('#cms-title').focus(); });
-    $('#cms-cancel').addEventListener('click', clearForm);
-    $('#cms-form').addEventListener('submit', async event => {
-      event.preventDefault();
-      const id = $('#cms-id').value;
-      const payload = {content_type:$('#cms-type').value,page_key:$('#cms-page').value,slug:$('#cms-slug').value,eyebrow:$('#cms-eyebrow').value,title:$('#cms-title').value,body:$('#cms-body').value,image_url:$('#cms-image').value,cta_label:$('#cms-cta-label').value,cta_url:$('#cms-cta-url').value,sort_order:Number($('#cms-order').value),status:$('#cms-status').value};
-      const button = $('#cms-save'); button.disabled = true;
-      try {
-        await api(id ? '/content/' + id : '/content', {method:id?'PUT':'POST',body:JSON.stringify(payload)});
-        notify(id ? 'Content updated.' : 'Content created.');
-        await loadSiteStudio(el);
-      } catch (error) { $('#cms-message').textContent = error.message; $('#cms-message').className = 'form-message error'; }
-      finally { button.disabled = false; }
+    const handler = event => {
+      if (event.origin !== location.origin || event.source !== frame.contentWindow || !event.data || event.data.type !== 'veyrion:select') return;
+      selectedSelector = String(event.data.selector || '');
+      $('#studio-selection').textContent = selectedSelector || 'No element selected';
+      textInput.value = String(event.data.text || '').slice(0,500);
+      const styles = event.data.styles || {};
+      styleInputs.color.value = styles.color || '';
+      styleInputs.backgroundColor.value = styles.backgroundColor || '';
+      styleInputs.fontSize.value = styles.fontSize || '';
+      styleInputs.borderRadius.value = styles.borderRadius || '';
+      $('#studio-save').disabled = !selectedSelector;
+      $('#studio-clear').disabled = !selectedSelector;
+    };
+    window.__veyrionStudioMessageHandler = handler;
+    window.addEventListener('message', handler);
+    textInput.addEventListener('input', sendPreview);
+    Object.values(styleInputs).forEach(input => input.addEventListener('input', sendPreview));
+    $('#studio-page').addEventListener('change', () => { frame.src = '/' + $('#studio-page').value + '?studio=1'; selectedSelector = ''; $('#studio-selection').textContent = 'Click a heading or paragraph in the preview.'; });
+    $('#studio-refresh').addEventListener('click', () => { const page = $('#studio-page').value; frame.src = '/' + page + '?studio=1&refresh=' + Date.now(); });
+    $('#studio-save').addEventListener('click', async () => {
+      if (!selectedSelector) return;
+      try { await api('/site/config', { method: 'PUT', body: JSON.stringify({ config: liveConfig }) }); notify('Visual change saved.'); }
+      catch (error) { notify(error.message, true); }
     });
-    syncPageField();
-    renderItems();
-  }
+    $('#studio-clear').addEventListener('click', async () => {
+      if (!selectedSelector) return;
+      delete liveConfig.patches[selectedSelector];
+      try { await api('/site/config', { method: 'PUT', body: JSON.stringify({ config: liveConfig }) }); notify('Visual override removed.'); frame.contentWindow.postMessage({ type: 'veyrion:live-config', config: liveConfig }, location.origin); }
+      catch (error) { notify(error.message, true); }
+    });
 
-
-  async function loadSiteStudio(el) {
-    setPageTitle('Site Studio');
-    const items = await api('/content');
-    const pageLabels = {home:'Home',about:'About',backend:'Backend',frontend:'Frontend',saas:'SaaS',games:'Games',security:'Security',services:'Services','case-studies':'Work',process:'Process',blog:'Blog',contact:'Contact',faq:'FAQ',careers:'Careers',changelog:'Changelog',opensource:'Open source',store:'Store',docs:'Docs'};
+    const pageOptions = {home:'Home',about:'About',backend:'Backend',frontend:'Frontend',saas:'SaaS',games:'Games',security:'Security',services:'Services','case-studies':'Work',process:'Process',blog:'Blog',contact:'Contact',faq:'FAQ',careers:'Collaboration',changelog:'Development log',opensource:'Open source',store:'Store',docs:'Docs'};
     function renderItems() {
-      const rows = (items || []).map(item => '<article class="cms-item"><div class="cms-item__main"><div class="cms-item__meta"><span class="status-tag">' + escapeHtml(item.content_type) + '</span>' + statusTag(item.status) + '<span class="secondary-cell">' + escapeHtml(pageLabels[item.page_key] || item.page_key) + '</span></div><strong>' + escapeHtml(item.title) + '</strong><small>/' + escapeHtml(item.slug) + '</small></div><div class="cms-item__actions"><button class="small-btn" type="button" data-edit="' + item.id + '">Edit</button><button class="small-btn cms-delete" type="button" data-delete="' + item.id + '">Delete</button></div></article>').join('');
+      const rows = (items || []).map(item => '<article class="cms-item"><div class="cms-item__main"><div class="cms-item__meta"><span class="status-tag">' + escapeHtml(item.content_type) + '</span>' + statusTag(item.status) + '<span class="secondary-cell">' + escapeHtml(pageOptions[item.page_key] || item.page_key) + '</span></div><strong>' + escapeHtml(item.title) + '</strong><small>/' + escapeHtml(item.slug) + '</small></div><div class="cms-item__actions"><button class="small-btn" type="button" data-edit="' + item.id + '">Edit</button><button class="small-btn cms-delete" type="button" data-delete="' + item.id + '">Delete</button></div></article>').join('');
       $('#cms-items').innerHTML = rows || '<div class="empty-state">No custom content yet. Create your first section, article or project.</div>';
-      $('[data-edit]').forEach(button => button.addEventListener('click', () => {
-        const item = items.find(row => String(row.id) === button.dataset.edit);
-        if (!item) return;
-        $('#cms-id').value = item.id;
-        $('#cms-type').value = item.content_type;
-        $('#cms-page').value = item.page_key;
-        $('#cms-slug').value = item.slug;
-        $('#cms-eyebrow').value = item.eyebrow || '';
-        $('#cms-title').value = item.title;
-        $('#cms-body').value = item.body || '';
-        $('#cms-image').value = item.image_url || '';
-        $('#cms-cta-label').value = item.cta_label || '';
-        $('#cms-cta-url').value = item.cta_url || '';
-        $('#cms-order').value = item.sort_order || 0;
-        $('#cms-status').value = item.status;
-        $('#cms-form-title').textContent = 'Edit content';
-        $('#cms-save').textContent = 'Save changes';
-        syncPageField();
-        $('#cms-title').focus();
+      $$('[data-edit]').forEach(button => button.addEventListener('click', () => {
+        const item = items.find(row => String(row.id) === button.dataset.edit); if (!item) return;
+        $('#cms-id').value = item.id; $('#cms-type').value = item.content_type; $('#cms-page').value = item.page_key;
+        $('#cms-slug').value = item.slug; $('#cms-eyebrow').value = item.eyebrow || ''; $('#cms-title').value = item.title;
+        $('#cms-body').value = item.body || ''; $('#cms-image').value = item.image_url || '';
+        $('#cms-cta-label').value = item.cta_label || ''; $('#cms-cta-url').value = item.cta_url || '';
+        $('#cms-order').value = item.sort_order || 0; $('#cms-status').value = item.status;
+        $('#cms-form-title').textContent = 'Edit content'; $('#cms-save').textContent = 'Save changes'; syncPageField(); $('#cms-title').focus();
       }));
-      $('[data-delete]').forEach(button => button.addEventListener('click', async () => {
+      $$('[data-delete]').forEach(button => button.addEventListener('click', async () => {
         const item = items.find(row => String(row.id) === button.dataset.delete);
         if (!item || !window.confirm('Delete "' + item.title + '"? This cannot be undone.')) return;
-        try { await api('/content/' + item.id, {method:'DELETE'}); notify('Content deleted.'); await loadSiteStudio(el); }
+        try { await api('/content/' + item.id, { method: 'DELETE' }); notify('Content deleted.'); await loadSiteStudio(el); }
         catch (error) { notify(error.message, true); }
       }));
     }
-    el.innerHTML = '<div class="section-head"><div><h2>Manage website content</h2><p>Create sections for any page, plus blog articles and project entries. Drafts stay private until published.</p></div><span class="secure-pill">OWNER ONLY</span></div>' +
-      '<div class="cms-layout"><section class="panel cms-library"><div class="cms-panel-head"><div><h3>Your content</h3><p>Published items appear on the live website.</p></div><button id="cms-new" class="ghost-btn" type="button">＋ New item</button></div><div id="cms-items" class="cms-items"></div></section>' +
-      '<section class="panel cms-editor"><div class="cms-panel-head"><div><h3 id="cms-form-title">Create content</h3><p>Plain text content is escaped safely. Raw HTML is not accepted.</p></div></div>' +
-      '<form id="cms-form" class="cms-form"><input id="cms-id" type="hidden">' +
-      '<label>Content type<select id="cms-type"><option value="section">Page section</option><option value="article">Blog article</option><option value="project">Project / work item</option></select></label>' +
-      '<label>Page<select id="cms-page">' + Object.keys(pageLabels).map(key => '<option value="' + key + '">' + escapeHtml(pageLabels[key]) + '</option>').join('') + '</select></label>' +
-      '<label>URL slug<input id="cms-slug" maxlength="80" placeholder="generated-from-title"></label>' +
-      '<label>Small label<input id="cms-eyebrow" maxlength="80" placeholder="OPTIONAL LABEL"></label>' +
-      '<label>Title<input id="cms-title" maxlength="140" required></label>' +
-      '<label>Body<textarea id="cms-body" rows="7" maxlength="8000" placeholder="Write plain text. Separate paragraphs with a blank line."></textarea></label>' +
-      '<label>Image URL (optional)<input id="cms-image" type="url" placeholder="https://..."></label>' +
-      '<div class="cms-two"><label>Button label<input id="cms-cta-label" maxlength="60" placeholder="Learn more"></label><label>Button link<input id="cms-cta-url" maxlength="500" placeholder="/contact.html"></label></div>' +
-      '<div class="cms-two"><label>Sort order<input id="cms-order" type="number" value="0" min="-10000" max="10000"></label><label>Visibility<select id="cms-status"><option value="draft">Draft</option><option value="published">Published</option></select></label></div>' +
-      '<div class="cms-form-actions"><button id="cms-save" class="primary-btn" type="submit">Publish / save</button><button id="cms-cancel" class="ghost-btn" type="button">Clear form</button></div><p class="form-hint">Articles appear on Blog. Projects appear on Work. Page sections are added near the bottom of the selected page. Use HTTPS image links only.</p><div id="cms-message" class="form-message" aria-live="polite"></div></form></section></div>';
     function syncPageField() {
       const type = $('#cms-type').value;
       if (type === 'article') { $('#cms-page').value = 'blog'; $('#cms-page').disabled = true; }
@@ -460,8 +425,7 @@
     }
     function clearForm() {
       $('#cms-form').reset(); $('#cms-id').value = ''; $('#cms-page').disabled = false; $('#cms-order').value = '0';
-      $('#cms-form-title').textContent = 'Create content'; $('#cms-save').textContent = 'Publish / save';
-      $('#cms-message').textContent = '';
+      $('#cms-form-title').textContent = 'Create content'; $('#cms-save').textContent = 'Save content'; $('#cms-message').textContent = '';
     }
     $('#cms-type').addEventListener('change', syncPageField);
     $('#cms-new').addEventListener('click', () => { clearForm(); $('#cms-title').focus(); });
@@ -469,13 +433,10 @@
     $('#cms-form').addEventListener('submit', async event => {
       event.preventDefault();
       const id = $('#cms-id').value;
-      const payload = {content_type:$('#cms-type').value,page_key:$('#cms-page').value,slug:$('#cms-slug').value,eyebrow:$('#cms-eyebrow').value,title:$('#cms-title').value,body:$('#cms-body').value,image_url:$('#cms-image').value,cta_label:$('#cms-cta-label').value,cta_url:$('#cms-cta-url').value,sort_order:Number($('#cms-order').value),status:$('#cms-status').value};
+      const payload = { content_type:$('#cms-type').value, page_key:$('#cms-page').value, slug:$('#cms-slug').value, eyebrow:$('#cms-eyebrow').value, title:$('#cms-title').value, body:$('#cms-body').value, image_url:$('#cms-image').value, cta_label:$('#cms-cta-label').value, cta_url:$('#cms-cta-url').value, sort_order:Number($('#cms-order').value), status:$('#cms-status').value };
       const button = $('#cms-save'); button.disabled = true;
-      try {
-        await api(id ? '/content/' + id : '/content', {method:id?'PUT':'POST',body:JSON.stringify(payload)});
-        notify(id ? 'Content updated.' : 'Content created.');
-        await loadSiteStudio(el);
-      } catch (error) { $('#cms-message').textContent = error.message; $('#cms-message').className = 'form-message error'; }
+      try { await api(id ? '/content/' + id : '/content', { method:id ? 'PUT' : 'POST', body:JSON.stringify(payload) }); notify(id ? 'Content updated.' : 'Content created.'); await loadSiteStudio(el); }
+      catch (error) { $('#cms-message').textContent = error.message; $('#cms-message').className = 'form-message error'; }
       finally { button.disabled = false; }
     });
     syncPageField();

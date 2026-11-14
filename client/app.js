@@ -1259,5 +1259,5 @@
 })();
 
 
-/* Load owner-published site content on public pages. */
-(function(){var s=document.createElement('script');s.src='/site-content.js';s.defer=true;document.head.appendChild(s);})();
+/* Load owner-published content and visual overrides on public pages. */
+(function(){['/live-site.js','/site-content.js'].forEach(function(src){var s=document.createElement('script');s.src=src;s.defer=true;document.head.appendChild(s);});})();
