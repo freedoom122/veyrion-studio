@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Case Studies — Veyrion</title>
-  <meta name="description" content="Representative systems Veyrion has built. Details composited from real engagement patterns.">
+  <meta name="description" content="Selected projects and experiments by Marcu Brasovean, including FTC robotics, game development and the Veyrion website.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@
       <a href="contact.html">Contact</a>
     </nav>
     <div class="header__right">
-      <span class="header__status"><span class="header__dot"></span>Studio / 2026</span>
+      <span class="header__status"><span class="header__dot"></span>Concept / 2025</span>
       <a class="header__account" href="account.html" aria-label="Your account" title="Your account"><svg class="account-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.8" r="3.25"></circle><path d="M4.7 20c.7-3.7 3.55-5.85 7.3-5.85s6.6 2.15 7.3 5.85"></path></svg><span class="account-label">Your account</span></a>
       <a href="contact.html" class="header__cta">Start a conversation</a>
     </div>
@@ -45,216 +45,13 @@
   <a href="index.html">Home</a><a href="backend.html">Backend</a><a href="frontend.html">Frontend</a><a href="saas.html">SaaS</a><a href="games.html">Games</a><a href="security.html">Security</a><a href="services.html">Services</a><a href="case-studies.html">Work</a><a href="about.html">About</a><a href="contact.html">Contact</a>
 </div>
 
-  <main id="main">
-
-    <section class="page-hero">
-      <div class="page-hero__inner">
-        <p class="page-hero__eyebrow">06 / REPRESENTATIVE BUILDS</p>
-        <h1 class="page-hero__title">Systems we have shipped</h1>
-        <p class="page-hero__sub">Representative builds. Details composited from real engagement patterns. Not client endorsements.</p>
-      </div>
-    </section>
-
-    <!-- Case 1 -->
-    <section class="cs-deep">
-      <div class="cs-deep__inner">
-        <div class="cs-deep__meta">
-          <span class="cs-deep__kicker">OPERATIONS</span>
-          <span class="cs-deep__date">2022 — 2023</span>
-        </div>
-        <h2 class="cs-deep__title">Distributed Operations Platform</h2>
-        <div class="cs-deep__grid">
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Problem</h3>
-            <p>A multi-region operator ran plant scheduling in spreadsheets and three disconnected vendor tools. Night shifts could not see live capacity. Incidents were reconstructed from chat logs. The operations team spent more time reconciling data than acting on it.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Constraints</h3>
-            <p>Multi-region with partition tolerance required. Write path had to survive network splits. Read models needed sub-second freshness for operator consoles. Audit trail was non-negotiable for regulatory compliance.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Architecture</h3>
-            <p>Event-sourced operations log with regional read models. Single operator console as the system of engagement. Write path designed for partition tolerance with causal consistency. Event replay for audit and incident reconstruction.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Implementation</h3>
-            <p>Go services for the write path. Postgres with logical replication for regional read models. NATS for event fan-out across regions. TypeScript console with optimistic concurrency on every mutation. OpenTelemetry traces on all write operations.</p>
-          </div>
-        </div>
-        <div class="cs-deep__outcome">
-          <div class="cs-deep__metrics">
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">&lt;400ms</span>
-              <span class="cs-deep__metric-label">Regional lag</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">99.97%</span>
-              <span class="cs-deep__metric-label">Write uptime</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">3</span>
-              <span class="cs-deep__metric-label">Regions</span>
-            </div>
-          </div>
-          <p>Scheduling and incident timeline live in one system. Night shifts see the same data as day shifts. Spreadsheets retired from the critical path. The audit trail serves compliance without manual reporting.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Case 2 -->
-    <section class="cs-deep cs-deep--alt">
-      <div class="cs-deep__inner">
-        <div class="cs-deep__meta">
-          <span class="cs-deep__kicker">AUTOMATION</span>
-          <span class="cs-deep__date">2023</span>
-        </div>
-        <h2 class="cs-deep__title">Automation Orchestration Engine</h2>
-        <div class="cs-deep__grid">
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Problem</h3>
-            <p>A marketplace team had 70+ Zapier zaps, no retries they trusted, and a weekly ritual of re-running failed jobs by hand. Nobody knew which zaps were critical. Failures surfaced in Slack threads that nobody owned.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Constraints</h3>
-            <p>Exactly-once semantics required for financial operations. Dead-letter needed operator replay, not just alerting. Connector SDK had to be typed so non-core engineers could add integrations without touching the engine.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Architecture</h3>
-            <p>Durable workflow engine with named executions and full history. Idempotency keys at the edge for exactly-once effects. Dead-letter queue with operator replay console. Typed connector SDK for new integrations.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Implementation</h3>
-            <p>Temporal-style orchestrators in TypeScript. Redis for lease management and distributed locks. Postgres for execution history and audit. OpenTelemetry on every activity for tracing and debugging.</p>
-          </div>
-        </div>
-        <div class="cs-deep__outcome">
-          <div class="cs-deep__metrics">
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">70+</span>
-              <span class="cs-deep__metric-label">Zaps replaced</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">0</span>
-              <span class="cs-deep__metric-label">Manual reruns</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">1</span>
-              <span class="cs-deep__metric-label">Operator console</span>
-            </div>
-          </div>
-          <p>Failed work became a queue with an owner, not a Slack thread. Replay is a button. New connectors ship without touching the core engine. The weekly rerun ritual disappeared entirely.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Case 3 -->
-    <section class="cs-deep">
-      <div class="cs-deep__inner">
-        <div class="cs-deep__meta">
-          <span class="cs-deep__kicker">ANALYTICS</span>
-          <span class="cs-deep__date">2023 — 2024</span>
-        </div>
-        <h2 class="cs-deep__title">Real-Time Analytics Infrastructure</h2>
-        <div class="cs-deep__grid">
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Problem</h3>
-            <p>Product and finance disagreed on revenue because three pipelines defined "paid" differently, each with a 12-hour delay. The argument was never about strategy — it was about which number was real.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Constraints</h3>
-            <p>Exactly-once loaders into the warehouse. Streaming aggregates for operator dashboards had to be sub-second. Finance needed audit-grade accuracy with full lineage. Semantic layer had to be queryable by both teams.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Architecture</h3>
-            <p>Canonical event bus as the single source of truth. Exactly-once loaders into the warehouse. Streaming aggregates for the operator view. dbt for the semantic layer with versioned models and freshness checks.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Implementation</h3>
-            <p>Kafka for the event bus. Flink-style streaming jobs for real-time aggregates. ClickHouse for hot reads on operator dashboards. Snowflake for finance with full dbt lineage. One metrics catalog both teams query.</p>
-          </div>
-        </div>
-        <div class="cs-deep__outcome">
-          <div class="cs-deep__metrics">
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">1</span>
-              <span class="cs-deep__metric-label">Definition of paid</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">&lt;2s</span>
-              <span class="cs-deep__metric-label">Operator dashboards</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">&lt;5min</span>
-              <span class="cs-deep__metric-label">Finance reports</span>
-            </div>
-          </div>
-          <p>One number for "paid." Operator dashboards update in seconds, finance in minutes. The argument moved from "which number" to "what to do with it."</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Case 4 -->
-    <section class="cs-deep cs-deep--alt">
-      <div class="cs-deep__inner">
-        <div class="cs-deep__meta">
-          <span class="cs-deep__kicker">AI SYSTEMS</span>
-          <span class="cs-deep__date">2024</span>
-        </div>
-        <h2 class="cs-deep__title">AI Workflow System</h2>
-        <div class="cs-deep__grid">
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Problem</h3>
-            <p>A support org pasted tickets into a public chatbot. Answers drifted with no evaluation. PII left the perimeter on every request. Nobody knew if the model was getting better or worse over time.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Constraints</h3>
-            <p>PII had to stay inside the VPC. Write actions (closing tickets, updating records) required human confirmation. Quality had to be a tracked metric with regression detection. Inference costs had to be bounded.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Architecture</h3>
-            <p>Retrieval over an internal corpus with permissions-aware filtering. Tool-calling into the ticketing API for write actions. Eval suite running on golden tickets weekly. Human-confirm step on any write operation.</p>
-          </div>
-          <div class="cs-deep__block">
-            <h3 class="cs-deep__label">Implementation</h3>
-            <p>Python inference workers with model versioning. Permissions-aware retriever enforcing access control at query time. Streaming responses over gRPC for low-latency UX. Traces stored for weekly eval runs and regression detection.</p>
-          </div>
-        </div>
-        <div class="cs-deep__outcome">
-          <div class="cs-deep__metrics">
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">0</span>
-              <span class="cs-deep__metric-label">PII leaks</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">100%</span>
-              <span class="cs-deep__metric-label">Writes confirmed</span>
-            </div>
-            <div class="cs-deep__metric">
-              <span class="cs-deep__metric-value">Weekly</span>
-              <span class="cs-deep__metric-label">Eval runs</span>
-            </div>
-          </div>
-          <p>Suggested replies stay inside the VPC. Write actions require an agent click. Quality is a number that can get worse — and we notice before customers do.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="section">
-      <div class="section__inner" style="text-align:center;">
-        <h2 class="section__title">Have a system that needs building?</h2>
-        <p style="color:var(--text-2);margin-bottom:32px;max-width:50ch;margin-left:auto;margin-right:auto;">Every engagement starts with a 45-minute architecture call. Technical conversation, not a sales pitch.</p>
-        <a href="contact.html" class="btn btn--primary">Request architecture call</a>
-      </div>
-    </section>
-
-  </main>
+  <main id="main"><section class="page-hero"><div class="page-hero__inner"><p class="page-hero__eyebrow">PROJECTS / EXPERIMENTS</p><h1 class="page-hero__title">Selected work in progress.</h1><p class="page-hero__sub">A small portfolio of hands-on builds and experiments. These are personal and team projects, not invented client case studies.</p></div></section><section class="section"><div class="section__inner"><div class="bento"><article class="bento-card bento-card--wide"><span class="bento-card__num">01 / ROBOTICS</span><h2 class="bento-card__title">FTC robotics — Esentza Robotics</h2><p class="bento-card__body">Competition robotics work involving robot-control software, hardware integration and testing a four-wheel mecanum drivetrain with a Control Hub and Expansion Hub. The team earned a regional event win in 2025.</p><div class="bento-card__tags"><span>FTC</span><span>Robot control</span><span>Hardware</span></div></article><article class="bento-card"><span class="bento-card__num">02 / GAME DEVELOPMENT</span><h2 class="bento-card__title">WORLDBOUND</h2><p class="bento-card__body">A Roblox game concept in development, combining third-person exploration, farming, creature systems, progression, procedural environments and automation.</p><div class="bento-card__tags"><span>Roblox</span><span>Game systems</span><span>World design</span></div></article><article class="bento-card"><span class="bento-card__num">03 / WEB PLATFORM</span><h2 class="bento-card__title">Veyrion website &amp; admin</h2><p class="bento-card__body">An ongoing website and backend build: responsive pages, a Node.js and Express server, owner-only authentication, persistent data and a content editor. Still being developed and tested.</p><div class="bento-card__tags"><span>JavaScript</span><span>Node.js</span><span>Supabase</span></div></article></div></div></section><section class="section section--alt"><div class="section__inner"><p class="section__label">HOW TO READ THIS PAGE</p><h2 class="section__title">No inflated numbers.</h2><p style="max-width:65ch;color:var(--text-2);line-height:1.8">Project descriptions explain what is being built and what technologies are involved. No client names, delivery metrics or commercial outcomes are claimed unless they can be verified and shared.</p></div></section></main>
 
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__left">
         <span class="footer__brand">VEYRION</span>
-        <span class="footer__tagline">Bespoke systems for companies that have outgrown the catalogue.</span>
+        <span class="footer__tagline">Software, systems and experiments by Marcu Brasovean.</span>
       </div>
       <nav class="footer__nav" aria-label="Footer">
         <a href="index.html#capabilities">Capabilities</a>
