@@ -769,65 +769,21 @@
   function initEstimator() {
     var form = $("#estimator");
     if (!form) return;
-
-    var typeScore = {
-      "Custom Application": 2, "Backend Platform": 3, "Automation": 2,
-      "AI System": 3, "Data Infrastructure": 3, "Legacy Modernization": 4
-    };
-    var cxScore = {
-      "Contained (one team, one domain)": 1,
-      "Cross-cutting (several services, shared data)": 2,
-      "Systemic (platform-level, multiple teams)": 3
-    };
-    var timeScore = {
-      "8\u201312 weeks": 1, "8-12 weeks": 1,
-      "3\u20136 months": 2, "3-6 months": 2,
-      "6\u201312 months": 3, "6-12 months": 3,
-      "12+ months": 4
-    };
-    var ratingLabels = ["", "Focused", "Substantial", "Demanding", "Severe", "Flagship"];
-
+    var typeScore = {"Website or web app":2,"Backend / API":2,"Automation":2,"Game / interactive project":3,"Other":2};
+    var cxScore = {"Small prototype":1,"Several connected features":2,"Not sure yet":1};
+    var timeScore = {"Flexible":1,"A few weeks":1,"A few months":2,"To be discussed":1};
+    var ratingLabels = ["","Small","Focused","Moderate","Broad","Needs discussion"];
     function update() {
-      var t = typeScore[$("#est-type").value] || 2;
-      var c = cxScore[$("#est-cx").value] || 1;
-      var tm = timeScore[$("#est-time").value] || 1;
-      var modelVal = $("#est-model").value;
-      var total = t + c + tm;
-      var rating = Math.min(5, Math.max(1, Math.round(total / 2)));
-
-      var scope;
-      if (total <= 5) scope = "A tightly scoped system with a single primary surface.";
-      else if (total <= 8) scope = "A multi-service system with explicit integration risk.";
-      else scope = "A platform engagement. Architecture is the product.";
-
-      var windowBase = $("#est-time").value;
-      var windowSuffix = "";
-      if (modelVal.indexOf("Advisory") !== -1) windowSuffix = " Discovery-heavy; delivery owned by your team.";
-      else if (modelVal.indexOf("Embedded") !== -1) windowSuffix = " We staff the critical path.";
-      else if (modelVal.indexOf("Joint") !== -1) windowSuffix = " Shared cadence, shared review.";
-
-      var modelText;
-      if (modelVal.indexOf("Advisory") !== -1) modelText = "Architecture partnership. We design, your team builds.";
-      else if (modelVal.indexOf("Embedded") !== -1) modelText = "Core team from Veyrion, integrated with yours.";
-      else modelText = "Paired delivery. Your engineers, our technical lead.";
-
-      var estScope = $("#est-scope");
-      var estWindow = $("#est-window");
-      var estLabel = $("#est-rating-label");
-      var bars = $$(".estimator__rating-bar");
-      var estModel = $("#est-model-out");
-
-      if (estScope) estScope.textContent = scope;
-      if (estWindow) estWindow.innerHTML = windowBase + windowSuffix;
-      if (estLabel) estLabel.textContent = ratingLabels[rating];
-      if (estModel) estModel.textContent = modelText;
-      bars.forEach(function (bar, i) { bar.classList.toggle("is-filled", i < rating); });
+      var t=typeScore[$("#est-type").value]||2, c=cxScore[$("#est-cx").value]||1, tm=timeScore[$("#est-time").value]||1;
+      var modelVal=$("#est-model").value, total=t+c+tm, rating=Math.min(5,Math.max(1,Math.round(total/2)));
+      var scope=total<=4?"A small prototype or one focused feature.":total<=6?"A project with a few connected features.":"A broader project that needs careful scoping.";
+      var timeText=$("#est-time").value+". This is a preference, not a commitment.";
+      var modelText=modelVal==="Independent build"?"Independent build, subject to availability.":modelVal==="Collaborative work"?"Collaborative work, with responsibilities agreed first.":"Review and guidance, if the topic fits.";
+      var a=$("#est-scope"),b=$("#est-window"),cLabel=$("#est-rating-label"),m=$("#est-model-out"),bars=$$(".estimator__rating-bar");
+      if(a)a.textContent=scope;if(b)b.textContent=timeText;if(cLabel)cLabel.textContent=ratingLabels[rating];if(m)m.textContent=modelText;
+      bars.forEach(function(bar,i){bar.classList.toggle("is-filled",i<rating);});
     }
-
-    $$(".estimator__select", form).forEach(function (sel) {
-      sel.addEventListener("change", update);
-    });
-    update();
+    $$(".estimator__select",form).forEach(function(sel){sel.addEventListener("change",update);});update();
   }
 
   /* ============================================================
