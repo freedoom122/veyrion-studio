@@ -3222,3 +3222,20 @@ html, body {
 @media (max-width: 768px) {
   .header__cta { display: none !important; }
 }
+
+
+/* Homepage hero: remove the decorative system-map panel and give the message room. */
+.hero--editorial .hero__inner {
+  grid-template-columns: minmax(0, 1fr) !important;
+  max-width: 1200px !important;
+  gap: 0 !important;
+}
+.hero--editorial .hero__left {
+  max-width: 900px !important;
+}
+.hero--editorial .hero__title {
+  max-width: 10ch !important;
+}
+@media (max-width: 768px) {
+  .hero--editorial .hero__inner { gap: 0 !important; }
+}
