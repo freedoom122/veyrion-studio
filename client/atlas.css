@@ -216,3 +216,12 @@
 .atlas-stage .hero-stack--atlas,
 .atlas-stage .atlas-drop-panel { display:none!important; }
 .hero-art .hero-orbit { display:block!important; }
+
+/* Responsive nav must collapse after all desktop overrides. */
+@media (max-width: 1180px) {
+  .header__nav, .header__status { display: none !important; }
+  .header__toggle { display: flex !important; }
+}
+@media (max-width: 768px) {
+  .header__cta { display: none !important; }
+}
