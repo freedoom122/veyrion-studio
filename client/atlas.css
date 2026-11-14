@@ -95,8 +95,8 @@
   flex-direction: column;
   justify-content: space-between;
   height: clamp(340px, 36vw, 460px) !important;
-  min-height: 340px;
-  max-height: 460px;
+  min-height: 340px !important;
+  max-height: 460px !important;
   padding: clamp(18px, 3vw, 30px);
   overflow: hidden;
   isolation: isolate;
