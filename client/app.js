@@ -382,7 +382,7 @@
         if (!target) return;
         e.preventDefault();
         var rect = target.getBoundingClientRect();
-        var top = rect.top + window.pageYOffset - 72;
+        var top = rect.top + window.pageYOffset - (document.querySelector(".atlas-index") ? 124 : 72);
         window.scrollTo({ top: top, behavior: reduceMotion ? "auto" : "smooth" });
         history.pushState(null, "", id);
       });
@@ -1266,7 +1266,7 @@
      INIT
      ============================================================ */
 
-  function loadSharedAtlasExperience(){document.querySelectorAll('[data-veyrion-atlas],.atlas-checker').forEach(function(el){el.remove();});var l=document.createElement('link');l.rel='stylesheet';l.href='/atlas.css?v=20261112-4';document.head.appendChild(l);var s=document.createElement('script');s.src='/atlas.js?v=20261112-4';s.async=false;s.onerror=function(){console.error('[VEYRION] Atlas module failed to load.');};document.body.appendChild(s);}
+  function loadSharedAtlasExperience(){document.querySelectorAll('[data-veyrion-atlas],.atlas-checker').forEach(function(el){el.remove();});var l=document.createElement('link');l.rel='stylesheet';l.href='/atlas.css?v=20261114-1';document.head.appendChild(l);var s=document.createElement('script');s.src='/atlas.js?v=20261114-1';s.async=false;s.onerror=function(){console.error('[VEYRION] Atlas module failed to load.');};document.body.appendChild(s);}
 
   function safe(fn) { try { fn(); } catch (e) { /* silent */ } }
 
