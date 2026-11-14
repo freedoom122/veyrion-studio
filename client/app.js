@@ -949,7 +949,7 @@
   function initClock() {
     var el = $("#studio-clock");
     if (!el) return;
-    var CITY = "Bucharest";
+    var CITY = "Local time";
     var TZ = "Europe/Bucharest";
     var fmt = null;
     try {
