@@ -3209,3 +3209,8 @@ html, body {
 .bento-card__body {
   color: #a8aaa3 !important;
 }
+
+/* Final dark-theme navigation contrast correction. */
+.header__nav a { color: #A1A1AA !important; }
+.header__nav a:hover,
+.header__nav a.is-active { color: #FFFFFF !important; }
