@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentation — Veyrion</title>
-  <meta name="description" content="Architecture documentation and technical reference for Veyrion systems.">
+  <meta name="description" content="Conceptual architecture notes and technical references for software projects.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
       <div class="page-hero__inner">
         <p class="page-hero__eyebrow">DOCUMENTATION</p>
         <h1 class="page-hero__title">Architecture reference</h1>
-        <p class="page-hero__sub">Technical reference for the systems we build. Updated as patterns evolve.</p>
+        <p class="page-hero__sub">Architecture notes and conceptual references for software projects. Examples are illustrative, not descriptions of a deployed Veyrion platform.</p>
       </div>
     </section>
 
@@ -71,7 +71,7 @@
 
             <article class="docs-section" id="layer-model">
               <h2 class="docs-section__title">Layer model</h2>
-              <p class="docs-section__body">Every system we build follows a six-layer model. The layers are not deployment tiers — they are logical boundaries that constrain coupling. A change in one layer should not require changes in another.</p>
+              <p class="docs-section__body">One useful way to reason about a software system is to separate it into logical layers. These are conceptual boundaries, not deployment tiers or a claim about a live production platform. A change in one layer should avoid unnecessary changes in another.</p>
               <div class="docs-code">
                 <pre><code>L6  Client          Interfaces, consoles, portals
 L5  API             Versioned contracts, auth, rate limits

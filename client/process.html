@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Process — Veyrion</title>
-  <meta name="description" content="How Veyrion engagements run. Six steps from discovery to optimization.">
+  <meta name="description" content="A suggested project workflow for understanding, planning, building, testing and improving software.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -67,7 +67,7 @@
             <div class="process-step__content">
               <h2 class="process-step__title">Discover</h2>
               <span class="process-step__duration">SUGGESTED PHASE</span>
-              <p class="process-step__body">Review the existing code, documentation and goals. Speak with the people who use the system and identify constraints before choosing an approach.</p>
+              <p class="process-step__body">Review the current code, documentation and goals. Identify the main users, constraints and problem before choosing an approach.</p>
               <div class="process-step__outputs">
                 <span class="process-step__output-label">Outputs:</span>
                 <span class="process-step__output">Constraint map</span>
@@ -85,7 +85,7 @@
             <div class="process-step__content">
               <h2 class="process-step__title">Architect</h2>
               <span class="process-step__duration">SUGGESTED PHASE</span>
-              <p class="process-step__body">Boundaries, data contracts, threat model, and a delivery sequence that can be stopped at any point without leaving the system in a broken state. Plan the delivery in small steps, with a clear way to test and reverse risky changes.</p>
+              <p class="process-step__body">Outline the main parts, the data they need and the risks to consider. Keep the first version small enough to test.</p>
               <div class="process-step__outputs">
                 <span class="process-step__output-label">Outputs:</span>
                 <span class="process-step__output">Architecture decision records</span>
@@ -103,7 +103,7 @@
             <div class="process-step__content">
               <h2 class="process-step__title">Engineer</h2>
               <span class="process-step__duration">SUGGESTED PHASE</span>
-              <p class="process-step__body">Thin vertical slices. Use a test environment and working prototype early. Interfaces frozen before internals are clever. We don't build the whole thing and then find out the API was wrong.</p>
+              <p class="process-step__body">Build in small pieces so important features can be checked as they take shape. Avoid adding complexity before it is needed.</p>
               <div class="process-step__outputs">
                 <span class="process-step__output-label">Outputs:</span>
                 <span class="process-step__output">Working software</span>
@@ -121,7 +121,7 @@
             <div class="process-step__content">
               <h2 class="process-step__title">Validate</h2>
               <span class="process-step__duration">SUGGESTED PHASE</span>
-              <p class="process-step__body">Load testing, failure injection, security review, and parity tests against the system being replaced. "It works on my machine" is not a gate. We break it on purpose so production doesn't have to.</p>
+              <p class="process-step__body">Check the main user flows, edge cases, mobile layout, input validation and error handling before release.</p>
               <div class="process-step__outputs">
                 <span class="process-step__output-label">Outputs:</span>
                 <span class="process-step__output">Load test results</span>
@@ -139,7 +139,7 @@
             <div class="process-step__content">
               <h2 class="process-step__title">Deploy</h2>
               <span class="process-step__duration">SUGGESTED PHASE</span>
-              <p class="process-step__body">Progressive delivery. Rollback that has been rehearsed, not just documented. Document how to run the system and make sure ownership is clear before handover.</p>
+              <p class="process-step__body">Deploy only when the key paths work. Keep a clear recovery plan and document the steps needed to maintain the project.</p>
               <div class="process-step__outputs">
                 <span class="process-step__output-label">Outputs:</span>
                 <span class="process-step__output">Production deployment</span>
@@ -156,7 +156,7 @@
             <div class="process-step__content">
               <h2 class="process-step__title">Optimize</h2>
               <span class="process-step__duration">SUGGESTED PHASE</span>
-              <p class="process-step__body">Latency budgets, cost optimization, and operability improvements after the applause. We stay through the first real traffic, not just the launch. The system isn't done when it deploys — it's done when it runs smoothly.</p>
+              <p class="process-step__body">Use feedback and real usage to decide what deserves attention next. Improve the parts that make the biggest difference.</p>
               <div class="process-step__outputs">
                 <span class="process-step__output-label">Outputs:</span>
                 <span class="process-step__output">Performance baseline</span>
