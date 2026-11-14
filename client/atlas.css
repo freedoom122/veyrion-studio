@@ -94,7 +94,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: clamp(330px, 38vw, 470px);
+  height: clamp(340px, 36vw, 460px) !important;
+  min-height: 340px;
+  max-height: 460px;
   padding: clamp(18px, 3vw, 30px);
   overflow: hidden;
   isolation: isolate;
