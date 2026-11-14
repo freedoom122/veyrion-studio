@@ -346,7 +346,7 @@
       '<section class="panel cms-editor"><div class="cms-panel-head"><div><h3 id="cms-form-title">Create content</h3><p>Add a page section, blog article or project. Drafts remain private.</p></div></div>' +
       '<form id="cms-form" class="cms-form"><input id="cms-id" type="hidden">' +
       '<label>Content type<select id="cms-type"><option value="section">Page section</option><option value="article">Blog article</option><option value="project">Project / work item</option></select></label>' +
-      '<label>Page<select id="cms-page">' + Object.entries(pageLabels).map(([key,label]) => '<option value="' + key.replace('.html','') + '">' + escapeHtml(label) + '</option>').join('') + '</select></label>' +
+      '<label>Page<select id="cms-page">' + Object.entries(pageLabels).map(([key,label]) => '<option value="' + (key === 'index.html' ? 'home' : key.replace('.html','')) + '">' + escapeHtml(label) + '</option>').join('') + '</select></label>' +
       '<label>URL slug<input id="cms-slug" maxlength="80" placeholder="generated-from-title"></label>' +
       '<label>Small label<input id="cms-eyebrow" maxlength="80" placeholder="OPTIONAL LABEL"></label>' +
       '<label>Title<input id="cms-title" maxlength="140" required></label>' +
