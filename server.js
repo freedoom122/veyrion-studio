@@ -29,9 +29,11 @@ async function main() {
   const { migrate } = require('./server/database/migrate');
   const { seed } = require('./server/database/seed');
   const { migrateSecureAdmin } = require('./server/database/secureAdmin');
+  const { migrateSiteContent } = require('./server/database/siteContent');
   migrate();
   seed();
   migrateSecureAdmin();
+  migrateSiteContent();
   await flushRemoteSnapshot();
 
   const app = express();

@@ -68,6 +68,24 @@ router.post('/bookings', bookingLimiter, requireCustomerAuth, validate(bookingSc
 
 // Public settings endpoint
 const { getDb } = require('../../config/database');
+router.get('/site/content/item', (req, res) => {
+  const slug = String(req.query.slug || '').trim().toLowerCase();
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return res.status(400).json({ success: false, error: { code: 'INVALID_SLUG', message: 'A valid content slug is required.' } });
+  const item = getDb().prepare("SELECT content_type, page_key, slug, eyebrow, title, body, image_url, cta_label, cta_url, sort_order FROM site_content_items WHERE slug = ? AND status = 'published' LIMIT 1").get(slug);
+  if (!item) return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'This content is not available.' } });
+  res.setHeader('Cache-Control', 'no-store');
+  return res.json({ success: true, data: item });
+});
+
+router.get('/site/content', (req, res) => {
+  const page = String(req.query.page || 'home').trim().toLowerCase();
+  const allowed = new Set(['home','about','backend','frontend','saas','games','security','services','case-studies','process','blog','contact','faq','careers','changelog','opensource','store','docs']);
+  if (!allowed.has(page)) return res.status(400).json({ success: false, error: { code: 'INVALID_PAGE', message: 'Unknown site page.' } });
+  const rows = getDb().prepare("SELECT content_type, page_key, slug, eyebrow, title, body, image_url, cta_label, cta_url, sort_order FROM site_content_items WHERE page_key = ? AND status = 'published' ORDER BY sort_order ASC, created_at ASC").all(page);
+  res.setHeader('Cache-Control', 'no-store');
+  return res.json({ success: true, data: rows });
+});
+
 router.get('/settings/public', (req, res) => {
   const db = getDb();
   const settings = db.prepare("SELECT key, value FROM settings WHERE is_public = 1").all();
