@@ -3214,3 +3214,11 @@ html, body {
 .header__nav a { color: #A1A1AA !important; }
 .header__nav a:hover,
 .header__nav a.is-active { color: #FFFFFF !important; }
+
+@media (max-width: 1180px) {
+  .header__nav, .header__status { display: none !important; }
+  .header__toggle { display: flex !important; }
+}
+@media (max-width: 768px) {
+  .header__cta { display: none !important; }
+}
