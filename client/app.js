@@ -343,31 +343,92 @@
   function initMobileNav() {
     var toggle = $(".header__toggle");
     var menu = $("#mobile-menu");
-    var closeBtn = menu ? $(".mobile-nav__close", menu) : null;
+    if (!toggle || !menu) return;
+
+    /* Keep the mobile navigation identical across every page. */
+    menu.innerHTML = [
+      '<button type="button" class="mobile-nav__close" aria-label="Close menu">&times;</button>',
+      '<div class="mobile-nav__eyebrow">VEYRION / MENU</div>',
+      '<nav aria-label="Mobile navigation">',
+      '<a href="index.html">Home</a>',
+      '<a href="services.html">Services</a>',
+      '<a href="case-studies.html">Work</a>',
+      '<a href="about.html">About</a>',
+      '<a href="blog.html">Blog</a>',
+      '<a href="contact.html">Contact</a>',
+      '<a href="account.html">Account</a>',
+      '</nav>'
+    ].join("");
+
+    var closeBtn = $(".mobile-nav__close", menu);
+    var previousFocus = null;
 
     function openMenu() {
-      if (!menu || !toggle) return;
+      if (!menu.hidden) return;
+      previousFocus = document.activeElement;
       menu.hidden = false;
+      document.body.classList.add("mobile-nav-open");
       toggle.setAttribute("aria-expanded", "true");
       toggle.setAttribute("aria-label", "Close menu");
-      var first = $("a", menu);
-      if (first) first.focus();
-    }
-    function closeMenu() {
-      if (!menu || !toggle) return;
-      menu.hidden = true;
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.setAttribute("aria-label", "Open menu");
-      toggle.focus();
+      if (closeBtn) closeBtn.focus();
     }
 
-    if (toggle) toggle.addEventListener("click", function () { menu.hidden ? openMenu() : closeMenu(); });
-    if (closeBtn) closeBtn.addEventListener("click", closeMenu);
-    if (menu) $$("a", menu).forEach(function (a) { a.addEventListener("click", closeMenu); });
-    if (menu) $$(".mobile-nav__account button", menu).forEach(function (button) { button.addEventListener("click", closeMenu); });
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && menu && !menu.hidden) closeMenu();
+    function closeMenu(restoreFocus) {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      document.body.classList.remove("mobile-nav-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Open menu");
+      if (restoreFocus !== false && previousFocus && typeof previousFocus.focus === "function") {
+        previousFocus.focus();
+      } else {
+        toggle.focus();
+      }
+    }
+
+    toggle.addEventListener("click", function () {
+      if (menu.hidden) openMenu();
+      else closeMenu();
     });
+
+    if (closeBtn) closeBtn.addEventListener("click", function () {
+      closeMenu();
+    });
+
+    $$("a", menu).forEach(function (a) {
+      a.addEventListener("click", function () {
+        closeMenu(false);
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (menu.hidden) return;
+
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        var focusables = $$("a, button", menu);
+        if (!focusables.length) return;
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 1100 && !menu.hidden) closeMenu(false);
+    }, { passive: true });
   }
 
   /* ============================================================

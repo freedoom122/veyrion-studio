@@ -3239,3 +3239,128 @@ html, body {
 @media (max-width: 768px) {
   .hero--editorial .hero__inner { gap: 0 !important; }
 }
+
+
+/* ============================================================
+   VEYRION FINAL RESPONSIVE OVERRIDES
+   Single source of truth for the mobile navigation.
+   ============================================================ */
+:root {
+  --v-bg: #171816;
+  --v-surface: #1d1f1c;
+  --v-text: #eeece5;
+  --v-muted: #a8aaa3;
+  --v-line: rgba(238, 236, 229, .14);
+  --v-accent: #d79a82;
+}
+
+@media (max-width: 1100px) {
+  body.mobile-nav-open { overflow: hidden; }
+
+  .header__toggle {
+    color: var(--v-text) !important;
+    border-color: var(--v-line) !important;
+    background: transparent !important;
+  }
+
+  .mobile-nav {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 9999 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    min-height: 100dvh !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    padding: calc(env(safe-area-inset-top) + 88px) clamp(24px, 7vw, 64px) calc(env(safe-area-inset-bottom) + 40px) !important;
+    gap: 0 !important;
+    background: var(--v-bg) !important;
+    color: var(--v-text) !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .mobile-nav[hidden] { display: none !important; }
+  .mobile-nav::before { content: none !important; }
+
+  .mobile-nav__eyebrow {
+    display: block !important;
+    margin: 0 0 28px !important;
+    color: var(--v-muted) !important;
+    font: 10px/1 var(--font-mono, monospace) !important;
+    letter-spacing: .16em !important;
+    text-transform: uppercase !important;
+  }
+
+  .mobile-nav > nav {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .mobile-nav a {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    padding: 15px 0 !important;
+    border-bottom: 1px solid var(--v-line) !important;
+    color: var(--v-text) !important;
+    background: transparent !important;
+    font-family: var(--font-display, sans-serif) !important;
+    font-size: clamp(31px, 8vw, 52px) !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    letter-spacing: -.025em !important;
+    text-decoration: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .mobile-nav a:hover,
+  .mobile-nav a:focus-visible {
+    color: var(--v-accent) !important;
+    opacity: 1 !important;
+    transform: none !important;
+    outline: none;
+  }
+
+  .mobile-nav__close {
+    position: absolute !important;
+    top: calc(env(safe-area-inset-top) + 18px) !important;
+    right: clamp(20px, 6vw, 48px) !important;
+    width: 44px !important;
+    height: 44px !important;
+    margin: 0 !important;
+    border: 1px solid var(--v-line) !important;
+    background: transparent !important;
+    color: var(--v-text) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font: 24px/1 var(--font-mono, monospace) !important;
+  }
+
+  .mobile-nav__close:hover,
+  .mobile-nav__close:focus-visible {
+    color: var(--v-accent) !important;
+    border-color: rgba(215,154,130,.55) !important;
+    outline: none;
+  }
+}
+
+@media (min-width: 1101px) {
+  .mobile-nav { display: none !important; }
+}
+
+@media (max-width: 600px) {
+  .mobile-nav { padding-left: 22px !important; padding-right: 22px !important; }
+  .mobile-nav a { font-size: clamp(29px, 9vw, 43px) !important; }
+}
