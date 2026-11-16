@@ -21,6 +21,24 @@
     diagram.addEventListener('click',function(event){var plate=event.target.closest('.arch-model__plate');var layer=event.target.closest('.arch-layer');if(plate){var key=plate.dataset.layer;select(key);var control=diagram.querySelector('.arch-layer[data-layer="'+key+'"]');if(control)control.click();}else if(layer)select(layer.dataset.layer);});
     plates.forEach(function(plate){plate.setAttribute('aria-label','Inspect '+plate.textContent.replace(/\s+/g,' ').trim());plate.setAttribute('aria-pressed',plate.classList.contains('is-active')?'true':'false');});
   }
+  function initHeroStack(){
+    var orbit=document.querySelector('[data-hero-orbit]');if(!orbit)return;
+    var layers=Array.prototype.slice.call(orbit.querySelectorAll('[data-hero-layer]'));
+    var readout=orbit.querySelector('[data-hero-readout]');
+    var description=orbit.querySelector('[data-hero-readout-desc]');
+    var descriptions={L6:'Where people meet the system.',L5:'Contracts that keep every surface dependable.',L4:'The work that turns intent into movement.',L3:'Boundaries that make complexity legible.',L2:'The memory and signal underneath the product.',L1:'The quiet foundation everything relies on.'};
+    function select(layer){
+      var key=layer&&layer.dataset.heroLayer;if(!key)return;
+      layers.forEach(function(item){var active=item===layer;item.classList.toggle('is-active',active);item.setAttribute('aria-pressed',active?'true':'false');});
+      if(readout)readout.textContent=key+' / '+layer.textContent.replace(/\s+/g,' ').trim().replace(/^\d+\s+/,'');
+      if(description)description.textContent=descriptions[key]||'';
+    }
+    layers.forEach(function(layer){
+      layer.addEventListener('click',function(event){event.stopPropagation();select(layer);});
+      layer.addEventListener('keydown',function(event){if(event.key==='Enter'||event.key===' '){event.preventDefault();select(layer);}});
+    });
+    select(layers.find(function(layer){return layer.classList.contains('is-active');})||layers[0]);
+  }
   function initSystemLab(){
     var lab=document.querySelector('[data-system-lab]');if(!lab)return;
     var scenarios={
@@ -32,6 +50,6 @@
     buttons.forEach(function(button){button.addEventListener('click',function(){var key=button.dataset.labMode,item=scenarios[key];if(!item)return;lab.dataset.mode=key;buttons.forEach(function(other){var active=other===button;other.classList.toggle('is-active',active);other.setAttribute('aria-selected',active?'true':'false');});item.nodes.forEach(function(node,index){var suffix=['one','two','three','four'][index];var strong=lab.querySelector('[data-lab-node="'+suffix+'"]');var small=lab.querySelector('[data-lab-sub="'+suffix+'"]');if(strong)strong.textContent=node[0];if(small)small.textContent=node[1];});lab.querySelector('[data-lab-caption]').textContent=item.caption;lab.querySelector('[data-lab-description]').textContent=item.description;lab.querySelector('[data-lab-readout]').textContent=item.behaviour;lab.querySelector('[data-lab-priority]').textContent=item.priority;});});
   }
   function initReveal(){var targets=document.querySelectorAll('.status-card,.bento-card,.build,.principle,.timeline-step,.service-item,.system-lab');if(!targets.length||reduced||(window.gsap&&window.ScrollTrigger)||!('IntersectionObserver'in window))return;var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-in-view');observer.unobserve(entry.target);}});},{threshold:.12,rootMargin:'0px 0px -32px 0px'});targets.forEach(function(target){target.classList.add('v-reveal');observer.observe(target);});}
-  function init(){bindDrag(document.querySelector('[data-hero-orbit]'));initArchitecture();initSystemLab();initReveal();}
+  function init(){bindDrag(document.querySelector('[data-hero-orbit]'));initHeroStack();initArchitecture();initSystemLab();initReveal();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
