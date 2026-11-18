@@ -347,7 +347,6 @@
       '<a href="about.html">About</a>',
       '<a href="blog.html">Blog</a>',
       '<a href="contact.html">Contact</a>',
-      '<a href="account.html">Account</a>',
       '</nav>'
     ].join("");
 
