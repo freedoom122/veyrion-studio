@@ -6,16 +6,6 @@
 (function () {
   "use strict";
 
-  // Load the shared official brand identity on every page using the site app.
-  (function () {
-    var brandCss = document.createElement("link");
-    brandCss.rel = "stylesheet";
-    brandCss.href = "/brand-identity.css?v=20261118-1";
-    document.head.appendChild(brandCss);
-    var icon = document.querySelector('link[rel~="icon"]');
-    if (!icon) { icon = document.createElement("link"); icon.rel = "icon"; icon.type = "image/svg+xml"; document.head.appendChild(icon); }
-    icon.href = "/favicon.svg?v=20261118-1";
-  })();
 
   /* ---- API base (GitHub Pages -> Render backend, or relative on Render) ---- */
   var RENDER_BACKEND = 'https://veyrion-studio.onrender.com';
