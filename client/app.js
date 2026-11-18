@@ -95,8 +95,7 @@
       ["Case Studies", "case-studies.html"],
       ["Process", "process.html"],
       ["Blog", "blog.html"],
-      ["Contact", "contact.html"],
-      ["Account", "account.html"]
+      ["Contact", "contact.html"]
     ];
     var currentPage = location.pathname.split('/').pop() || 'index.html';
     var headerNav = $(".header__nav");
