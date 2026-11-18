@@ -21,6 +21,51 @@ function escapeHtml(value) {
 }
 function defaultSiteLiveConfig(){return {version:1,updatedAt:new Date().toISOString(),patches:{}};}
 function ensureSiteStudioSetting(db){const row=db.prepare("SELECT id FROM settings WHERE key = 'site_live_config' LIMIT 1").get();if(!row)db.prepare("INSERT INTO settings (key,value,setting_group,is_public) VALUES (?,?,?,1)").run('site_live_config',JSON.stringify(defaultSiteLiveConfig()),'site_studio');}
+function safeLiveStyleValue(key, value) {
+  const v = String(value == null ? '' : value).trim();
+  if (!v || v.length > 80) return '';
+  if (key === 'display') return ['none', 'block', 'inline', 'inline-block', 'flex', 'grid'].includes(v) ? v : '';
+  if (key === 'opacity') return /^(0|1|0?\.\d+)$/.test(v) ? v : '';
+  if (key === 'fontWeight') return /^(normal|bold|[1-9]00)$/.test(v) ? v : '';
+  if (key === 'color' || key === 'backgroundColor') {
+    return /^(#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})|rgba?\([0-9., %]+\)|hsla?\([0-9., %]+\))$/i.test(v) ? v : '';
+  }
+  if (['letterSpacing', 'lineHeight'].includes(key)) return /^-?\d+(\.\d+)?(px|rem|em|%)?$/.test(v) ? v : '';
+  if (['fontSize', 'borderRadius', 'maxWidth', 'minHeight'].includes(key) || key.startsWith('margin') || key.startsWith('padding')) {
+    return /^-?\d+(\.\d+)?(px|rem|em|%|vh|vw|ch)?$/.test(v) ? v : '';
+  }
+  return '';
+}
+function sanitizeLiveConfig(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error('A valid site configuration is required.');
+  const source = input.patches || {};
+  if (!source || typeof source !== 'object' || Array.isArray(source)) throw new Error('Invalid site editor patches.');
+  const entries = Object.entries(source);
+  if (entries.length > 300) throw new Error('Limit the live editor to 300 element overrides.');
+  const patches = Object.create(null);
+  const allowedStyles = new Set(['color','backgroundColor','fontSize','fontWeight','letterSpacing','lineHeight','borderRadius','paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft','opacity','display','maxWidth','minHeight']);
+  for (const [selector, patch] of entries) {
+    if (!selector.trim() || selector.length > 240 || !patch || typeof patch !== 'object' || Array.isArray(patch)) throw new Error('A live editor override is invalid.');
+    const clean = {};
+    if (typeof patch.text === 'string') {
+      if (patch.text.length > 500) throw new Error('Visual text overrides must be 500 characters or fewer.');
+      clean.text = patch.text;
+    }
+    if (typeof patch.hidden === 'boolean') clean.hidden = patch.hidden;
+    if (patch.styles && typeof patch.styles === 'object' && !Array.isArray(patch.styles)) {
+      const styles = {};
+      for (const [key, value] of Object.entries(patch.styles)) {
+        if (!allowedStyles.has(key)) continue;
+        const safe = safeLiveStyleValue(key, value);
+        if (!safe) throw new Error('A visual style value is invalid.');
+        styles[key] = safe;
+      }
+      if (Object.keys(styles).length) clean.styles = styles;
+    }
+    if (Object.keys(clean).length) patches[selector] = clean;
+  }
+  return { version: 1, updatedAt: new Date().toISOString(), patches };
+}
 
 const CONTENT_PAGES = new Set(['home','about','backend','frontend','saas','games','security','services','case-studies','process','blog','contact','faq','careers','changelog','opensource','store','docs']);
 const CONTENT_TYPES = new Set(['section','article','project']);
@@ -92,7 +137,33 @@ router.post('/change-password', requireAdminSession, adminAuth.changePassword);
 router.use(requireAdminSession, requirePasswordChanged);
 
 router.get('/site/config',(req,res,next)=>{try{const db=getDb();ensureSiteStudioSetting(db);const row=db.prepare("SELECT value FROM settings WHERE key = 'site_live_config' LIMIT 1").get();let config=defaultSiteLiveConfig();try{config=row&&row.value?JSON.parse(row.value):config;}catch(_){}res.json({success:true,data:{config}});}catch(error){next(error);}});
-router.put('/site/config',(req,res,next)=>{try{const payload=req.body&&req.body.config;if(!payload||typeof payload!=='object')return res.status(400).json({success:false,error:{code:'INVALID_CONFIG',message:'A valid site configuration is required.'}});const raw=JSON.stringify(payload);if(raw.length>100000)return res.status(413).json({success:false,error:{code:'CONFIG_TOO_LARGE',message:'The live site configuration is too large.'}});const patchCount=Object.keys(payload.patches||{}).length;if(patchCount>300)return res.status(400).json({success:false,error:{code:'TOO_MANY_PATCHES',message:'Limit the live editor to 300 element overrides.'}});const db=getDb();ensureSiteStudioSetting(db);const config=Object.assign({version:1},payload,{updatedAt:new Date().toISOString()});db.prepare("UPDATE settings SET value=?,setting_group='site_studio',is_public=1,updated_at=datetime('now') WHERE key='site_live_config'").run(JSON.stringify(config));db.prepare("INSERT INTO admin_logs (admin_id,action,entity_type,new_values,ip_address,user_agent) VALUES (?,?,?,?,?,?)").run(req.user.id,'publish_site_changes','site',JSON.stringify({patchCount}),req.ip||'',String(req.get('user-agent')||'').slice(0,500));res.json({success:true,data:{config,message:'Site changes are live.'}});}catch(error){next(error);}});
+router.put('/site/config', (req, res, next) => {
+  const payload = req.body && req.body.config;
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return res.status(400).json({ success: false, error: { code: 'INVALID_CONFIG', message: 'A valid site configuration is required.' } });
+  }
+  if (JSON.stringify(payload).length > 100000) {
+    return res.status(413).json({ success: false, error: { code: 'CONFIG_TOO_LARGE', message: 'The live site configuration is too large.' } });
+  }
+  let config;
+  try {
+    config = sanitizeLiveConfig(payload);
+  } catch (error) {
+    return res.status(400).json({ success: false, error: { code: 'INVALID_CONFIG', message: error.message || 'The site configuration is invalid.' } });
+  }
+  const patchCount = Object.keys(config.patches).length;
+  try {
+    const db = getDb();
+    ensureSiteStudioSetting(db);
+    db.prepare("UPDATE settings SET value=?,setting_group='site_studio',is_public=1,updated_at=datetime('now') WHERE key='site_live_config'").run(JSON.stringify(config));
+    db.prepare("INSERT INTO admin_logs (admin_id,action,entity_type,new_values,ip_address,user_agent) VALUES (?,?,?,?,?,?)").run(
+      req.user.id, 'publish_site_changes', 'site', JSON.stringify({ patchCount }), req.ip || '', String(req.get('user-agent') || '').slice(0, 500)
+    );
+    res.json({ success: true, data: { config, message: 'Site changes are live.' } });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get('/content', (req, res, next) => {
   try {
