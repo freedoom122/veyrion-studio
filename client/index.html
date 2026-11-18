@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=20261113-1">
-  <link rel="stylesheet" href="refinements.css?v=20261116-1">
+  <link rel="stylesheet" href="refinements.css?v=20261118-1">
 </head>
 <body>
 
@@ -81,27 +81,25 @@
           <div class="hero__meta"><span>01 / Listen</span><span>02 / Make</span><span>03 / Ship</span><span>04 / Stay involved</span></div>
         </div>
         <div class="hero__right">
-          <div class="hero-art" data-hero-art>
-            <div class="hero-art__top"><span>VEYRION / SYSTEM STUDY</span><span>FIG. 001</span></div>
-            <div class="hero-art__atmosphere" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
-            <div class="hero-orbit" data-hero-orbit tabindex="0" role="application" aria-label="Interactive Veyrion system map. Drag to rotate, or select a layer.">
-              <div class="hero-stack" data-hero-stack>
-                <button type="button" class="hero-stack__layer hero-stack__layer--interface is-active" data-hero-layer="L6" aria-pressed="true"><span><b>06</b> INTERFACE</span><i aria-hidden="true"></i></button>
-                <button type="button" class="hero-stack__layer hero-stack__layer--api" data-hero-layer="L5" aria-pressed="false"><span><b>05</b> API / EDGE</span><i aria-hidden="true"></i></button>
-                <button type="button" class="hero-stack__layer hero-stack__layer--flow" data-hero-layer="L4" aria-pressed="false"><span><b>04</b> ORCHESTRATION</span><i aria-hidden="true"></i></button>
-                <button type="button" class="hero-stack__layer hero-stack__layer--services" data-hero-layer="L3" aria-pressed="false"><span><b>03</b> DOMAIN SERVICES</span><i aria-hidden="true"></i></button>
-                <button type="button" class="hero-stack__layer hero-stack__layer--data" data-hero-layer="L2" aria-pressed="false"><span><b>02</b> DATA</span><i aria-hidden="true"></i></button>
-                <button type="button" class="hero-stack__layer hero-stack__layer--infra" data-hero-layer="L1" aria-pressed="false"><span><b>01</b> INFRASTRUCTURE</span><i aria-hidden="true"></i></button>
-                <span class="hero-stack__core" aria-hidden="true">V</span>
-              </div>
-              <span class="hero-orbit__satellite hero-orbit__satellite--a">API</span>
-              <span class="hero-orbit__satellite hero-orbit__satellite--b">DATA</span>
-              <span class="hero-orbit__satellite hero-orbit__satellite--c">AUTOMATION</span>
-              <span class="hero-orbit__hint"><span class="drag-icon" aria-hidden="true">↔</span> DRAG TO ROTATE <i>·</i> SELECT A LAYER</span>
-              <span class="hero-orbit__readout"><strong data-hero-readout>L6 / INTERFACE</strong><span data-hero-readout-desc>Where people meet the system.</span></span>
+          <section class="hero-welcome" aria-label="Welcome to Veyrion">
+            <div class="hero-welcome__topline"><span>VEYRION / SYSTEM STUDY</span><span>FIG. 001</span></div>
+            <div class="hero-welcome__visual" aria-hidden="true">
+              <span class="hero-welcome__ring hero-welcome__ring--one"></span>
+              <span class="hero-welcome__ring hero-welcome__ring--two"></span>
+              <span class="hero-welcome__scan"></span>
+              <img class="hero-welcome__mark" src="/assets/veyrion-mark.svg" alt="" width="210" height="152" loading="eager" decoding="async">
+              <span class="hero-welcome__index">01 <i>/</i> 04</span>
             </div>
-            <div class="hero-art__bottom"><span>CONNECTED SYSTEM</span><span>06 LAYERS / ONE COHERENT WHOLE</span></div>
-          </div>
+            <div class="hero-welcome__copy">
+              <p>WELCOME TO VEYRION</p>
+              <h2>Good ideas deserve <em>good systems.</em></h2>
+              <div class="hero-welcome__rotator" aria-label="Thoughtful software. Connected systems. Work that lasts.">
+                <span>Thoughtful software.</span><span>Connected systems.</span><span>Work that lasts.</span>
+              </div>
+            </div>
+            <div class="hero-welcome__ticker" aria-hidden="true"><div class="hero-welcome__ticker-track"><span>SOFTWARE</span><i>✳</i><span>INTERFACES</span><i>✳</i><span>AUTOMATION</span><i>✳</i><span>ENGINEERING</span><i>✳</i><span>SOFTWARE</span><i>✳</i><span>INTERFACES</span><i>✳</i><span>AUTOMATION</span><i>✳</i><span>ENGINEERING</span><i>✳</i></div></div>
+            <div class="hero-welcome__bottom"><span>CONNECTED BY DESIGN</span><span>BUILT WITH PURPOSE</span></div>
+          </section>
         </div>
       </div>
     </section>
@@ -458,8 +456,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<script src="app.js?v=20261114-1" defer></script>
-  <script src="experience.js" defer></script>
+<script src="app.js?v=20261118-1" defer></script>
+  <script src="experience.js?v=20261118-1" defer></script>
 
   <div class="auth-modal" id="auth-modal" hidden><div class="auth-modal__backdrop" data-auth-close></div><section class="auth-modal__card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title"><button class="auth-modal__close" type="button" data-auth-close aria-label="Close">×</button><p class="section__label" id="auth-modal-mode">ACCOUNT ACCESS</p><h2 id="auth-modal-title">Welcome to Veyrion.</h2><p class="auth-modal__sub" id="auth-modal-sub">Sign in to send a project brief.</p><form id="auth-login-form" class="auth-form"><div class="field"><label for="auth-email">Email</label><input id="auth-email" type="email" autocomplete="email" required></div><div class="field"><label for="auth-password">Password</label><input id="auth-password" type="password" autocomplete="current-password" required></div><button class="btn btn--primary" type="submit">Sign in</button><p class="auth-error" id="auth-login-error"></p><button class="auth-switch auth-forgot" id="auth-forgot-password" type="button">Forgot your password?</button></form><form id="auth-signup-form" class="auth-form" hidden><div class="field"><label for="auth-name">Name</label><input id="auth-name" type="text" autocomplete="name" minlength="2" required></div><div class="field"><label for="auth-signup-email">Work email</label><input id="auth-signup-email" type="email" autocomplete="email" required></div><div class="field"><label for="auth-company">Company</label><input id="auth-company" type="text" autocomplete="organization" minlength="2" required></div><div class="field"><label for="auth-signup-password">Password</label><input id="auth-signup-password" type="password" autocomplete="new-password" minlength="14" required></div><button class="btn btn--primary" type="submit">Create account</button><p class="auth-error" id="auth-signup-error"></p></form><button class="auth-switch" id="auth-switch" type="button">Need an account? Create one</button><p class="auth-modal__note">Account required for enquiries. This helps prevent spam and keeps your project history attached to you.</p></section></div>
 <script src="language.js" defer></script>

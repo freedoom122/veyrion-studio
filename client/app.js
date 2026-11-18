@@ -77,17 +77,12 @@
       accountLink.innerHTML = '<svg class="account-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.8" r="3.25"></circle><path d="M4.7 20c.7-3.7 3.55-5.85 7.3-5.85s6.6 2.15 7.3 5.85"></path></svg><span class="account-label">Your account</span>';
       headerRight.appendChild(accountLink);
     }
-    if (headerRight && !$("#auth-nav")) {
-      var nav = document.createElement("div"); nav.className = "auth-nav"; nav.id = "auth-nav";
-      nav.innerHTML = '<button class="header__auth" id="auth-open" type="button">Sign in</button><button class="header__auth header__auth--primary" id="signup-open" type="button">Create account</button><button class="header__auth" id="auth-logout" type="button" hidden>Sign out</button>';
-      headerRight.insertBefore(nav, headerRight.firstChild);
-    }
+    /* Authentication is accessed through the single account entry point. */
     var mobile = $("#mobile-menu");
-    if (mobile && !$(".mobile-nav__account", mobile)) {
-      var account = document.createElement("div"); account.className = "mobile-nav__account";
-      account.innerHTML = '<button type="button" data-auth-open>Sign in</button><button type="button" data-auth-signup>Create account</button><button type="button" data-auth-logout hidden>Sign out</button>';
-      mobile.appendChild(account);
-    }
+    var duplicateAuthNav = $("#auth-nav");
+    if (duplicateAuthNav) duplicateAuthNav.remove();
+    var duplicateMobileAuth = $(".mobile-nav__account", mobile || document);
+    if (duplicateMobileAuth) duplicateMobileAuth.remove();
     var navItems = [
       ["Home", "index.html"],
       ["About", "about.html"],
@@ -196,9 +191,8 @@
   }
   function updateAuthNav() {
     var signedIn = Boolean(currentAccessToken);
-    ["#auth-open","[data-auth-open]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=signedIn;}); });
-    ["#signup-open","[data-auth-signup]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=signedIn;}); });
-    ["#auth-logout","[data-auth-logout]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=!signedIn;}); });
+    ["[data-auth-open]","[data-auth-signup]"].forEach(function(sel){ $$(sel).forEach(function(el){el.hidden=signedIn;}); });
+    $$("[data-auth-logout]").forEach(function(el){el.hidden=!signedIn;});
     $$(".header__account").forEach(function(el) {
       el.classList.toggle("is-authenticated", signedIn);
       el.setAttribute("aria-label", signedIn ? "Your account, signed in" : "Your account");
@@ -236,8 +230,6 @@
 
   function initCustomerAuth() {
     ensureAuthUI(); restoreCustomerSession();
-    $("#auth-open") && $("#auth-open").addEventListener("click",function(){openAuth("login");});
-    $("#signup-open") && $("#signup-open").addEventListener("click",function(){openAuth("signup");});
     $$("[data-auth-open]").forEach(function(el){el.addEventListener("click",function(){openAuth("login");});});
     $$("[data-auth-signup]").forEach(function(el){el.addEventListener("click",function(){openAuth("signup");});});
     ["#auth-logout","[data-auth-logout]"].forEach(function(sel){$$(sel).forEach(function(el){el.addEventListener("click",function(){authRequest("/auth/v1/logout",{},currentAccessToken).catch(function(){}).finally(function(){clearCustomerSession();closeAuth();});});});});

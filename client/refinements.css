@@ -3481,3 +3481,41 @@ html, body {
   .hero-stack__layer { transition: none !important; }
   .hero-art { box-shadow: inset 0 0 40px rgba(207,117,88,.025) !important; }
 }
+
+
+/* VEYRION / FLAT WELCOME EXPERIENCE — replaces the former 3D system stack */
+.hero__inner { perspective: none !important; }
+.hero__right { transform: none !important; transform-style: flat !important; perspective: none !important; }
+.hero-welcome { --welcome-gold:#c9a77b; position:relative; display:flex; flex-direction:column; justify-content:space-between; width:min(100%,620px); min-height:clamp(430px,42vw,570px); padding:clamp(20px,3vw,34px); overflow:hidden; isolation:isolate; color:#eeeae2; border:1px solid rgba(232,219,197,.16); background:radial-gradient(ellipse at 50% 36%,rgba(201,167,123,.10),transparent 42%),linear-gradient(145deg,#151614 0%,#10110f 55%,#0b0c0b 100%); box-shadow:0 26px 80px rgba(0,0,0,.28); }
+.hero-welcome::before { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:.22; background-image:linear-gradient(rgba(238,234,226,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(238,234,226,.055) 1px,transparent 1px); background-size:38px 38px; mask-image:linear-gradient(145deg,#000 0%,transparent 88%); }
+.hero-welcome__topline,.hero-welcome__bottom { display:flex; justify-content:space-between; gap:14px; color:rgba(232,225,212,.55); font:500 8px/1.5 "IBM Plex Mono",monospace; letter-spacing:.15em; text-transform:uppercase; }
+.hero-welcome__visual { position:relative; display:grid; place-items:center; min-height:clamp(150px,18vw,220px); margin:10px 0 4px; overflow:hidden; }
+.hero-welcome__ring { position:absolute; width:clamp(170px,23vw,250px); aspect-ratio:1; border:1px solid rgba(201,167,123,.20); border-radius:50%; }
+.hero-welcome__ring--one { animation:welcome-ring 18s linear infinite; }
+.hero-welcome__ring--two { width:clamp(130px,18vw,190px); border-color:rgba(201,167,123,.12); animation:welcome-ring 24s linear infinite reverse; }
+.hero-welcome__scan { position:absolute; left:7%; right:7%; top:50%; height:1px; background:linear-gradient(90deg,transparent,rgba(201,167,123,.5),transparent); transform:translateY(-50%); animation:welcome-scan 5.5s ease-in-out infinite; }
+.hero-welcome__mark { position:relative; z-index:1; width:clamp(150px,20vw,210px); height:auto; object-fit:contain; filter:drop-shadow(0 12px 24px rgba(0,0,0,.36)); animation:welcome-mark 6s ease-in-out infinite; }
+.hero-welcome__index { position:absolute; right:4px; bottom:7px; color:rgba(232,225,212,.48); font:500 8px/1 "IBM Plex Mono",monospace; letter-spacing:.15em; }
+.hero-welcome__index i { color:var(--welcome-gold); font-style:normal; padding:0 4px; }
+.hero-welcome__copy { padding:clamp(4px,1vw,12px) 0 18px; }
+.hero-welcome__copy p { margin:0 0 10px; color:var(--welcome-gold); font:600 8px/1.4 "IBM Plex Mono",monospace; letter-spacing:.19em; }
+.hero-welcome__copy h2 { max-width:12ch; margin:0; color:#f0ece4; font:400 clamp(32px,4vw,48px)/.98 "Instrument Serif",Georgia,serif; letter-spacing:-.035em; }
+.hero-welcome__copy h2 em { color:#d3b38c; font-style:italic; }
+.hero-welcome__rotator { position:relative; min-height:22px; margin-top:13px; color:#aaa69d; font:500 9px/1.5 "IBM Plex Mono",monospace; letter-spacing:.08em; }
+.hero-welcome__rotator span { position:absolute; left:0; top:0; opacity:0; animation:welcome-words 9s infinite; }
+.hero-welcome__rotator span:nth-child(2) { animation-delay:3s; } .hero-welcome__rotator span:nth-child(3) { animation-delay:6s; }
+.hero-welcome__ticker { overflow:hidden; margin:0 -34px 18px; padding:11px 0; border-top:1px solid rgba(232,219,197,.12); border-bottom:1px solid rgba(232,219,197,.12); }
+.hero-welcome__ticker-track { display:flex; align-items:center; gap:22px; width:max-content; color:rgba(232,225,212,.68); font:500 8px/1 "IBM Plex Mono",monospace; letter-spacing:.17em; animation:welcome-marquee 26s linear infinite; }
+.hero-welcome__ticker-track i { color:var(--welcome-gold); font-style:normal; }
+.hero-welcome__bottom { color:rgba(232,225,212,.72); font-size:7px; }
+@keyframes welcome-ring { to { transform:rotate(360deg); } } @keyframes welcome-scan { 0%,100% { opacity:.25; transform:translateY(-32px); } 50% { opacity:.8; transform:translateY(32px); } } @keyframes welcome-mark { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } } @keyframes welcome-words { 0%,5% { opacity:0; transform:translateY(6px); } 12%,27% { opacity:1; transform:translateY(0); } 34%,100% { opacity:0; transform:translateY(-5px); } } @keyframes welcome-marquee { to { transform:translateX(-50%); } }
+.header__right { display:flex !important; align-items:center; }
+.header__account { color:#f1e7d6 !important; border:1px solid rgba(215,181,139,.48) !important; background:rgba(215,181,139,.10) !important; box-shadow:inset 0 0 0 1px rgba(215,181,139,.06),0 8px 22px rgba(0,0,0,.22); }
+.header__account:hover { color:#fff !important; border-color:rgba(215,181,139,.82) !important; background:rgba(215,181,139,.17) !important; }
+.header__account .account-icon { display:block; width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; opacity:1; }
+.header__account:focus-visible { outline:2px solid #d7b58b; outline-offset:3px; }
+.auth-nav,.header__auth { display:none !important; }
+@media(max-width:1100px) { .header__right { display:flex !important; margin-left:auto; gap:8px; } .header__status,.header__cta { display:none !important; } }
+@media(max-width:860px) { .hero-welcome { min-height:440px; } .hero-welcome__visual { min-height:180px; } }
+@media(max-width:600px) { .hero-welcome { min-height:410px; padding:20px; } .hero-welcome__visual { min-height:155px; } .hero-welcome__copy h2 { font-size:clamp(34px,10vw,44px); } .hero-welcome__ticker { margin-left:-20px; margin-right:-20px; } .hero-welcome__bottom { font-size:6px; letter-spacing:.10em; } }
+@media(prefers-reduced-motion:reduce) { .hero-welcome__ring,.hero-welcome__scan,.hero-welcome__mark,.hero-welcome__rotator span,.hero-welcome__ticker-track { animation:none !important; } .hero-welcome__rotator span { position:static; display:none; opacity:1; transform:none; } .hero-welcome__rotator span:first-child { display:block; } }
