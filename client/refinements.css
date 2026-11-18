@@ -3594,3 +3594,17 @@ select:disabled,
   -webkit-text-fill-color: #9b9b93 !important;
   opacity: .72;
 }
+
+
+/* VEYRION / account dialog legibility and native form controls */
+#auth-modal .auth-modal__card { background:#eeece5 !important; color:#171816 !important; }
+#auth-modal .auth-modal__card h2,#auth-modal #auth-modal-title { color:#171816 !important; opacity:1 !important; text-shadow:none !important; }
+#auth-modal .section__label,#auth-modal #auth-modal-mode { color:#55574f !important; opacity:1 !important; }
+#auth-modal .auth-modal__sub,#auth-modal .auth-modal__note { color:#55574f !important; opacity:1 !important; }
+#auth-modal .auth-form label,#auth-modal .auth-form label span { color:#55574f !important; opacity:1 !important; }
+#auth-modal .auth-form input,#auth-modal .auth-form input[type=email],#auth-modal .auth-form input[type=password] { color:#171816 !important; background:#fffdf8 !important; border:1px solid #aaa79e !important; outline:none !important; box-shadow:none !important; -webkit-text-fill-color:#171816 !important; caret-color:#171816 !important; border-radius:0 !important; }
+#auth-modal .auth-form input:focus-visible { outline:2px solid #8b5b43 !important; outline-offset:2px !important; }
+#auth-modal .auth-form input:-webkit-autofill,#auth-modal .auth-form input:-webkit-autofill:hover,#auth-modal .auth-form input:-webkit-autofill:focus { -webkit-text-fill-color:#171816 !important; caret-color:#171816 !important; -webkit-box-shadow:0 0 0 1000px #fffdf8 inset !important; box-shadow:0 0 0 1000px #fffdf8 inset !important; transition:background-color 9999s ease-out 0s; }
+#auth-modal .auth-switch { color:#6f4938 !important; opacity:1 !important; }
+#auth-modal .auth-modal__close { color:#55574f !important; border-color:rgba(23,24,22,.22) !important; }
+#auth-modal .auth-error { color:#a33124 !important; }
