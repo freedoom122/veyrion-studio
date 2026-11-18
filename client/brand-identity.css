@@ -1,6 +1,7 @@
-/* Official Veyrion Studios identity */
-.header__brand{display:inline-flex!important;align-items:center!important;gap:11px!important;white-space:nowrap}
-.header__brand::before{content:"";display:block;width:38px;height:38px;flex:0 0 38px;background:url("/assets/veyrion-official.webp?v=20261118-1") center/cover no-repeat;border:1px solid rgba(215,181,139,.36);border-radius:3px;box-shadow:0 5px 18px rgba(0,0,0,.28)}
-.footer__brand{display:inline-flex;align-items:center;gap:11px;white-space:nowrap}
-.footer__brand::before{content:"";display:block;width:42px;height:42px;flex:0 0 42px;background:url("/assets/veyrion-official.webp?v=20261118-1") center/cover no-repeat;border:1px solid rgba(215,181,139,.3);border-radius:3px}
-@media(max-width:600px){.header__brand{gap:9px!important}.header__brand::before{width:32px;height:32px;flex-basis:32px}.footer__brand::before{width:36px;height:36px;flex-basis:36px}}
+/* Official Veyrion Studios logo lockups */
+.header__brand{display:inline-flex!important;align-items:center!important;gap:11px!important;white-space:nowrap!important}
+.header__brand::before,.footer__brand::before{content:none!important;display:none!important}
+.header__brand-mark{display:block!important;width:38px!important;height:38px!important;flex:0 0 38px!important;object-fit:cover!important;object-position:center!important;border:1px solid rgba(215,181,139,.36);border-radius:3px;box-shadow:0 5px 18px rgba(0,0,0,.28)}
+.footer__brand{display:inline-flex!important;align-items:center!important;gap:11px!important;white-space:nowrap!important}
+.footer__brand-mark{display:block!important;width:42px!important;height:42px!important;flex:0 0 42px!important;object-fit:cover!important;object-position:center!important;border:1px solid rgba(215,181,139,.3);border-radius:3px}
+@media(max-width:600px){.header__brand{gap:9px!important}.header__brand-mark{width:32px!important;height:32px!important;flex-basis:32px!important}.footer__brand-mark{width:36px!important;height:36px!important;flex-basis:36px!important}}
