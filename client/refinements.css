@@ -3608,3 +3608,21 @@ select:disabled,
 #auth-modal .auth-switch { color:#6f4938 !important; opacity:1 !important; }
 #auth-modal .auth-modal__close { color:#55574f !important; border-color:rgba(23,24,22,.22) !important; }
 #auth-modal .auth-error { color:#a33124 !important; }
+
+
+/* VEYRION / GLOBAL LIGHT-SURFACE CONTRAST REPAIR */
+:root { --panel-ink:#171816; --panel-muted:#55574f; --panel-rule:rgba(23,24,22,.18); }
+.account-panel,.account-panel--member,.account-benefit,.account-profile { color:var(--panel-ink) !important; }
+.account-panel__intro h1,.account-panel__intro h2,.account-panel__intro h3,.account-panel__intro p,.account-panel__intro span,.account-panel__intro strong,.account-panel__intro small,.account-panel__intro label,.account-panel__intro li,.account-benefit__number,.account-benefit strong,.account-benefit p,.account-profile__heading,.account-profile__heading h2,.account-profile__heading p,.account-profile__details,.account-profile__detail,.account-profile__detail span,.account-profile__detail strong,.account-profile__message { color:var(--panel-ink) !important; opacity:1 !important; text-shadow:none !important; }
+.account-panel__intro p,.account-benefit p,.account-profile__email,.account-profile__detail span { color:var(--panel-muted) !important; }
+.service-showcase > *,.service-showcase__lead,.service-list { color:var(--panel-ink) !important; }
+.service-showcase__lead h1,.service-showcase__lead h2,.service-showcase__lead h3,.service-showcase__lead p,.service-showcase__lead .section__label,.service-list a,.service-list a strong,.service-list a span { color:var(--panel-ink) !important; opacity:1 !important; text-shadow:none !important; }
+.service-showcase__lead h2 em { color:#a95f46 !important; }
+.service-showcase__lead p:not(.section__label),.service-list small { color:var(--panel-muted) !important; }
+.service-list a { background:#eeece5 !important; }
+.service-list a:hover { background:#e4e0d7 !important; }
+.account-panel .btn--primary { color:#eeece5 !important; }
+.account-panel .btn--quiet { color:#171816 !important; border-color:var(--panel-rule) !important; }
+.account-panel :is(input,select,textarea) { color:#171816 !important; background:#fffdf8 !important; -webkit-text-fill-color:#171816 !important; }
+.account-panel :is(input,select,textarea)::placeholder { color:#77786f !important; -webkit-text-fill-color:#77786f !important; opacity:1 !important; }
+.account-panel :is(.section__label,.eyebrow,.account-eyebrow),.service-showcase :is(.section__label,.eyebrow) { color:#6a6258 !important; opacity:1 !important; }
