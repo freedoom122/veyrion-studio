@@ -1220,7 +1220,7 @@
 
 
   /* ============================================================
-     SPATIAL INTERACTIONS / motion layer 02
+     POINTER INTERACTIONS / motion layer 02
      ============================================================ */
   function initSpatialInteractions() {
     if (reduceMotion) return;
@@ -1236,7 +1236,7 @@
           card.style.setProperty('--mouse-x', (x * 100) + '%');
           card.style.setProperty('--mouse-y', (y * 100) + '%');
           if (card.classList.contains('bento-card')) {
-            card.style.transform = 'perspective(900px) rotateX(' + ((.5-y)*5).toFixed(2) + 'deg) rotateY(' + ((x-.5)*6).toFixed(2) + 'deg) translateY(-4px)';
+            card.style.transform = 'translateY(-4px)';
           }
         }, { passive:true });
         card.addEventListener('pointerleave', function () { card.style.transform = ''; }, { passive:true });
@@ -1246,7 +1246,7 @@
           var r = el.getBoundingClientRect();
           var dx = (event.clientX - r.left - r.width/2) / r.width;
           var dy = (event.clientY - r.top - r.height/2) / r.height;
-          el.style.transform = 'translate3d(' + (dx*7).toFixed(1) + 'px,' + (dy*5).toFixed(1) + 'px,0)';
+          el.style.transform = 'translate(' + (dx*7).toFixed(1) + 'px,' + (dy*5).toFixed(1) + 'px)';
         }, { passive:true });
         el.addEventListener('pointerleave', function () { el.style.transform = ''; }, { passive:true });
       });
