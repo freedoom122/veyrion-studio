@@ -3539,3 +3539,21 @@ html, body {
 .arch-model__axis { display:none !important; }
 .arch-model__hint { margin-top:15px !important; color:rgba(232,225,212,.52) !important; font-size:11px !important; }
 @media(max-width:600px) { .arch-model__stack { grid-template-columns:1fr 1fr !important; gap:7px !important; } .arch-model__plate { min-height:52px !important; padding:11px !important; } }
+
+
+/* MOBILE HEADER / one compact navigation row */
+@media (max-width: 1100px) {
+  .header__nav { display:none !important; }
+  .header__toggle { display:flex !important; }
+  .header__right { display:flex !important; align-items:center; }
+  .header__status,.header__cta { display:none !important; }
+  .header__account { display:flex !important; align-items:center; justify-content:center; }
+}
+@media (max-width: 600px) {
+  .header__inner { gap:10px !important; }
+  .header__brand { margin-right:auto !important; }
+  .header__right { margin-left:auto !important; gap:0 !important; }
+  .v-language { display:none !important; }
+  .header__account { margin:0 8px 0 auto !important; }
+  .header__toggle { margin-left:0 !important; }
+}
