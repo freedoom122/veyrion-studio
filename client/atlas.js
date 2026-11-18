@@ -14,7 +14,6 @@
     ['Process', 'process.html'],
     ['Blog', 'blog.html'],
     ['Contact', 'contact.html'],
-    ['Account', 'account.html']
   ];
 
   var path = location.pathname.split('/').filter(Boolean).pop() || 'index.html';
