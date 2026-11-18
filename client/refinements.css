@@ -3562,3 +3562,35 @@ html, body {
 /* The Atlas page index is redundant beside the phone menu; keep the mobile header clean. */
 @media (max-width: 1100px) { .atlas-index { display:none !important; } }
 .mobile-nav[hidden] { display:none !important; }
+
+
+/* VEYRION / readable native select menus across every form */
+select,
+.field select,
+.estimator__select,
+.contact-page__form-wrap select {
+  color: #eeeae2 !important;
+  color-scheme: dark !important;
+  background-color: #171816 !important;
+  border-color: rgba(232, 219, 197, .24) !important;
+  -webkit-text-fill-color: #eeeae2 !important;
+}
+select option,
+.field select option,
+.estimator__select option,
+.contact-page__form-wrap select option,
+select optgroup {
+  color: #eeeae2 !important;
+  background-color: #171816 !important;
+}
+select option:checked,
+.field select option:checked {
+  color: #fff !important;
+  background-color: #343630 !important;
+}
+select:disabled,
+.field select:disabled {
+  color: #9b9b93 !important;
+  -webkit-text-fill-color: #9b9b93 !important;
+  opacity: .72;
+}
