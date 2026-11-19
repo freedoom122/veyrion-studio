@@ -7,9 +7,8 @@
   "use strict";
 
 
-  /* ---- API base (GitHub Pages -> Render backend, or relative on Render) ---- */
-  var RENDER_BACKEND = 'https://veyrion-studio.onrender.com';
-  var API_BASE = (location.hostname.indexOf('github.io') !== -1) ? RENDER_BACKEND : '';
+  /* ---- API base (Cloudflare Pages frontend -> Render backend) ---- */
+  var API_BASE = 'https://api.veyrionstudios.com';
 
   /* ---- guards ---- */
   var hasGSAP = typeof gsap !== "undefined";
