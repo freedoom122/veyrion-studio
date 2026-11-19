@@ -127,6 +127,25 @@ async function main() {
     res.send('Contact: mailto:contact.veyrion@gmail.com\nPreferred-Languages: en, ro\nCanonical: https://veyrionstudios.com/.well-known/security.txt\nPolicy: https://veyrionstudios.com/security.html\nExpires: 2027-11-11T00:00:00.000Z\n');
   });
 
+  const errorCatalog = require('./server/config/errorCatalog');
+  const errorPage = path.join(__dirname, 'client', 'errors', 'index.html');
+  app.get('/errors', (_req, res) => res.redirect(302, '/errors/404'));
+  app.get(/^\/errors\/(\d{3})\/?$/, (req, res) => {
+    const code = String(req.params[0]);
+    const entry = errorCatalog[code] || errorCatalog['404'];
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(entry.httpStatus || Number(code) || 404).sendFile(errorPage);
+  });
+
+  app.use(express.static(path.join(__dirname, 'client'), {
+    dotfiles: 'deny',
+    index: 'index.html',
+    etag: true,
+    maxAge: 0,
+    setHeaders(res, filePath) {
+      if (/\.(?:html|js|css)$/i.test(filePath)) res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    },
+  }));
 
   app.use('/admin', express.static(path.join(__dirname, 'server', 'admin'), {
     dotfiles: 'deny',
@@ -136,14 +155,14 @@ async function main() {
     },
   }));
 
-  // Backend-only service: API, webhooks, health, and admin are served here.
-  // The public website is deployed separately on Cloudflare Pages.
+  // Only the admin root and real static assets are served; unknown paths reach the 404 handler.
+
+  // Never turn an unknown URL or missing asset into a successful homepage response.
   app.use((req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/webhooks/')) {
       return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'The requested API route does not exist.' }, requestId: req.id });
     }
-    if (req.path === '/admin' || req.path.startsWith('/admin/')) return next();
-    return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'This Render service is API-only.' }, requestId: req.id });
+    return res.redirect(302, '/errors/404?from=' + encodeURIComponent(req.originalUrl));
   });
 
   app.use(errorHandler);
